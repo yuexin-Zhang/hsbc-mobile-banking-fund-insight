@@ -22,6 +22,41 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
     'FWE007': 25,
   });
   const [activeTab, setActiveTab] = useState<'return' | 'drawdown' | 'probability' | 'holdings'>('return');
+  const [drawdownPeriod, setDrawdownPeriod] = useState<'3M' | '6M' | '1Y' | '3Y' | 'More'>('3Y');
+  const tabScrollRef = React.useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = React.useState(false);
+  const [startX, setStartX] = React.useState(0);
+  const [scrollLeft, setScrollLeft] = React.useState(0);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!tabScrollRef.current) return;
+    setIsDragging(true);
+    setStartX(e.pageX - tabScrollRef.current.offsetLeft);
+    setScrollLeft(tabScrollRef.current.scrollLeft);
+    tabScrollRef.current.style.cursor = 'grabbing';
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+    if (tabScrollRef.current) {
+      tabScrollRef.current.style.cursor = 'grab';
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    if (tabScrollRef.current) {
+      tabScrollRef.current.style.cursor = 'grab';
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !tabScrollRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - tabScrollRef.current.offsetLeft;
+    const walk = (x - startX) * 2;
+    tabScrollRef.current.scrollLeft = scrollLeft - walk;
+  };
 
   const funds: Fund[] = [
     { id: 'HGE001', name: 'HSBC Global Equity Fund', code: 'HGE001', type: 'Equity - Growth' },
@@ -84,7 +119,7 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
       </div>
 
       {/* Tabs */}
-      <div className="flex px-2 border-b border-gray-100 mb-2 overflow-x-auto no-scrollbar">
+      <div className="flex px-2 border-b border-gray-100 mb-2 overflow-x-scroll no-scrollbar">
         {['Recently Viewed', 'Watchlist', 'Holdings', 'History'].map((tab, i) => (
           <div key={tab} className="relative px-3 py-3 text-[11px] font-bold text-gray-800 uppercase tracking-tighter whitespace-nowrap">
             {tab}
@@ -488,6 +523,45 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
           );
 
         case 'drawdown':
+          // Calculate metrics based on selected period
+          const getPeriodMetrics = () => {
+            const metrics = {
+              '3M': {
+                portfolioDrawdown: -8.23,
+                benchmarkDrawdown: -5.67,
+                recoveryDays: { portfolio: 45, benchmark: 12 },
+                volatility: { portfolio: 12.34, benchmark: 9.87 }
+              },
+              '6M': {
+                portfolioDrawdown: -12.56,
+                benchmarkDrawdown: -9.34,
+                recoveryDays: { portfolio: 87, benchmark: 18 },
+                volatility: { portfolio: 15.67, benchmark: 12.45 }
+              },
+              '1Y': {
+                portfolioDrawdown: -15.89,
+                benchmarkDrawdown: -11.23,
+                recoveryDays: { portfolio: 156, benchmark: 21 },
+                volatility: { portfolio: 18.23, benchmark: 14.56 }
+              },
+              '3Y': {
+                portfolioDrawdown: portfolioMaxDrawdown,
+                benchmarkDrawdown: benchmarkMaxDrawdown,
+                recoveryDays: { portfolio: 387, benchmark: 25 },
+                volatility: { portfolio: 20.73, benchmark: 17.01 }
+              },
+              'More': {
+                portfolioDrawdown: -28.45,
+                benchmarkDrawdown: -22.67,
+                recoveryDays: { portfolio: 542, benchmark: 34 },
+                volatility: { portfolio: 24.89, benchmark: 19.34 }
+              }
+            };
+            return metrics[drawdownPeriod];
+          };
+          
+          const periodMetrics = getPeriodMetrics();
+          
           return (
             <>
               {/* Drawdown Chart */}
@@ -502,12 +576,12 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
                   <div className="flex items-center gap-1.5">
                     <div className="w-3 h-0.5 bg-[#ff8c42] rounded-full"></div>
                     <span className="text-[10px] text-[#1e1e1e] font-bold">Portfolio</span>
-                    <span className="text-[11px] text-[#22c55e] font-bold ml-1">{portfolioMaxDrawdown.toFixed(2)}%</span>
+                    <span className="text-[11px] text-[#22c55e] font-bold ml-1">{periodMetrics.portfolioDrawdown.toFixed(2)}%</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <div className="w-3 h-0.5 bg-[#b0b0b0] rounded-full"></div>
-                    <span className="text-[10px] text-[#767676] font-bold">MSCI World ▼</span>
-                    <span className="text-[11px] text-[#22c55e] font-bold ml-1">{benchmarkMaxDrawdown.toFixed(2)}%</span>
+                    <span className="text-[10px] text-[#767676] font-bold">MSCI World</span>
+                    <span className="text-[11px] text-[#22c55e] font-bold ml-1">{periodMetrics.benchmarkDrawdown.toFixed(2)}%</span>
                   </div>
                 </div>
 
@@ -569,41 +643,46 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
                   <div className="flex items-center justify-between px-5 py-4">
                     <span className="text-[12px] text-[#1e1e1e] font-medium">Maximum Drawdown</span>
                     <div className="flex items-center gap-12">
-                      <span className="text-[13px] text-[#1e1e1e] font-bold">{portfolioMaxDrawdown.toFixed(2)}%</span>
-                      <span className="text-[13px] text-[#1e1e1e] font-bold">{benchmarkMaxDrawdown.toFixed(2)}%</span>
+                      <span className="text-[13px] text-[#1e1e1e] font-bold">{periodMetrics.portfolioDrawdown.toFixed(2)}%</span>
+                      <span className="text-[13px] text-[#1e1e1e] font-bold">{periodMetrics.benchmarkDrawdown.toFixed(2)}%</span>
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between px-5 py-4">
                     <span className="text-[12px] text-[#1e1e1e] font-medium">Max Drawdown Recovery</span>
                     <div className="flex items-center gap-12">
-                      <span className="text-[13px] text-[#1e1e1e] font-bold">387 Days</span>
-                      <span className="text-[13px] text-[#1e1e1e] font-bold">25 Days</span>
+                      <span className="text-[13px] text-[#1e1e1e] font-bold">{periodMetrics.recoveryDays.portfolio} Days</span>
+                      <span className="text-[13px] text-[#1e1e1e] font-bold">{periodMetrics.recoveryDays.benchmark} Days</span>
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between px-5 py-4">
                     <span className="text-[12px] text-[#1e1e1e] font-medium">Annualized Volatility</span>
                     <div className="flex items-center gap-12">
-                      <span className="text-[13px] text-[#1e1e1e] font-bold">20.73%</span>
-                      <span className="text-[13px] text-[#1e1e1e] font-bold">17.01%</span>
+                      <span className="text-[13px] text-[#1e1e1e] font-bold">{periodMetrics.volatility.portfolio.toFixed(2)}%</span>
+                      <span className="text-[13px] text-[#1e1e1e] font-bold">{periodMetrics.volatility.benchmark.toFixed(2)}%</span>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Time Period Tabs */}
-              <div className="flex items-center gap-3 px-1">
-                {['3M', '6M', '1Y', '3Y', 'More'].map((period, idx) => (
-                  <button
-                    key={period}
-                    className={`px-4 py-2 text-[11px] font-bold rounded-full transition-all ${
-                      idx === 3 ? 'bg-blue-500 text-white' : 'text-[#767676] active:bg-gray-50'
-                    }`}
-                  >
-                    {period}
-                  </button>
-                ))}
+              <div className="overflow-x-scroll no-scrollbar">
+                <div className="flex items-center gap-2 px-1 w-max">
+                  {['3M', '6M', '1Y', '3Y', 'More'].map((period) => (
+                    <button
+                      key={period}
+                      onClick={() => setDrawdownPeriod(period as any)}
+                      className={`px-3 py-1.5 text-[9px] font-bold uppercase tracking-tight rounded-[2px] transition-all border ${
+                        drawdownPeriod === period
+                          ? 'bg-[#da0011] text-white border-[#da0011]'
+                          : 'bg-white text-[#767676] border-gray-200 hover:border-gray-300 active:bg-gray-50'
+                      }`}
+                    >
+                      {period}
+                    </button>
+                  ))}
+                </div>
               </div>
             </>
           );
@@ -719,10 +798,32 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
     };
 
     return (
-      <div className="flex flex-col h-full bg-[#f4f5f6] overflow-hidden animate-fade-in">
+      <div className="flex flex-col h-full bg-[#f4f5f6] animate-fade-in">
         {/* Tab Navigation */}
-        <div className="bg-white border-b border-gray-100 overflow-x-auto no-scrollbar">
-          <div className="flex px-2 min-w-max">
+        <div 
+          ref={tabScrollRef}
+          className="tab-scroll-container flex-shrink-0" 
+          onMouseDown={handleMouseDown}
+          onMouseLeave={handleMouseLeave}
+          onMouseUp={handleMouseUp}
+          onMouseMove={handleMouseMove}
+          style={{ 
+            backgroundColor: 'white',
+            borderBottom: '1px solid #e5e7eb',
+            overflowX: 'scroll',
+            overflowY: 'hidden',
+            WebkitOverflowScrolling: 'touch',
+            position: 'relative',
+            cursor: 'grab',
+            userSelect: 'none'
+          }}
+        >
+          <div style={{ 
+            display: 'flex',
+            paddingLeft: '0.5rem',
+            paddingRight: '0.5rem',
+            minWidth: 'fit-content'
+          }}>
             {[
               { id: 'return', label: 'Return Performance' },
               { id: 'drawdown', label: 'Drawdown' },
@@ -732,17 +833,49 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className="relative px-5 py-3 text-[11px] font-bold uppercase tracking-tighter whitespace-nowrap transition-colors"
-                style={{ color: activeTab === tab.id ? '#1e1e1e' : '#767676' }}
+                style={{
+                  position: 'relative',
+                  padding: '0.75rem 1.25rem',
+                  fontSize: '11px',
+                  fontWeight: 'bold',
+                  textTransform: 'uppercase',
+                  letterSpacing: '-0.025em',
+                  whiteSpace: 'nowrap',
+                  transition: 'color 0.2s',
+                  color: activeTab === tab.id ? '#1e1e1e' : '#767676',
+                  border: 'none',
+                  backgroundColor: 'transparent',
+                  cursor: 'pointer',
+                  flexShrink: 0,
+                  minWidth: 'fit-content'
+                }}
               >
                 {tab.label}
                 {activeTab === tab.id && (
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-[#da0011] rounded-full" />
+                  <div style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: '1rem',
+                    height: '2px',
+                    backgroundColor: '#da0011',
+                    borderRadius: '9999px'
+                  }} />
                 )}
               </button>
             ))}
           </div>
         </div>
+        <style>{`
+          .tab-scroll-container::-webkit-scrollbar {
+            display: none;
+          }
+          .tab-scroll-container {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+        `}</style>
 
         {/* Tab Content */}
         <div className="flex-1 overflow-y-auto p-4 space-y-5 pb-12">
