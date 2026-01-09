@@ -33,17 +33,17 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
 
   const chartData = useMemo(() => [
     { date: '2024-08', all: 0, fund: 0, saa: 0 },
-    { date: '2024-09', all: -2, fund: -1.5, saa: 1 },
-    { date: '2024-10', all: 5, fund: 4, saa: 3 },
-    { date: '2024-11', all: 3, fund: 2, saa: 4.5 },
-    { date: '2024-12', all: 8, fund: 7.5, saa: 6 },
-    { date: '2025-01', all: 12, fund: 10, saa: 9 },
-    { date: '2025-02', all: 10, fund: 8, saa: 11 },
-    { date: '2025-03', all: 18, fund: 16, saa: 13 },
-    { date: '2025-04', all: 15, fund: 13, saa: 15 },
-    { date: '2025-05', all: 25, fund: 22, saa: 18 },
-    { date: '2025-06', all: 22, fund: 19, saa: 17 },
-    { date: '2025-07', all: 32.23, fund: 28.5, saa: 21 },
+    { date: '2024-09', all: -2, fund: -1, saa: 1.5 },
+    { date: '2024-10', all: 5, fund: 6, saa: 4 },
+    { date: '2024-11', all: 3, fund: 5.5, saa: 7 },
+    { date: '2024-12', all: 8, fund: 7, saa: 9.5 },
+    { date: '2025-01', all: 12, fund: 13.5, saa: 11 },
+    { date: '2025-02', all: 10, fund: 11, saa: 14 },
+    { date: '2025-03', all: 18, fund: 16, saa: 19.5 },
+    { date: '2025-04', all: 15, fund: 17, saa: 16.5 },
+    { date: '2025-05', all: 25, fund: 23, saa: 27 },
+    { date: '2025-06', all: 22, fund: 24.5, saa: 23.5 },
+    { date: '2025-07', all: 32.23, fund: 30, saa: 35.8 },
   ], []);
 
   const saaComparisonData = [
@@ -181,16 +181,16 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
               <line x1="0" y1="0" x2="0" y2="100" stroke={colors.axis} strokeWidth="0.5" />
               <line x1="0" y1="100" x2="100" y2="100" stroke={colors.axis} strokeWidth="0.5" />
               
-              {visibleLines.saa && (
-                <path d={getSmoothPathForFiltered(filteredData, 'saa')} fill="none" stroke={colors.grey} strokeWidth="1" strokeLinecap="round" strokeDasharray="3 2" />
+              {visibleLines.all && (
+                <path d={getSmoothPathForFiltered(filteredData, 'all')} fill="none" stroke={colors.red} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               )}
               
               {visibleLines.fund && (
                 <path d={getSmoothPathForFiltered(filteredData, 'fund')} fill="none" stroke={colors.lightRed} strokeWidth="1.2" strokeLinecap="round" />
               )}
               
-              {visibleLines.all && (
-                <path d={getSmoothPathForFiltered(filteredData, 'all')} fill="none" stroke={colors.red} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              {visibleLines.saa && (
+                <path d={getSmoothPathForFiltered(filteredData, 'saa')} fill="none" stroke={colors.grey} strokeWidth="1.5" strokeLinecap="round" strokeDasharray="3 2" />
               )}
 
               {hoverData && <line x1={getXForFiltered(hoverData.index)} y1="0" x2={getXForFiltered(hoverData.index)} y2="100" stroke={colors.muted} strokeWidth="0.5" strokeDasharray="3 2" />}

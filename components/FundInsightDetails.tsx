@@ -119,14 +119,14 @@ const FundInsightDetails: React.FC<FundInsightDetailsProps> = ({ onBack }) => {
   };
 
   const productAllocation = [
+    { label: 'Cash/Deposits', pct: 52.17, val: '80,773,627.08', color: '#1e1e1e' },
     { label: 'Funds&Related', pct: 30.35, val: '46,995,624.56', color: '#da0011' },
+    { label: 'QDII Structured Note', pct: 6.56, val: '10,154,696.62', color: '#ebeef0' },
+    { label: 'QDII Bond', pct: 5.84, val: '9,044,989.92', color: '#f87171' },
+    { label: 'Structured Deposits', pct: 5.01, val: '7,760,775.21', color: '#9ca3af' },
     { label: 'AMP&Trust', pct: 0.05, val: '78,200.00', color: '#fca5a5' },
     { label: 'WMP', pct: 0.01, val: '15,000.00', color: '#fee2e2' },
-    { label: 'QDII Bond', pct: 5.84, val: '9,044,989.92', color: '#f87171' },
-    { label: 'QDII Structured Note', pct: 6.56, val: '10,154,696.62', color: '#ebeef0' },
-    { label: 'Structured Deposits', pct: 5.01, val: '7,760,775.21', color: '#9ca3af' },
     { label: 'Insurance', pct: 0.01, val: '12,556.66', color: '#4b5563' },
-    { label: 'Cash/Deposits', pct: 52.17, val: '80,773,627.08', color: '#1e1e1e' },
   ];
 
   const currencyAllocation = [
@@ -142,17 +142,17 @@ const FundInsightDetails: React.FC<FundInsightDetailsProps> = ({ onBack }) => {
     { label: 'China Equity', pct: 25.71, val: '39,808,189.35', color: '#da0011' },
     { label: 'Global Investment Grade Bond', pct: 8.53, val: '13,207,465.59', color: '#005f73' },
     { label: 'China Fixed Income', pct: 6.04, val: '9,352,062.39', color: '#0a9396' },
-    { label: 'Developed Market Equity', pct: 1.59, val: '2,461,883.97', color: '#94d2bd' },
     { label: 'Remaining types', pct: 4.42, val: '6,843,737.79', color: '#ebeef0' },
+    { label: 'Developed Market Equity', pct: 1.59, val: '2,461,883.97', color: '#94d2bd' },
   ];
 
   const geographiesData = [
     { label: 'China', pct: 71.63, val: '110,908,647.20', color: '#da0011' },
+    { label: 'Remaining types', pct: 13.99, val: '21,661,482.26', color: '#ebeef0' },
     { label: 'United States', pct: 8.26, val: '12,789,409.83', color: '#9ca3af' },
     { label: 'Hong Kong, China', pct: 2.99, val: '4,629,580.55', color: '#666666' },
     { label: 'Germany', pct: 1.60, val: '2,477,367.52', color: '#333333' },
     { label: 'Taiwan, China', pct: 1.53, val: '2,368,982.69', color: '#111111' },
-    { label: 'Remaining types', pct: 13.99, val: '21,661,482.26', color: '#ebeef0' },
   ];
 
   const sectorsData = [
@@ -474,7 +474,6 @@ const FundInsightDetails: React.FC<FundInsightDetailsProps> = ({ onBack }) => {
                     <div className="space-y-4">
                       <div>
                         <div className="flex items-center gap-2 mb-1.5">
-                          <span className="text-xs">📊</span>
                           <span className="text-[10px] font-bold text-[#1e1e1e] uppercase tracking-tight">Product & Currency Analysis</span>
                         </div>
                         <p className="text-[11px] text-[#767676] leading-relaxed">
@@ -482,18 +481,17 @@ const FundInsightDetails: React.FC<FundInsightDetailsProps> = ({ onBack }) => {
                         </p>
                       </div>
 
-                      <div className="bg-[#da0011]/5 border-l-2 border-[#da0011] p-3">
+                      <div className="p-3">
                         <div className="flex items-center gap-2 mb-1.5">
-                          <span className="text-xs">🎯</span>
-                          <span className="text-[10px] font-bold text-[#da0011] uppercase tracking-tight">Actionable Recommendations</span>
+                          <span className="text-[10px] font-bold text-[#1e1e1e] uppercase tracking-tight">Actionable Recommendations</span>
                         </div>
                         <ul className="text-[10px] text-[#333] space-y-1.5 leading-tight">
                           <li className="flex gap-2">
-                            <span className="text-[#da0011]">•</span>
+                            <span className="text-[#767676]">•</span>
                             <span>Transition idle CNY cash into <span className="font-bold">QDII Structured Notes</span> to target higher potential returns without excessive capital risk.</span>
                           </li>
                           <li className="flex gap-2">
-                            <span className="text-[#da0011]">•</span>
+                            <span className="text-[#767676]">•</span>
                             <span>Utilize your <span className="font-bold">USD (28.27%)</span> exposure to build a core position in USD-denominated Global High Yield assets.</span>
                           </li>
                         </ul>
@@ -528,7 +526,6 @@ const FundInsightDetails: React.FC<FundInsightDetailsProps> = ({ onBack }) => {
                     <div className="space-y-4">
                       <div>
                         <div className="flex items-center gap-2 mb-1.5">
-                          <span className="text-xs">⚖️</span>
                           <span className="text-[10px] font-bold text-[#1e1e1e] uppercase tracking-tight">Portfolio Analysis</span>
                         </div>
                         <p className="text-[11px] text-[#767676] leading-relaxed">
@@ -536,18 +533,17 @@ const FundInsightDetails: React.FC<FundInsightDetailsProps> = ({ onBack }) => {
                         </p>
                       </div>
 
-                      <div className="bg-[#da0011]/5 border-l-2 border-[#da0011] p-3">
+                      <div className="p-3">
                         <div className="flex items-center gap-2 mb-1.5">
-                          <span className="text-xs">💡</span>
-                          <span className="text-[10px] font-bold text-[#da0011] uppercase tracking-tight">Tactical Advice</span>
+                          <span className="text-[10px] font-bold text-[#1e1e1e] uppercase tracking-tight">Tactical Advice</span>
                         </div>
                         <ul className="text-[10px] text-[#333] space-y-1.5 leading-tight">
                           <li className="flex gap-2">
-                            <span className="text-[#da0011]">•</span>
+                            <span className="text-[#767676]">•</span>
                             <span>Consider diversifying <span className="font-bold">10-15% of Liquidity</span> into Global Investment Grade Bonds to enhance risk-adjusted yields.</span>
                           </li>
                           <li className="flex gap-2">
-                            <span className="text-[#da0011]">•</span>
+                            <span className="text-[#767676]">•</span>
                             <span>Increase exposure to <span className="font-bold">Developed Market Equities</span> to balance geographic risk.</span>
                           </li>
                         </ul>
