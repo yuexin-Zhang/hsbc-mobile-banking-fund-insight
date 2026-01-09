@@ -695,7 +695,6 @@ const FundInsightDetails: React.FC<FundInsightDetailsProps> = ({ onBack }) => {
                   <div className="space-y-4">
                     <div>
                       <div className="flex items-center gap-2 mb-1.5">
-                        <span className="text-xs">📈</span>
                         <span className="text-[10px] font-bold text-[#1e1e1e] uppercase tracking-tight">Concentration Risk</span>
                       </div>
                       <p className="text-[11px] text-[#767676] leading-relaxed">
@@ -703,18 +702,17 @@ const FundInsightDetails: React.FC<FundInsightDetailsProps> = ({ onBack }) => {
                       </p>
                     </div>
 
-                    <div className="bg-[#da0011]/5 border-l-2 border-[#da0011] p-3">
+                    <div className="p-3">
                       <div className="flex items-center gap-2 mb-1.5">
-                        <span className="text-xs">💼</span>
-                        <span className="text-[10px] font-bold text-[#da0011] uppercase tracking-tight">Portfolio Insight</span>
+                        <span className="text-[10px] font-bold text-[#1e1e1e] uppercase tracking-tight">Portfolio Insight</span>
                       </div>
                       <ul className="text-[10px] text-[#333] space-y-1.5 leading-tight">
                         <li className="flex gap-2">
-                          <span className="text-[#da0011]">•</span>
+                          <span className="text-[#767676]">•</span>
                           <span>Consider rebalancing if any single stock exceeds <span className="font-bold">5% threshold</span> to manage idiosyncratic risk.</span>
                         </li>
                         <li className="flex gap-2">
-                          <span className="text-[#da0011]">•</span>
+                          <span className="text-[#767676]">•</span>
                           <span>Enhance diversification by adding exposure to <span className="font-bold">US/European large-caps</span> and <span className="font-bold">Healthcare sector</span>.</span>
                         </li>
                       </ul>
