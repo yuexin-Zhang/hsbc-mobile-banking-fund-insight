@@ -99,30 +99,37 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
 
   const getFilteredChartData = () => {
     const allData = chartData;
-    const now = new Date(2025, 6, 31); // 使用数据中的最后日期
+    // Data goes from 2025-01 to 2026-01 (latest date in data)
+    // Total 36 data points across 13 months
     
     let startIndex = 0;
     
     switch (dateRange) {
       case '1M':
-        // 最后1个月（最后3个数据点）
+        // Last 1 month (2026-01): last 3 data points
         startIndex = Math.max(0, allData.length - 3);
         break;
       case '3M':
-        // 最后3个月（最后4个数据点）
-        startIndex = Math.max(0, allData.length - 4);
+        // Last 3 months (2025-11, 2025-12, 2026-01): ~12 data points
+        // Find first data point from 2025-11
+        startIndex = allData.findIndex(d => d.date >= '2025-11');
+        if (startIndex === -1) startIndex = Math.max(0, allData.length - 12);
         break;
       case '6M':
-        // 最后6个月（最后7个数据点）
-        startIndex = Math.max(0, allData.length - 7);
+        // Last 6 months (2025-08 to 2026-01): ~18 data points
+        // Find first data point from 2025-08
+        startIndex = allData.findIndex(d => d.date >= '2025-08');
+        if (startIndex === -1) startIndex = Math.max(0, allData.length - 18);
         break;
       case '1Y':
-        // 最后1年（所有数据）
+        // Last 1 year (all data from 2025-01 to 2026-01)
         startIndex = 0;
         break;
       case 'YTD':
-        // 年初至今（从2025-01开始）
-        startIndex = allData.findIndex(d => d.date.startsWith('2025-01'));
+        // Year to date (from 2026-01-01 to current)
+        // Since we're in Jan 2026, this should only show 2026-01 data
+        startIndex = allData.findIndex(d => d.date.startsWith('2026-01'));
+        if (startIndex === -1) startIndex = 0;
         break;
     }
     
@@ -146,10 +153,47 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
       yMin >= 0 ? 0 : Math.floor(yMin * 0.5)
     ].filter(val => val !== undefined && !isNaN(val)).sort((a, b) => b - a); // 确保去重并排序
       
-    // 根据过滤后的数据重新计算 x 轴刻度
-    const xTicksIndices = filteredData.length > 1 
-      ? [...new Set([0, Math.floor(filteredData.length / 3), Math.floor((filteredData.length * 2) / 3), filteredData.length - 1])]
-      : [0];
+    // 根据过滤后的数据重新计算 x 轴刻度，确保显示不同的月份
+    const getXTicksIndices = () => {
+      if (filteredData.length <= 1) return [0];
+      
+      // Get unique months from filtered data
+      const monthsMap = new Map<string, number>();
+      filteredData.forEach((d, idx) => {
+        if (!monthsMap.has(d.date)) {
+          monthsMap.set(d.date, idx);
+        }
+      });
+      
+      const uniqueMonths = Array.from(monthsMap.entries());
+      
+      // For different ranges, show appropriate month labels
+      if (dateRange === '1M' || dateRange === 'YTD') {
+        // Show first and last
+        return [0, filteredData.length - 1];
+      } else if (dateRange === '3M') {
+        // Show 3-4 labels distributed across 3 months
+        const indices = uniqueMonths.map(([_, idx]) => idx);
+        if (indices.length <= 4) return [...indices, filteredData.length - 1].filter((v, i, a) => a.indexOf(v) === i).sort((a, b) => a - b);
+        // Select evenly distributed indices
+        return [indices[0], indices[Math.floor(indices.length / 2)], filteredData.length - 1];
+      } else if (dateRange === '6M') {
+        // Show 4-6 labels distributed across 6 months
+        const indices = uniqueMonths.map(([_, idx]) => idx);
+        if (indices.length <= 6) return [...indices, filteredData.length - 1].filter((v, i, a) => a.indexOf(v) === i).sort((a, b) => a - b);
+        // Select evenly distributed indices
+        return [indices[0], indices[Math.floor(indices.length / 3)], indices[Math.floor(indices.length * 2 / 3)], filteredData.length - 1];
+      } else {
+        // 1Y: Show more labels
+        const indices = uniqueMonths.map(([_, idx]) => idx);
+        if (indices.length <= 8) return [...indices].sort((a, b) => a - b);
+        // Select evenly distributed indices every 2-3 months
+        const step = Math.floor(indices.length / 6);
+        return indices.filter((_, i) => i % step === 0 || i === indices.length - 1).sort((a, b) => a - b);
+      }
+    };
+    
+    const xTicksIndices = getXTicksIndices();
   
     const getYForFiltered = (val: number) => 100 - ((val - yMin) / (yMax - yMin)) * 100;
     const getXForFiltered = (index: number) => (index / Math.max(1, filteredData.length - 1)) * 100;
