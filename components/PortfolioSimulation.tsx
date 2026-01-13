@@ -147,61 +147,6 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
     return { portfolioData, benchmarkData };
   }, [simulatedReturn]); // Only regenerate if simulatedReturn changes
 
-  // Generate synthetic drawdown data - MEMOIZED to prevent regeneration on hover
-  const { portfolioDrawdowns, benchmarkDrawdowns } = useMemo(() => {
-    const generateSyntheticDrawdowns = (targetMaxDrawdown: number, numPoints: number = 36) => {
-      const drawdowns: number[] = [];
-      
-      for (let i = 0; i < numPoints; i++) {
-        let drawdown = 0;
-        
-        // Create realistic drawdown pattern that ACTUALLY reaches targetMaxDrawdown
-        // First phase: slight drawdown (months 0-8)
-        if (i <= 8) {
-          drawdown = Math.sin((i / 8) * Math.PI) * (targetMaxDrawdown * 0.2);
-        }
-        // Second phase: recovery to near zero (months 9-14)
-        else if (i <= 14) {
-          const t = (i - 9) / 5;
-          // Use deterministic calculation instead of Math.random()
-          const noise = Math.sin(i * 0.5) * (targetMaxDrawdown * 0.03);
-          drawdown = (targetMaxDrawdown * 0.2) * (1 - t) + noise;
-        }
-        // Third phase: major drawdown - ENSURE IT REACHES targetMaxDrawdown (months 15-22)
-        else if (i <= 22) {
-          const t = (i - 15) / 7;
-          // Linear descent to targetMaxDrawdown with some noise
-          drawdown = -t * targetMaxDrawdown + Math.sin(t * Math.PI * 2) * (targetMaxDrawdown * 0.05);
-          // Ensure we hit the exact target at peak drawdown
-          if (i === 19) {
-            drawdown = targetMaxDrawdown; // Exact target at month 19
-          }
-        }
-        // Fourth phase: recovery (months 23-30)
-        else if (i <= 30) {
-          const t = (i - 23) / 7;
-          drawdown = targetMaxDrawdown + t * (targetMaxDrawdown * 0.7) + Math.sin(t * Math.PI) * (targetMaxDrawdown * 0.08);
-        }
-        // Final phase: stabilization (months 31-36)
-        else {
-          const t = (i - 31) / 5;
-          drawdown = (targetMaxDrawdown * 0.3) * (1 - t) + Math.sin(t * Math.PI * 3) * (targetMaxDrawdown * 0.05);
-        }
-        
-        // Clamp to valid range [targetMaxDrawdown, 0]
-        drawdowns.push(Math.max(targetMaxDrawdown, Math.min(0, drawdown)));
-      }
-      
-      return drawdowns;
-    };
-
-    // Use synthetic drawdown data for realistic chart visualization
-    const portfolioDrawdowns = generateSyntheticDrawdowns(-18.5, 36);
-    const benchmarkDrawdowns = generateSyntheticDrawdowns(-13.2, 36);
-    
-    return { portfolioDrawdowns, benchmarkDrawdowns };
-  }, [simulatedReturn]); // Only regenerate if simulatedReturn changes
-
   const renderSelectStep = () => (
     <div className="flex flex-col h-full bg-white animate-fade-in">
       {/* Search Bar */}
@@ -371,6 +316,71 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
     const excessReturn = (parseFloat(cumulativeReturn) - parseFloat(benchmarkCumulativeReturn)).toFixed(2);
     const annualizedReturn = (Math.pow(portfolioData[portfolioData.length - 1] / 100, 1/3) - 1) * 100;
     const sharpeRatio = (annualizedReturn / 15).toFixed(2); // Simplified Sharpe ratio
+
+    // Calculate drawdown data - but override with synthetic data for 3Y period to match metrics
+    const calculateDrawdown = (data: number[]) => {
+      let maxDrawdown = 0;
+      let peak = data[0];
+      const drawdowns: number[] = [];
+      
+      for (let i = 0; i < data.length; i++) {
+        if (data[i] > peak) peak = data[i];
+        const drawdown = ((data[i] - peak) / peak) * 100;
+        drawdowns.push(drawdown);
+        if (drawdown < maxDrawdown) maxDrawdown = drawdown;
+      }
+      
+      return { maxDrawdown, drawdowns };
+    };
+
+    // Generate synthetic drawdown data that matches the displayed metrics for 3Y period
+    const generateSyntheticDrawdowns = (targetMaxDrawdown: number, numPoints: number = 36) => {
+      const drawdowns: number[] = [];
+      
+      for (let i = 0; i < numPoints; i++) {
+        let drawdown = 0;
+        
+        // Create realistic drawdown pattern that ACTUALLY reaches targetMaxDrawdown
+        // First phase: slight drawdown (months 0-8)
+        if (i <= 8) {
+          drawdown = Math.sin((i / 8) * Math.PI) * (targetMaxDrawdown * 0.2);
+        }
+        // Second phase: recovery to near zero (months 9-14)
+        else if (i <= 14) {
+          const t = (i - 9) / 5;
+          drawdown = (targetMaxDrawdown * 0.2) * (1 - t) + Math.random() * (targetMaxDrawdown * 0.03);
+        }
+        // Third phase: major drawdown - ENSURE IT REACHES targetMaxDrawdown (months 15-22)
+        else if (i <= 22) {
+          const t = (i - 15) / 7;
+          // Linear descent to targetMaxDrawdown with some noise
+          drawdown = -t * targetMaxDrawdown + Math.sin(t * Math.PI * 2) * (targetMaxDrawdown * 0.05);
+          // Ensure we hit the exact target at peak drawdown
+          if (i === 19) {
+            drawdown = targetMaxDrawdown; // Exact target at month 19
+          }
+        }
+        // Fourth phase: recovery (months 23-30)
+        else if (i <= 30) {
+          const t = (i - 23) / 7;
+          drawdown = targetMaxDrawdown + t * (targetMaxDrawdown * 0.7) + Math.sin(t * Math.PI) * (targetMaxDrawdown * 0.08);
+        }
+        // Final phase: stabilization (months 31-36)
+        else {
+          const t = (i - 31) / 5;
+          drawdown = (targetMaxDrawdown * 0.3) * (1 - t) + Math.sin(t * Math.PI * 3) * (targetMaxDrawdown * 0.05);
+        }
+        
+        // Clamp to valid range [targetMaxDrawdown, 0]
+        drawdowns.push(Math.max(targetMaxDrawdown, Math.min(0, drawdown)));
+      }
+      
+      return drawdowns;
+    };
+
+    // Use synthetic drawdown data for realistic chart visualization
+    const portfolioDrawdowns = generateSyntheticDrawdowns(-18.5, 36);
+    const benchmarkDrawdowns = generateSyntheticDrawdowns(-13.2, 36);
 
     // Calculate min/max for chart scaling
     const allValues = [...portfolioData, ...benchmarkData];
@@ -762,7 +772,7 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
                 <div className="flex items-center justify-between px-5 py-2 bg-[#fafafa] border-b border-gray-100">
                   <span className="text-[9px] text-[#767676] font-bold uppercase tracking-widest">Risk Metrics</span>
                   <div className="flex items-center gap-12">
-                    <span className="text-[9px] text-[#767676] font-bold uppercase tracking-widest">Portfolio</span>
+                    <span className="text-[9px] text-[#767676] font-bold uppercase tracking-widest w-20 text-right">Portfolio</span>
                     <span className="text-[9px] text-[#767676] font-bold uppercase tracking-widest">SAA</span>
                   </div>
                 </div>
@@ -770,25 +780,25 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
                 <div className="divide-y divide-gray-50">
                   <div className="flex items-center justify-between px-5 py-4">
                     <span className="text-[12px] text-[#1e1e1e] font-medium">Maximum Drawdown</span>
-                    <div className="flex items-center gap-12">
-                      <span className="text-[13px] text-[#1e1e1e] font-bold">{periodMetrics.portfolioDrawdown.toFixed(2)}%</span>
-                      <span className="text-[13px] text-[#1e1e1e] font-bold">{periodMetrics.benchmarkDrawdown.toFixed(2)}%</span>
+                    <div className="flex items-center gap-4">
+                      <span className="text-[13px] text-[#1e1e1e] font-bold text-right">{periodMetrics.portfolioDrawdown.toFixed(2)}%</span>
+                      <span className="text-[13px] text-[#1e1e1e] font-bold text-right">{periodMetrics.benchmarkDrawdown.toFixed(2)}%</span>
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between px-5 py-4">
                     <span className="text-[12px] text-[#1e1e1e] font-medium">Max Drawdown Recovery</span>
-                    <div className="flex items-center gap-12">
-                      <span className="text-[13px] text-[#1e1e1e] font-bold">{periodMetrics.recoveryDays.portfolio} Days</span>
-                      <span className="text-[13px] text-[#1e1e1e] font-bold">{periodMetrics.recoveryDays.benchmark} Days</span>
+                    <div className="flex items-center gap-6">
+                      <span className="text-[12px] text-[#1e1e1e] font-bold text-right">{periodMetrics.recoveryDays.portfolio} Days</span>
+                      <span className="text-[12px] text-[#1e1e1e] font-bold text-right">{periodMetrics.recoveryDays.benchmark} Days</span>
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between px-5 py-4">
                     <span className="text-[12px] text-[#1e1e1e] font-medium">Annualized Volatility</span>
-                    <div className="flex items-center gap-12">
-                      <span className="text-[13px] text-[#1e1e1e] font-bold">{periodMetrics.volatility.portfolio.toFixed(2)}%</span>
-                      <span className="text-[13px] text-[#1e1e1e] font-bold">{periodMetrics.volatility.benchmark.toFixed(2)}%</span>
+                    <div className="flex items-center gap-6">
+                      <span className="text-[13px] text-[#1e1e1e] font-bold text-right">{periodMetrics.volatility.portfolio.toFixed(2)}%</span>
+                      <span className="text-[13px] text-[#1e1e1e] font-bold text-right">{periodMetrics.volatility.benchmark.toFixed(2)}%</span>
                     </div>
                   </div>
                 </div>
