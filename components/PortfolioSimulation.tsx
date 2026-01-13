@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 
 interface Fund {
   id: string;
@@ -27,6 +27,9 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
   const [isDragging, setIsDragging] = React.useState(false);
   const [startX, setStartX] = React.useState(0);
   const [scrollLeft, setScrollLeft] = React.useState(0);
+  const [hoverData, setHoverData] = useState<{ index: number; x: number; y: number } | null>(null);
+  const returnChartRef = React.useRef<HTMLDivElement>(null);
+  const drawdownChartRef = React.useRef<HTMLDivElement>(null);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!tabScrollRef.current) return;
@@ -101,6 +104,39 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
 
   // Fix: Explicitly cast Object.values to number[] to resolve 'unknown' type assignment error
   const totalAllocated: number = (Object.values(allocations) as number[]).reduce((a: number, b: number) => a + b, 0);
+
+  // Calculate simulated return for memoization - moved to component level
+  const simulatedReturn = useMemo(() => {
+    return ((Object.entries(allocations) as [string, number][]).reduce((acc: number, [id, pct]) => {
+      const fund = funds.find(f => f.id === id);
+      const rate: number = fund?.type.includes('Growth') ? 0.11 : fund?.type.includes('Income') ? 0.05 : 0.08;
+      return acc + (pct * rate);
+    }, 0)).toFixed(2);
+  }, [allocations]);
+
+  // Generate historical performance data - MEMOIZED at component level to prevent regeneration on hover
+  const { portfolioData, benchmarkData } = useMemo(() => {
+    const months = 36;
+    const portfolioData: number[] = [];
+    const benchmarkData: number[] = [];
+    
+    let portfolioValue = 100;
+    let benchmarkValue = 100;
+    
+    for (let i = 0; i < months; i++) {
+      const monthlyReturn = (parseFloat(simulatedReturn) / 100) / 12;
+      const benchmarkReturn = 0.065 / 12; // 6.5% benchmark annual return
+      
+      const volatility = Math.random() * 0.04 - 0.02;
+      portfolioValue *= (1 + monthlyReturn + volatility);
+      benchmarkValue *= (1 + benchmarkReturn + volatility * 0.5);
+      
+      portfolioData.push(portfolioValue);
+      benchmarkData.push(benchmarkValue);
+    }
+    
+    return { portfolioData, benchmarkData };
+  }, [simulatedReturn]); // Only regenerate if simulatedReturn changes
 
   const renderSelectStep = () => (
     <div className="flex flex-col h-full bg-white animate-fade-in">
@@ -263,40 +299,11 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
   );
 
   const renderResultStep = () => {
-    // Fix: Explicitly cast Object.entries to [string, number][] to fix arithmetic type error on 'pct'
-    const simulatedReturn = ((Object.entries(allocations) as [string, number][]).reduce((acc: number, [id, pct]) => {
-      const fund = funds.find(f => f.id === id);
-      const rate: number = fund?.type.includes('Growth') ? 0.11 : fund?.type.includes('Income') ? 0.05 : 0.08;
-      return acc + (pct * rate);
-    }, 0)).toFixed(2);
-
-    // Generate historical performance data for 3 years
-    const generateHistoricalData = () => {
-      const months = 36;
-      const portfolioData: number[] = [];
-      const benchmarkData: number[] = [];
-      
-      let portfolioValue = 100;
-      let benchmarkValue = 100;
-      
-      for (let i = 0; i < months; i++) {
-        const monthlyReturn = (parseFloat(simulatedReturn) / 100) / 12;
-        const benchmarkReturn = 0.065 / 12; // 6.5% benchmark annual return
-        
-        const volatility = Math.random() * 0.04 - 0.02;
-        portfolioValue *= (1 + monthlyReturn + volatility);
-        benchmarkValue *= (1 + benchmarkReturn + volatility * 0.5);
-        
-        portfolioData.push(portfolioValue);
-        benchmarkData.push(benchmarkValue);
-      }
-      
-      return { portfolioData, benchmarkData };
-    };
-
-    const { portfolioData, benchmarkData } = generateHistoricalData();
-    const cumulativeReturn = ((portfolioData[portfolioData.length - 1] - 100) / 100 * 100).toFixed(2);
-    const benchmarkCumulativeReturn = ((benchmarkData[benchmarkData.length - 1] - 100) / 100 * 100).toFixed(2);
+    // Calculate static values once - these should never change on hover
+    const finalCumulativeReturn = ((portfolioData[portfolioData.length - 1] - 100) / 100 * 100).toFixed(2);
+    const finalBenchmarkCumulativeReturn = ((benchmarkData[benchmarkData.length - 1] - 100) / 100 * 100).toFixed(2);
+    const cumulativeReturn = finalCumulativeReturn;
+    const benchmarkCumulativeReturn = finalBenchmarkCumulativeReturn;
     const excessReturn = (parseFloat(cumulativeReturn) - parseFloat(benchmarkCumulativeReturn)).toFixed(2);
     const annualizedReturn = (Math.pow(portfolioData[portfolioData.length - 1] / 100, 1/3) - 1) * 100;
     const sharpeRatio = (annualizedReturn / 15).toFixed(2); // Simplified Sharpe ratio
@@ -423,7 +430,16 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
                 <span>{((minValue - 100) / 100 * 100).toFixed(0)}%</span>
               </div>
 
-              <div className="ml-8">
+              <div className="ml-8" ref={returnChartRef}
+                onMouseMove={(e) => {
+                  if (!returnChartRef.current || portfolioData.length === 0) return;
+                  const rect = returnChartRef.current.getBoundingClientRect();
+                  const x = e.clientX - rect.left;
+                  const index = Math.min(portfolioData.length - 1, Math.max(0, Math.round((x / rect.width) * (portfolioData.length - 1))));
+                  setHoverData({ index, x, y: getYPosition(portfolioData[index]) });
+                }}
+                onMouseLeave={() => setHoverData(null)}
+              >
                 {/* Grid lines overlay */}
                 <div className="absolute inset-0 ml-8 flex flex-col justify-between opacity-[0.03] pointer-events-none">
                   {[0, 1, 2].map((i) => <div key={i} className="border-t border-black w-full"></div>)}
@@ -453,7 +469,21 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
                     strokeLinejoin="round"
                     strokeLinecap="round"
                   />
+                  
+                  {/* Hover line */}
+                  {hoverData && <line x1={(hoverData.index / (portfolioData.length - 1)) * 100} y1="0" x2={(hoverData.index / (portfolioData.length - 1)) * 100} y2="100" stroke="#767676" strokeWidth="0.5" strokeDasharray="3 2" />}
                 </svg>
+                
+                {/* Hover Tooltip */}
+                {hoverData && (
+                  <div className="absolute z-20 bg-[#1e1e1e]/90 shadow-2xl rounded-[2px] p-1.5 text-white pointer-events-none transform -translate-x-1/2 -translate-y-full mb-2" style={{ left: `${(hoverData.index / (portfolioData.length - 1)) * 100}%`, top: `${(hoverData.y / chartHeight) * 100}%` }}>
+                    <div className="text-[7px] opacity-60 text-center leading-none mb-1">Month {hoverData.index + 1}</div>
+                    <div className="space-y-0.5">
+                      <div className="flex justify-between items-center gap-2 text-[8px]"><span className="opacity-70">Portfolio:</span><span className="font-bold text-orange-300">{portfolioData[hoverData.index]?.toFixed(2)}</span></div>
+                      <div className="flex justify-between items-center gap-2 text-[8px]"><span className="opacity-70">MSCI World:</span><span className="font-bold text-gray-300">{benchmarkData[hoverData.index]?.toFixed(2)}</span></div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* X-axis labels */}
@@ -595,7 +625,19 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
                     <span>-28.00%</span>
                   </div>
 
-                  <div className="ml-8">
+                  <div className="ml-8" ref={drawdownChartRef}
+                    onMouseMove={(e) => {
+                      if (!drawdownChartRef.current || portfolioDrawdowns.length === 0) return;
+                      const rect = drawdownChartRef.current.getBoundingClientRect();
+                      const x = e.clientX - rect.left;
+                      const index = Math.min(portfolioDrawdowns.length - 1, Math.max(0, Math.round((x / rect.width) * (portfolioDrawdowns.length - 1))));
+                      const minDrawdown = Math.min(...portfolioDrawdowns);
+                      const drawdownRange = Math.abs(minDrawdown);
+                      const yPos = 100 - (Math.abs(portfolioDrawdowns[index]) / drawdownRange) * 100;
+                      setHoverData({ index, x, y: yPos });
+                    }}
+                    onMouseLeave={() => setHoverData(null)}
+                  >
                     {/* Grid lines overlay */}
                     <div className="absolute inset-0 ml-8 flex flex-col justify-between opacity-[0.03] pointer-events-none">
                       {[0, 1, 2, 3, 4].map((i) => <div key={i} className="border-t border-black w-full"></div>)}
@@ -614,7 +656,20 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
                         strokeLinejoin="round"
                         strokeLinecap="round"
                       />
+                      
+                      {/* Hover line */}
+                      {hoverData && <line x1={(hoverData.index / (portfolioDrawdowns.length - 1)) * 100} y1="0" x2={(hoverData.index / (portfolioDrawdowns.length - 1)) * 100} y2="100" stroke="#767676" strokeWidth="0.5" strokeDasharray="3 2" />}
                     </svg>
+                    
+                    {/* Hover Tooltip */}
+                    {hoverData && (
+                      <div className="absolute z-20 bg-[#1e1e1e]/90 shadow-2xl rounded-[2px] p-1.5 text-white pointer-events-none transform -translate-x-1/2 -translate-y-full mb-2" style={{ left: `${(hoverData.index / (portfolioDrawdowns.length - 1)) * 100}%`, top: `${hoverData.y}%` }}>
+                        <div className="text-[7px] opacity-60 text-center leading-none mb-1">Month {hoverData.index + 1}</div>
+                        <div className="space-y-0.5">
+                          <div className="flex justify-between items-center gap-2 text-[8px]"><span className="opacity-70">Drawdown:</span><span className="font-bold text-emerald-400">{portfolioDrawdowns[hoverData.index]?.toFixed(2)}%</span></div>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex justify-between mt-2 text-[9px] text-[#767676] font-medium ml-8 pointer-events-none">
