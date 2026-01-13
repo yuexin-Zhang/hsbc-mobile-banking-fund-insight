@@ -57,27 +57,27 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose }) => {
           </button>
 
           <div className="flex items-center gap-2 flex-1">
-            <svg className="w-8 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+            <svg className="w-8 h-6 text-[#da0011]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M2 7l4-4 4 4m-4-4v18m16-9l-4-4-4 4m4-4v18" />
             </svg>
             <div>
-              <div className="text-gray-500 text-[9px] font-medium">MSCI World Index</div>
+              <div className="text-gray-500 text-[9px] font-medium">S&P 500 Index</div>
               <div className="flex items-center gap-1.5">
                 <span className="text-gray-900 text-sm font-bold">3,425.18</span>
-                <span className="text-emerald-500 text-[10px] font-medium">+1.24%</span>
+                <span className="text-[#da0011] text-[10px] font-medium">+1.24%</span>
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-2 flex-1">
-            <svg className="w-8 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+            <svg className="w-8 h-6 text-[#da0011]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M2 7l4-4 4 4m-4-4v18m16-9l-4-4-4 4m4-4v18" />
             </svg>
             <div>
-              <div className="text-gray-500 text-[9px] font-medium">Global Bond Index</div>
+              <div className="text-gray-500 text-[8px] font-medium">Strategic Asset Allocation</div>
               <div className="flex items-center gap-1.5">
-                <span className="text-gray-900 text-sm font-bold">2,156.42</span>
-                <span className="text-emerald-500 text-[10px] font-medium">+0.56%</span>
+                <span className="text-gray-900 text-sm font-bold">128.45</span>
+                <span className="text-[#da0011] text-[10px] font-medium">+2.15%</span>
               </div>
             </div>
           </div>
@@ -234,10 +234,10 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose }) => {
                 <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
               </svg>
               <div className="text-gray-900 text-xs leading-relaxed">
-                <span className="font-bold text-[#da0011]">Rebalancing Recommendation:</span> Your portfolio's 
+                <span className="font-bold text-[#da0011]">Rebalancing Strategy:</span> Your portfolio's 
                 1-year return of <span className="font-bold">+28.59%</span> with a max drawdown of 
                 <span className="font-bold"> 16.70%</span> indicates strong performance but higher volatility. 
-                Consider increasing your exposure to defensive assets like BGF GOLD (currently at $59,266) to 
+                Consider increasing your exposure to defensive assets like BGF GOLD to 
                 balance risk during potential market corrections.
               </div>
             </div>

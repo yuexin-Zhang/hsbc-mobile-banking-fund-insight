@@ -125,17 +125,81 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
     
     for (let i = 0; i < months; i++) {
       const monthlyReturn = (parseFloat(simulatedReturn) / 100) / 12;
-      const benchmarkReturn = 0.065 / 12; // 6.5% benchmark annual return
+      // SAA benchmark has higher return - 8.5% annual (vs portfolio's variable return)
+      const benchmarkReturn = 0.085 / 12;
       
       const volatility = Math.random() * 0.04 - 0.02;
       portfolioValue *= (1 + monthlyReturn + volatility);
-      benchmarkValue *= (1 + benchmarkReturn + volatility * 0.5);
+      // Benchmark has lower volatility and higher base return to stay above portfolio
+      benchmarkValue *= (1 + benchmarkReturn + volatility * 0.3);
       
       portfolioData.push(portfolioValue);
       benchmarkData.push(benchmarkValue);
     }
     
+    // CRITICAL: Ensure SAA is always >= Portfolio at every point
+    for (let i = 0; i < months; i++) {
+      if (benchmarkData[i] < portfolioData[i]) {
+        benchmarkData[i] = portfolioData[i] + (portfolioData[i] * 0.02); // SAA always 2% higher
+      }
+    }
+    
     return { portfolioData, benchmarkData };
+  }, [simulatedReturn]); // Only regenerate if simulatedReturn changes
+
+  // Generate synthetic drawdown data - MEMOIZED to prevent regeneration on hover
+  const { portfolioDrawdowns, benchmarkDrawdowns } = useMemo(() => {
+    const generateSyntheticDrawdowns = (targetMaxDrawdown: number, numPoints: number = 36) => {
+      const drawdowns: number[] = [];
+      
+      for (let i = 0; i < numPoints; i++) {
+        let drawdown = 0;
+        
+        // Create realistic drawdown pattern that ACTUALLY reaches targetMaxDrawdown
+        // First phase: slight drawdown (months 0-8)
+        if (i <= 8) {
+          drawdown = Math.sin((i / 8) * Math.PI) * (targetMaxDrawdown * 0.2);
+        }
+        // Second phase: recovery to near zero (months 9-14)
+        else if (i <= 14) {
+          const t = (i - 9) / 5;
+          // Use deterministic calculation instead of Math.random()
+          const noise = Math.sin(i * 0.5) * (targetMaxDrawdown * 0.03);
+          drawdown = (targetMaxDrawdown * 0.2) * (1 - t) + noise;
+        }
+        // Third phase: major drawdown - ENSURE IT REACHES targetMaxDrawdown (months 15-22)
+        else if (i <= 22) {
+          const t = (i - 15) / 7;
+          // Linear descent to targetMaxDrawdown with some noise
+          drawdown = -t * targetMaxDrawdown + Math.sin(t * Math.PI * 2) * (targetMaxDrawdown * 0.05);
+          // Ensure we hit the exact target at peak drawdown
+          if (i === 19) {
+            drawdown = targetMaxDrawdown; // Exact target at month 19
+          }
+        }
+        // Fourth phase: recovery (months 23-30)
+        else if (i <= 30) {
+          const t = (i - 23) / 7;
+          drawdown = targetMaxDrawdown + t * (targetMaxDrawdown * 0.7) + Math.sin(t * Math.PI) * (targetMaxDrawdown * 0.08);
+        }
+        // Final phase: stabilization (months 31-36)
+        else {
+          const t = (i - 31) / 5;
+          drawdown = (targetMaxDrawdown * 0.3) * (1 - t) + Math.sin(t * Math.PI * 3) * (targetMaxDrawdown * 0.05);
+        }
+        
+        // Clamp to valid range [targetMaxDrawdown, 0]
+        drawdowns.push(Math.max(targetMaxDrawdown, Math.min(0, drawdown)));
+      }
+      
+      return drawdowns;
+    };
+
+    // Use synthetic drawdown data for realistic chart visualization
+    const portfolioDrawdowns = generateSyntheticDrawdowns(-18.5, 36);
+    const benchmarkDrawdowns = generateSyntheticDrawdowns(-13.2, 36);
+    
+    return { portfolioDrawdowns, benchmarkDrawdowns };
   }, [simulatedReturn]); // Only regenerate if simulatedReturn changes
 
   const renderSelectStep = () => (
@@ -176,7 +240,7 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
                 <span className="text-[10px] text-[#767676] font-medium">{fund.type}</span>
               </div>
             </div>
-            <div className={`w-5 h-5 rounded-[2px] border flex items-center justify-center transition-all ${selectedFundIds.includes(fund.id) ? 'bg-[#da0011] border-[#da0011]' : 'border-gray-300 bg-white'}`}>
+            <div className={`cursor-pointer w-5 h-5 rounded-[2px] border flex items-center justify-center transition-all ${selectedFundIds.includes(fund.id) ? 'bg-[#da0011] border-[#da0011]' : 'border-gray-300 bg-white'}`}>
               {selectedFundIds.includes(fund.id) && (
                 <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path>
@@ -308,25 +372,6 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
     const annualizedReturn = (Math.pow(portfolioData[portfolioData.length - 1] / 100, 1/3) - 1) * 100;
     const sharpeRatio = (annualizedReturn / 15).toFixed(2); // Simplified Sharpe ratio
 
-    // Calculate drawdown data
-    const calculateDrawdown = (data: number[]) => {
-      let maxDrawdown = 0;
-      let peak = data[0];
-      const drawdowns: number[] = [];
-      
-      for (let i = 0; i < data.length; i++) {
-        if (data[i] > peak) peak = data[i];
-        const drawdown = ((data[i] - peak) / peak) * 100;
-        drawdowns.push(drawdown);
-        if (drawdown < maxDrawdown) maxDrawdown = drawdown;
-      }
-      
-      return { maxDrawdown, drawdowns };
-    };
-
-    const { maxDrawdown: portfolioMaxDrawdown, drawdowns: portfolioDrawdowns } = calculateDrawdown(portfolioData);
-    const { maxDrawdown: benchmarkMaxDrawdown } = calculateDrawdown(benchmarkData);
-
     // Calculate min/max for chart scaling
     const allValues = [...portfolioData, ...benchmarkData];
     const minValue = Math.min(...allValues);
@@ -360,16 +405,15 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
     const portfolioPath = generatePath(portfolioData);
     const benchmarkPath = generatePath(benchmarkData);
 
-    // Generate drawdown chart path with smooth curves
-    const generateDrawdownPath = (drawdowns: number[]) => {
+    // Generate drawdown chart path with smooth curves - aligned to fixed Y-axis scale
+    const generateDrawdownPath = (drawdowns: number[], maxScale: number = 28) => {
       if (drawdowns.length < 2) return '';
-      const minDrawdown = Math.min(...drawdowns);
-      const drawdownRange = Math.abs(minDrawdown);
       const width = 100;
       
+      // Use fixed scale from 0 to -maxScale% for consistent Y-axis alignment
       const points = drawdowns.map((dd, index) => ({
         x: (index / (drawdowns.length - 1)) * width,
-        y: 100 - (Math.abs(dd) / drawdownRange) * 100
+        y: (Math.abs(dd) / maxScale) * 100  // Map to 0-100 range based on maxScale
       }));
       
       let d = `M ${points[0].x},${points[0].y}`;
@@ -382,7 +426,8 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
       return d;
     };
 
-    const drawdownPath = generateDrawdownPath(portfolioDrawdowns);
+    const drawdownPath = generateDrawdownPath(portfolioDrawdowns, 28);
+    const benchmarkDrawdownPath = generateDrawdownPath(benchmarkDrawdowns, 28);
 
     // Tab content rendering
     const renderTabContent = () => {
@@ -412,12 +457,12 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
               <div className="flex items-center gap-1.5">
                 <div className="w-3 h-0.5 bg-[#ff8c42] rounded-full"></div>
                 <span className="text-[10px] text-[#1e1e1e] font-bold">Portfolio</span>
-                <span className="text-[11px] text-[#ff8c42] font-bold ml-1">+{cumulativeReturn}%</span>
+                <span className="text-[11px] text-[#da0011] font-bold ml-1">+{cumulativeReturn}%</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <div className="w-3 h-0.5 bg-[#b0b0b0] rounded-full"></div>
-                <span className="text-[10px] text-[#767676] font-bold">MSCI World</span>
-                <span className="text-[11px] text-[#767676] font-bold ml-1">+{benchmarkCumulativeReturn}%</span>
+                <span className="text-[10px] text-[#767676] font-bold">SAA</span>
+                <span className="text-[11px] text-[#da0011] font-bold ml-1">+{benchmarkCumulativeReturn}%</span>
               </div>
             </div>
 
@@ -450,22 +495,22 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
                   <line x1="0" y1="0" x2="0" y2="100" stroke="#dcddde" strokeWidth="0.5" />
                   <line x1="0" y1="100" x2="100" y2="100" stroke="#dcddde" strokeWidth="0.5" />
                   
-                  {/* Benchmark line */}
+                  {/* SAA/Benchmark line - render first (will be below) */}
                   <path 
                     d={benchmarkPath}
                     fill="none"
                     stroke="#b0b0b0"
-                    strokeWidth="0.8"
+                    strokeWidth="1.5"
                     strokeLinejoin="round"
                     strokeLinecap="round"
                   />
                   
-                  {/* Portfolio line */}
+                  {/* Portfolio line - render second (will be on top) */}
                   <path 
                     d={portfolioPath}
                     fill="none"
                     stroke="#ff8c42"
-                    strokeWidth="1"
+                    strokeWidth="1.2"
                     strokeLinejoin="round"
                     strokeLinecap="round"
                   />
@@ -480,7 +525,7 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
                     <div className="text-[7px] opacity-60 text-center leading-none mb-1">Month {hoverData.index + 1}</div>
                     <div className="space-y-0.5">
                       <div className="flex justify-between items-center gap-2 text-[8px]"><span className="opacity-70">Portfolio:</span><span className="font-bold text-orange-300">{portfolioData[hoverData.index]?.toFixed(2)}</span></div>
-                      <div className="flex justify-between items-center gap-2 text-[8px]"><span className="opacity-70">MSCI World:</span><span className="font-bold text-gray-300">{benchmarkData[hoverData.index]?.toFixed(2)}</span></div>
+                      <div className="flex justify-between items-center gap-2 text-[8px]"><span className="opacity-70">SAA:</span><span className="font-bold text-gray-300">{benchmarkData[hoverData.index]?.toFixed(2)}</span></div>
                     </div>
                   </div>
                 )}
@@ -508,7 +553,7 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
               <span className="text-[9px] text-[#767676] font-bold uppercase tracking-widest">Return Metrics</span>
               <div className="flex items-center gap-0">
                 <span className="text-[9px] text-[#767676] font-bold uppercase tracking-widest w-24 text-right">Portfolio</span>
-                <span className="text-[9px] text-[#767676] font-bold uppercase tracking-widest w-24 text-right">MSCI World</span>
+                <span className="text-[9px] text-[#767676] font-bold uppercase tracking-widest w-24 text-right">SAA</span>
               </div>
             </div>
 
@@ -516,15 +561,15 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
               <div className="flex items-center justify-between px-5 py-4">
                 <span className="text-[12px] text-[#1e1e1e] font-medium">Cumulative Return</span>
                 <div className="flex items-center gap-0">
-                  <span className="text-[13px] text-[#ff4444] font-bold w-24 text-right">+{cumulativeReturn}%</span>
-                  <span className="text-[13px] text-[#ff4444] font-bold w-24 text-right">+{benchmarkCumulativeReturn}%</span>
+                  <span className="text-[13px] text-[#da0011] font-bold w-24 text-right">+{cumulativeReturn}%</span>
+                  <span className="text-[13px] text-[#da0011] font-bold w-24 text-right">+{benchmarkCumulativeReturn}%</span>
                 </div>
               </div>
 
               <div className="flex items-center justify-between px-5 py-4">
                 <span className="text-[12px] text-[#1e1e1e] font-medium">Excess Return</span>
                 <div className="flex items-center gap-0">
-                  <span className="text-[13px] text-[#ff4444] font-bold w-24 text-right">+{excessReturn}%</span>
+                  <span className="text-[13px] text-[#da0011] font-bold w-24 text-right">+{excessReturn}%</span>
                   <span className="text-[13px] text-[#767676] font-medium w-24 text-right">--</span>
                 </div>
               </div>
@@ -532,8 +577,8 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
               <div className="flex items-center justify-between px-5 py-4">
                 <span className="text-[12px] text-[#1e1e1e] font-medium">Annualized Return</span>
                 <div className="flex items-center gap-0">
-                  <span className="text-[13px] text-[#ff4444] font-bold w-24 text-right">+{annualizedReturn.toFixed(2)}%</span>
-                  <span className="text-[13px] text-[#ff4444] font-bold w-24 text-right">+{((Math.pow(benchmarkData[benchmarkData.length - 1] / 100, 1/3) - 1) * 100).toFixed(2)}%</span>
+                  <span className="text-[13px] text-[#da0011] font-bold w-24 text-right">+{annualizedReturn.toFixed(2)}%</span>
+                  <span className="text-[13px] text-[#da0011] font-bold w-24 text-right">+{((Math.pow(benchmarkData[benchmarkData.length - 1] / 100, 1/3) - 1) * 100).toFixed(2)}%</span>
                 </div>
               </div>
 
@@ -558,31 +603,31 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
             const metrics = {
               '3M': {
                 portfolioDrawdown: -8.23,
-                benchmarkDrawdown: -5.67,
+                benchmarkDrawdown: -5.67,  // SAA drawdown smaller than Portfolio
                 recoveryDays: { portfolio: 45, benchmark: 12 },
                 volatility: { portfolio: 12.34, benchmark: 9.87 }
               },
               '6M': {
                 portfolioDrawdown: -12.56,
-                benchmarkDrawdown: -9.34,
+                benchmarkDrawdown: -9.34,  // SAA drawdown smaller than Portfolio
                 recoveryDays: { portfolio: 87, benchmark: 18 },
                 volatility: { portfolio: 15.67, benchmark: 12.45 }
               },
               '1Y': {
                 portfolioDrawdown: -15.89,
-                benchmarkDrawdown: -11.23,
+                benchmarkDrawdown: -11.23,  // SAA drawdown smaller than Portfolio
                 recoveryDays: { portfolio: 156, benchmark: 21 },
                 volatility: { portfolio: 18.23, benchmark: 14.56 }
               },
               '3Y': {
-                portfolioDrawdown: portfolioMaxDrawdown,
-                benchmarkDrawdown: benchmarkMaxDrawdown,
+                portfolioDrawdown: -18.5,  // Fixed value matching chart data
+                benchmarkDrawdown: -13.2,  // Fixed value matching chart data (SAA smaller than Portfolio)
                 recoveryDays: { portfolio: 387, benchmark: 25 },
                 volatility: { portfolio: 20.73, benchmark: 17.01 }
               },
               'More': {
                 portfolioDrawdown: -28.45,
-                benchmarkDrawdown: -22.67,
+                benchmarkDrawdown: -22.67,  // SAA drawdown smaller than Portfolio
                 recoveryDays: { portfolio: 542, benchmark: 34 },
                 volatility: { portfolio: 24.89, benchmark: 19.34 }
               }
@@ -591,6 +636,26 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
           };
           
           const periodMetrics = getPeriodMetrics();
+          
+          // Calculate dynamic Y-axis scale based on actual drawdown values
+          const maxDrawdownValue = Math.max(
+            Math.abs(periodMetrics.portfolioDrawdown),
+            Math.abs(periodMetrics.benchmarkDrawdown)
+          );
+          // Round up to nearest 5 for cleaner scale
+          const dynamicMaxScale = Math.ceil(maxDrawdownValue / 5) * 5;
+          
+          // Generate Y-axis labels dynamically based on data range
+          const generateYAxisLabels = () => {
+            const numLabels = 5;
+            const labels: number[] = [];
+            for (let i = 0; i < numLabels; i++) {
+              labels.push(-(dynamicMaxScale * i / (numLabels - 1)));
+            }
+            return labels;
+          };
+          
+          const yAxisLabels = generateYAxisLabels();
           
           return (
             <>
@@ -610,7 +675,7 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
                   </div>
                   <div className="flex items-center gap-1.5">
                     <div className="w-3 h-0.5 bg-[#b0b0b0] rounded-full"></div>
-                    <span className="text-[10px] text-[#767676] font-bold">MSCI World</span>
+                    <span className="text-[10px] text-[#767676] font-bold">SAA</span>
                     <span className="text-[11px] text-[#22c55e] font-bold ml-1">{periodMetrics.benchmarkDrawdown.toFixed(2)}%</span>
                   </div>
                 </div>
@@ -618,60 +683,68 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
                 {/* SVG Drawdown Chart */}
                 <div className="relative bg-[#fafafa] rounded-[2px] p-4 border border-gray-50">
                   <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-between py-4 text-[9px] text-[#767676] font-medium pointer-events-none">
-                    <span>0.00%</span>
-                    <span>-7.00%</span>
-                    <span>-14.00%</span>
-                    <span>-21.00%</span>
-                    <span>-28.00%</span>
+                    {yAxisLabels.map((label, idx) => (
+                      <span key={idx}>{label.toFixed(2)}%</span>
+                    ))}
                   </div>
-
+                
                   <div className="ml-8" ref={drawdownChartRef}
                     onMouseMove={(e) => {
                       if (!drawdownChartRef.current || portfolioDrawdowns.length === 0) return;
                       const rect = drawdownChartRef.current.getBoundingClientRect();
                       const x = e.clientX - rect.left;
                       const index = Math.min(portfolioDrawdowns.length - 1, Math.max(0, Math.round((x / rect.width) * (portfolioDrawdowns.length - 1))));
-                      const minDrawdown = Math.min(...portfolioDrawdowns);
-                      const drawdownRange = Math.abs(minDrawdown);
-                      const yPos = 100 - (Math.abs(portfolioDrawdowns[index]) / drawdownRange) * 100;
+                      const yPos = (Math.abs(portfolioDrawdowns[index]) / dynamicMaxScale) * 100;
                       setHoverData({ index, x, y: yPos });
                     }}
                     onMouseLeave={() => setHoverData(null)}
                   >
                     {/* Grid lines overlay */}
                     <div className="absolute inset-0 ml-8 flex flex-col justify-between opacity-[0.03] pointer-events-none">
-                      {[0, 1, 2, 3, 4].map((i) => <div key={i} className="border-t border-black w-full"></div>)}
+                      {yAxisLabels.map((_, i) => <div key={i} className="border-t border-black w-full"></div>)}
                     </div>
-                    
+                                    
                     <svg className="relative w-full h-[180px]" preserveAspectRatio="none" viewBox="0 0 100 100">
                       {/* Axis lines */}
                       <line x1="0" y1="0" x2="0" y2="100" stroke="#dcddde" strokeWidth="0.5" />
                       <line x1="0" y1="100" x2="100" y2="100" stroke="#dcddde" strokeWidth="0.5" />
-                      
+                                      
+                      {/* SAA drawdown line - render first (below) */}
                       <path 
-                        d={drawdownPath}
+                        d={generateDrawdownPath(benchmarkDrawdowns, dynamicMaxScale)}
+                        fill="none"
+                        stroke="#b0b0b0"
+                        strokeWidth="0.8"
+                        strokeLinejoin="round"
+                        strokeLinecap="round"
+                      />
+                                      
+                      {/* Portfolio drawdown line - render second (above) */}
+                      <path 
+                        d={generateDrawdownPath(portfolioDrawdowns, dynamicMaxScale)}
                         fill="none"
                         stroke="#ff8c42"
                         strokeWidth="1"
                         strokeLinejoin="round"
                         strokeLinecap="round"
                       />
-                      
+                                      
                       {/* Hover line */}
                       {hoverData && <line x1={(hoverData.index / (portfolioDrawdowns.length - 1)) * 100} y1="0" x2={(hoverData.index / (portfolioDrawdowns.length - 1)) * 100} y2="100" stroke="#767676" strokeWidth="0.5" strokeDasharray="3 2" />}
                     </svg>
-                    
+                                    
                     {/* Hover Tooltip */}
                     {hoverData && (
                       <div className="absolute z-20 bg-[#1e1e1e]/90 shadow-2xl rounded-[2px] p-1.5 text-white pointer-events-none transform -translate-x-1/2 -translate-y-full mb-2" style={{ left: `${(hoverData.index / (portfolioDrawdowns.length - 1)) * 100}%`, top: `${hoverData.y}%` }}>
                         <div className="text-[7px] opacity-60 text-center leading-none mb-1">Month {hoverData.index + 1}</div>
                         <div className="space-y-0.5">
-                          <div className="flex justify-between items-center gap-2 text-[8px]"><span className="opacity-70">Drawdown:</span><span className="font-bold text-emerald-400">{portfolioDrawdowns[hoverData.index]?.toFixed(2)}%</span></div>
+                          <div className="flex justify-between items-center gap-2 text-[8px]"><span className="opacity-70">Portfolio:</span><span className="font-bold text-emerald-400">{portfolioDrawdowns[hoverData.index]?.toFixed(2)}%</span></div>
+                          <div className="flex justify-between items-center gap-2 text-[8px]"><span className="opacity-70">SAA:</span><span className="font-bold text-gray-300">{benchmarkDrawdowns[hoverData.index]?.toFixed(2)}%</span></div>
                         </div>
                       </div>
                     )}
                   </div>
-
+                
                   <div className="flex justify-between mt-2 text-[9px] text-[#767676] font-medium ml-8 pointer-events-none">
                     <span>2023-01-06</span>
                     <span>2026-01-07</span>
@@ -690,7 +763,7 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
                   <span className="text-[9px] text-[#767676] font-bold uppercase tracking-widest">Risk Metrics</span>
                   <div className="flex items-center gap-12">
                     <span className="text-[9px] text-[#767676] font-bold uppercase tracking-widest">Portfolio</span>
-                    <span className="text-[9px] text-[#767676] font-bold uppercase tracking-widest">MSCI World</span>
+                    <span className="text-[9px] text-[#767676] font-bold uppercase tracking-widest">SAA</span>
                   </div>
                 </div>
 
@@ -754,7 +827,7 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
 
                 <div className="mb-5">
                   <p className="text-[11px] text-[#1e1e1e] leading-relaxed">
-                    Historical analysis: Buy at any time, hold for <span className="text-[#ff4444] font-bold">3 years</span>, profit probability <span className="text-[#ff4444] font-bold text-[15px]">65%</span>
+                    Historical analysis: Buy at any time, hold for <span className="text-[#da0011] font-bold">3 years</span>, profit probability <span className="text-[#da0011] font-bold text-[15px]">65%</span>
                   </p>
                 </div>
 
@@ -773,7 +846,7 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
                   ].map((item) => (
                     <div key={item.period} className="flex items-center justify-between">
                       <span className="text-[12px] text-[#1e1e1e] font-bold w-20">{item.period}</span>
-                      <span className="text-[13px] text-[#ff4444] font-bold w-20 text-center">{item.return}</span>
+                      <span className="text-[13px] text-[#da0011] font-bold w-20 text-center">{item.return}</span>
                       <div className="flex items-center gap-2 flex-1">
                         <div className="flex-1 bg-[#f4f5f6] rounded-full h-2 overflow-hidden">
                           <div 
@@ -834,7 +907,7 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
                           </div>
                           <div className="flex items-center gap-8">
                             <span className="text-[13px] text-[#1e1e1e] font-bold">{allocations[id].toFixed(2)}%</span>
-                            <span className={`text-[13px] font-bold w-20 text-right ${isNegative ? 'text-[#22c55e]' : 'text-[#ff4444]'}`}>
+                            <span className={`text-[13px] font-bold w-20 text-right ${isNegative ? 'text-[#22c55e]' : 'text-[#da0011]'}`}>
                               {fundReturn}
                             </span>
                           </div>
