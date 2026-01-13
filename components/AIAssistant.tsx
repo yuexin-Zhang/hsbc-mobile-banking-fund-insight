@@ -61,23 +61,23 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose }) => {
               <path strokeLinecap="round" strokeLinejoin="round" d="M2 7l4-4 4 4m-4-4v18m16-9l-4-4-4 4m4-4v18" />
             </svg>
             <div>
-              <div className="text-gray-500 text-[9px] font-medium">Hang Seng Index</div>
+              <div className="text-gray-500 text-[9px] font-medium">MSCI World Index</div>
               <div className="flex items-center gap-1.5">
-                <span className="text-gray-900 text-sm font-bold">17,482.35</span>
-                <span className="text-emerald-500 text-[10px] font-medium">+0.82%</span>
+                <span className="text-gray-900 text-sm font-bold">3,425.18</span>
+                <span className="text-emerald-500 text-[10px] font-medium">+1.24%</span>
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-2 flex-1">
-            <svg className="w-8 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M2 17l4 4 4-4m-4 4V3m16 14l-4 4-4-4m4 4V3" />
+            <svg className="w-8 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M2 7l4-4 4 4m-4-4v18m16-9l-4-4-4 4m4-4v18" />
             </svg>
             <div>
-              <div className="text-gray-500 text-[9px] font-medium">Shanghai Composite</div>
+              <div className="text-gray-500 text-[9px] font-medium">Global Bond Index</div>
               <div className="flex items-center gap-1.5">
-                <span className="text-gray-900 text-sm font-bold">3,245.89</span>
-                <span className="text-red-500 text-[10px] font-medium">-0.34%</span>
+                <span className="text-gray-900 text-sm font-bold">2,156.42</span>
+                <span className="text-emerald-500 text-[10px] font-medium">+0.56%</span>
               </div>
             </div>
           </div>
@@ -113,8 +113,8 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose }) => {
                 </svg>
               </div>
               <div>
-                <div className="text-gray-900 text-xs font-medium mb-1">Recalled your portfolio preferences</div>
-                <div className="text-gray-500 text-[10px]">You focus on China A-share market</div>
+                <div className="text-gray-900 text-xs font-medium mb-1">Analyzed your 9 fund holdings</div>
+                <div className="text-gray-500 text-[10px]">Total portfolio value: ¥9.40M CNY (9 funds)</div>
               </div>
             </div>
 
@@ -125,8 +125,8 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose }) => {
                 </svg>
               </div>
               <div>
-                <div className="text-gray-900 text-xs font-medium mb-1">Analyzed market intelligence</div>
-                <div className="text-gray-500 text-[10px]">Found 22 relevant articles & 3 financial indicators</div>
+                <div className="text-gray-900 text-xs font-medium mb-1">Retrieved performance metrics</div>
+                <div className="text-gray-500 text-[10px]">1Y Return: +28.59% | Max Drawdown: 16.70%</div>
               </div>
             </div>
 
@@ -153,60 +153,78 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose }) => {
               <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm animate-fade-in">
             <div className="text-gray-900 text-xs leading-relaxed space-y-3">
               <p>
-                I notice you're very focused on the China A-share market. Today's market showed strong activity 
-                with trading volume hitting new historical highs. Capital mainly flowed into AI and aerospace sectors.
+                Based on your portfolio analysis, I've identified key insights about your fund holdings worth 
+                <span className="font-bold text-[#da0011]"> ¥9.40M CNY</span> across 9 funds.
               </p>
               <p className="flex items-start gap-2">
                 <span className="inline-flex items-center justify-center w-5 h-5 bg-red-50 text-[#da0011] rounded text-[10px] font-bold flex-shrink-0 mt-0.5">1</span>
-                <span>I've compiled today's representative rising stocks for your reference:</span>
+                <span>Your <span className="font-bold">top performer</span> is BLK Sys GE High Inc (IPFD3116) with an outstanding return of <span className="font-bold text-[#da0011]">+42.56%</span>, significantly outperforming the market.</span>
+              </p>
+              <p className="flex items-start gap-2">
+                <span className="inline-flex items-center justify-center w-5 h-5 bg-red-50 text-[#da0011] rounded text-[10px] font-bold flex-shrink-0 mt-0.5">2</span>
+                <span>Your portfolio shows strong diversification with exposure to global equity, energy, precious metals, and fixed income sectors.</span>
               </p>
             </div>
           </div>
 
-          {/* Stock Information Card */}
+          {/* Fund Performance Card */}
           <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
             <div className="flex items-center justify-between mb-3">
-              <div className="text-gray-900 text-sm font-bold">Stock Information</div>
-              <div className="text-gray-500 text-[9px]">Updated 01-13 10:46:03</div>
+              <div className="text-gray-900 text-sm font-bold">Top Performing Funds</div>
+              <div className="text-gray-500 text-[9px]">Based on Your Holdings</div>
             </div>
 
-            <div className="text-gray-600 text-[10px] mb-3">Filter: Today's Gainers</div>
+            <div className="text-gray-600 text-[10px] mb-3">Filter: Highest Returns YTD</div>
 
             {/* Table Header */}
             <div className="grid grid-cols-3 gap-2 mb-2 pb-2 border-b border-gray-200">
-              <div className="text-gray-500 text-[9px] font-medium">Name</div>
-              <div className="text-gray-500 text-[9px] font-medium text-center">Change</div>
-              <div className="text-gray-500 text-[9px] font-medium text-right">Price</div>
+              <div className="text-gray-500 text-[9px] font-medium">Fund Name</div>
+              <div className="text-gray-500 text-[9px] font-medium text-center">Return</div>
+              <div className="text-gray-500 text-[9px] font-medium text-right">Market Value</div>
             </div>
 
-            {/* Stock Items */}
+            {/* Fund Items */}
             {[
-              { name: 'HSBC Holdings', code: '00005.HK', change: '+2.85%', price: '68.45', isUp: true },
-              { name: 'China Mobile', code: '00941.HK', change: '+1.92%', price: '54.30', isUp: true },
-              { name: 'Tencent Holdings', code: '00700.HK', change: '+3.24%', price: '398.20', isUp: true },
-            ].map((stock, idx) => (
+              { name: 'BLK Sys GE High Inc', code: 'IPFD3116', change: '+42.56%', value: '$215,204', isUp: true },
+              { name: 'BLK Sys GE High Inc', code: 'IPFD2116', change: '+11.10%', value: '$213,257', isUp: true },
+              { name: 'BGF WLD MIN', code: 'IPFD3004', change: '+21.76%', value: '$134,832', isUp: true },
+            ].map((fund, idx) => (
               <div key={idx} className="grid grid-cols-3 gap-2 py-2.5 border-b border-gray-100 last:border-0">
                 <div>
-                  <div className="text-gray-900 text-[10px] font-bold">{stock.name}</div>
+                  <div className="text-gray-900 text-[10px] font-bold">{fund.name}</div>
                   <div className="text-gray-500 text-[9px] flex items-center gap-1">
-                    {stock.code}
+                    {fund.code}
                     <button className="w-3 h-3 border border-gray-400 rounded-sm flex items-center justify-center hover:border-gray-600">
-                      <span className="text-gray-500 text-[8px]">+</span>
+                      <span className="text-gray-500 text-[8px]">→</span>
                     </button>
                   </div>
                 </div>
                 <div className="flex items-center justify-center">
-                  <div className={`flex items-center justify-center w-12 h-7 rounded-full ${stock.isUp ? 'bg-red-50' : 'bg-emerald-50'}`}>
-                    <span className={`text-[10px] font-bold ${stock.isUp ? 'text-[#da0011]' : 'text-emerald-600'}`}>
-                      {stock.change}
+                  <div className={`flex items-center justify-center px-2 h-7 rounded-full ${fund.isUp ? 'bg-red-50' : 'bg-emerald-50'}`}>
+                    <span className={`text-[10px] font-bold ${fund.isUp ? 'text-[#da0011]' : 'text-emerald-600'}`}>
+                      {fund.change}
                     </span>
                   </div>
                 </div>
                 <div className="text-gray-900 text-[11px] font-bold text-right flex items-center justify-end">
-                  {stock.price}
+                  {fund.value}
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* Risk Alert */}
+          <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg p-4 border border-amber-200 animate-fade-in">
+            <div className="flex items-start gap-2">
+              <svg className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+              </svg>
+              <div className="text-gray-900 text-xs leading-relaxed">
+                <span className="font-bold text-amber-700">Portfolio Alert:</span> Your China Trust holdings 
+                (CR Trust FirstEagle No.8) show a slight decline of <span className="font-medium text-[#008c4a]">-1.49%</span>. 
+                Consider reviewing your fixed income allocation as market conditions evolve.
+              </div>
+            </div>
           </div>
 
           {/* Additional Insight */}
@@ -216,9 +234,11 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose }) => {
                 <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
               </svg>
               <div className="text-gray-900 text-xs leading-relaxed">
-                <span className="font-bold text-[#da0011]">Market Insight:</span> Based on your portfolio allocation 
-                and current market trends, consider rebalancing your China equity exposure. The market shows 
-                strong momentum but watch for volatility in tech sectors.
+                <span className="font-bold text-[#da0011]">Rebalancing Recommendation:</span> Your portfolio's 
+                1-year return of <span className="font-bold">+28.59%</span> with a max drawdown of 
+                <span className="font-bold"> 16.70%</span> indicates strong performance but higher volatility. 
+                Consider increasing your exposure to defensive assets like BGF GOLD (currently at $59,266) to 
+                balance risk during potential market corrections.
               </div>
             </div>
           </div>
@@ -231,7 +251,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose }) => {
           <div className="flex items-center gap-2 bg-gray-50 rounded-full px-4 py-3 border border-gray-200">
             <input 
               type="text"
-              placeholder="Ask about wealth management..."
+              placeholder="Ask about your portfolio performance..."
               className="flex-1 bg-transparent text-gray-900 text-xs placeholder:text-gray-400 focus:outline-none"
             />
             <button className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors">

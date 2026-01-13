@@ -561,7 +561,7 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2">
             <div className="w-1 h-5 bg-[#4a90e2] rounded-sm"></div>
-            <h3 className="text-[15px] font-bold text-[#1e1e1e]">Holdings Overview</h3>
+            <h3 className="text-[15px] font-bold text-[#1e1e1e]">Holdings Detail</h3>
           </div>
         </div>
 
