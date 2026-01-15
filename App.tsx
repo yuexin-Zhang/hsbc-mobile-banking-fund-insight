@@ -9,13 +9,15 @@ import BottomNav from './components/BottomNav';
 import FundInsightOverview from './components/FundInsightOverview';
 import FundInsightDetails from './components/FundInsightDetails';
 import PortfolioSimulation from './components/PortfolioSimulation';
+import MyHoldings from './components/MyHoldings';
 
 const App: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState<'home' | 'overview' | 'details' | 'simulation'>('home');
+  const [currentPage, setCurrentPage] = useState<'home' | 'overview' | 'details' | 'simulation' | 'holdings'>('home');
 
   const navigateToOverview = () => setCurrentPage('overview');
   const navigateToDetails = () => setCurrentPage('details');
   const navigateToSimulation = () => setCurrentPage('simulation');
+  const navigateToHoldings = () => setCurrentPage('holdings');
   const navigateToHome = () => setCurrentPage('home');
 
   return (
@@ -23,7 +25,7 @@ const App: React.FC = () => {
       <PhoneFrame>
         {currentPage === 'home' && (
           <div className="flex flex-col h-full bg-[#F5F5F5] overflow-y-auto no-scrollbar">
-            <WealthHeader />
+            <WealthHeader onWealthAssetsClick={navigateToHoldings} />
             <NavGrid onInsightClick={navigateToOverview} />
             <div className="px-4 py-4 space-y-4">
               <ContactSection />
@@ -51,6 +53,13 @@ const App: React.FC = () => {
         {currentPage === 'simulation' && (
           <PortfolioSimulation 
             onBack={navigateToOverview} 
+          />
+        )}
+
+        {currentPage === 'holdings' && (
+          <MyHoldings 
+            onBack={navigateToHome}
+            onGoToFundInsight={navigateToOverview}
           />
         )}
       </PhoneFrame>
