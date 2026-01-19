@@ -20,6 +20,7 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
     fund: true,
     saa: true
   });
+  const [holdingStyle, setHoldingStyle] = useState<'All' | 'Value' | 'Balanced' | 'Growth'>('All');
 
   const colors = {
     red: '#da0011',
@@ -138,10 +139,10 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
 
   const renderLineChart = () => {
     const filteredData = getFilteredChartData();
-    // 动态计算Y轴刻度，基于当前数据范围
+    // Dynamically calculate Y-axis scale based on current data range
     const maxValue = Math.max(...filteredData.map(d => Math.max(d.fund, d.saa)));
     const minValue = Math.min(...filteredData.map(d => Math.min(d.fund, d.saa)));
-    // 如果最小值大于0，则Y轴范围从0开始
+    // If min value is > 0, Y-axis starts from 0
     const yMax = maxValue;
     const yMin = Math.min(minValue, 0);
     const yTicks = [
@@ -151,9 +152,9 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
       Math.ceil(yMax * 0.4),
       Math.ceil(yMax * 0.2),
       yMin >= 0 ? 0 : Math.floor(yMin * 0.5)
-    ].filter(val => val !== undefined && !isNaN(val)).sort((a, b) => b - a); // 确保去重并排序
+    ].filter(val => val !== undefined && !isNaN(val)).sort((a, b) => b - a); // Ensure unique and sorted
       
-    // 根据过滤后的数据重新计算 x 轴刻度，确保显示不同的月份
+    // Recalculate X-axis ticks based on filtered data to ensure correct months
     const getXTicksIndices = () => {
       if (filteredData.length <= 1) return [0];
       
@@ -518,23 +519,33 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
   };
 
   const PortfolioTable = () => {
-    // 模拟图片中的数据
+    // Mock data based on provided visuals
     const holdings = [
-      { name: 'BGF WLD MIN', id: 'IPFD3004', mktValue: '$134,832.39', returnVal: '+$24,098.31', returnPct: '21.76%', isPositive: true },
-      { name: 'BGF ENERGY', id: 'IPFD3145', mktValue: '$160,062.60', returnVal: '-$1,390.27', returnPct: '0.86%', isPositive: false },
-      { name: 'BGF GOLD', id: 'IPFD3131', mktValue: '$59,266.81', returnVal: '+$9,266.81', returnPct: '18.53%', isPositive: true },
-      { name: 'BLK Sys GE High Inc', id: 'IPFD3116', mktValue: '$215,204.06', returnVal: '+$85,395.59', returnPct: '42.56%', isPositive: true },
-      { name: 'BLK Sys GE High Inc', id: 'IPFD2116', mktValue: '$213,257.23', returnVal: '+$23,283.08', returnPct: '11.10%', isPositive: true },
-      { name: 'BIK World Tech', id: 'IPFD2254', mktValue: '$76,635.33', returnVal: '+$156.18', returnPct: '0.20%', isPositive: true },
-      { name: 'JPM GEHI USD', id: 'IPFD3540', mktValue: '$83,452.34', returnVal: '+$3,592.43', returnPct: '4.41%', isPositive: true },
+      { name: 'BGF WLD MIN', id: 'IPFD3004', mktValue: '$134,832.39', returnVal: '+$24,098.31', returnPct: '21.76%', isPositive: true, style: 'Value' },
+      { name: 'BGF ENERGY', id: 'IPFD3145', mktValue: '$160,062.60', returnVal: '-$1,390.27', returnPct: '0.86%', isPositive: false, style: 'Growth' },
+      { name: 'BGF GOLD', id: 'IPFD3131', mktValue: '$59,266.81', returnVal: '+$9,266.81', returnPct: '18.53%', isPositive: true, style: 'Balanced' },
+      { name: 'BLK Sys GE High Inc', id: 'IPFD3116', mktValue: '$215,204.06', returnVal: '+$85,395.59', returnPct: '42.56%', isPositive: true, style: 'Value' },
+      { name: 'BLK Sys GE High Inc', id: 'IPFD2116', mktValue: '$213,257.23', returnVal: '+$23,283.08', returnPct: '11.10%', isPositive: true, style: 'Balanced' },
+      { name: 'BIK World Tech', id: 'IPFD2254', mktValue: '$76,635.33', returnVal: '+$156.18', returnPct: '0.20%', isPositive: true, style: 'Growth' },
+      { name: 'JPM GEHI USD', id: 'IPFD3540', mktValue: '$83,452.34', returnVal: '+$3,592.43', returnPct: '4.41%', isPositive: true, style: 'Growth' },
     ];
 
     const trustHoldings = [
-      { name: 'CR Trust FirstEagle No.1', id: 'T1C477', mktValue: '¥1,269,517.24', returnVal: '+¥219,517.24', returnPct: '20.91%', isPositive: true },
-      { name: 'CR Trust FirstEagle No.8', id: 'T1E648', mktValue: '¥1,034,379.31', returnVal: '-¥15,620.69', returnPct: '1.49%', isPositive: false },
+      { name: 'CR Trust FirstEagle No.1', id: 'T1C477', mktValue: '¥1,269,517.24', returnVal: '+¥219,517.24', returnPct: '20.91%', isPositive: true, style: 'Balanced' },
+      { name: 'CR Trust FirstEagle No.8', id: 'T1E648', mktValue: '¥1,034,379.31', returnVal: '-¥15,620.69', returnPct: '1.49%', isPositive: false, style: 'Balanced' },
     ];
 
-    // 渲染行的组件
+    const filteredHoldings = holdingStyle === 'All' ? holdings : holdings.filter(h => h.style === holdingStyle);
+    const filteredTrust = holdingStyle === 'All' ? trustHoldings : trustHoldings.filter(h => h.style === holdingStyle);
+
+    const tabs = [
+      { id: 'All', label: 'All', pct: '' },
+      { id: 'Value', label: 'Value', pct: '15%' },
+      { id: 'Balanced', label: 'Balanced', pct: '70%' },
+      { id: 'Growth', label: 'Growth', pct: '15%' }
+    ];
+
+    // Row rendering component
     const Row = ({ item }) => (
       <div className="flex items-center py-2.5 border-b border-gray-100 last:border-0">
         <div className="w-[45%] text-[10px] font-bold text-[#1e1e1e] leading-tight pr-2">
@@ -558,11 +569,44 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
 
     return (
       <div className="bg-white rounded-[3px] p-5 border border-[#ebeef0] shadow-sm">
-        <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <div className="w-1 h-5 bg-[#4a90e2] rounded-sm"></div>
+            <div className="w-1 h-5 bg-[#da0011] rounded-sm"></div>
             <h3 className="text-[15px] font-bold text-[#1e1e1e]">Holdings Detail</h3>
           </div>
+        </div>
+
+        {/* Integrated Insight & Recommendation */}
+        <div className="mb-4 p-3 bg-blue-50/50 border border-blue-100 rounded-[4px]">
+          <div className="flex items-start gap-2">
+            <div className="mt-0.5 p-0.5 bg-blue-500 rounded-full flex-shrink-0">
+              <svg className="w-2 h-2 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <p className="text-[10px] text-blue-800 leading-tight font-medium">
+              Maintain core stability via your <span className="font-bold">70% Balanced</span> core while gradually increasing Growth exposure for long-term upside.
+            </p>
+          </div>
+        </div>
+
+        {/* Tab Bar */}
+        <div className="flex border-b border-gray-100 mb-4 overflow-x-auto no-scrollbar">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setHoldingStyle(tab.id as any)}
+              className={`flex-1 min-w-[70px] py-2 flex flex-col items-center relative transition-colors ${
+                holdingStyle === tab.id ? 'text-[#da0011]' : 'text-[#767676]'
+              }`}
+            >
+              <div className="text-[10px] font-bold uppercase">{tab.label}</div>
+              {tab.pct && <div className="text-[9px] font-bold mt-0.5">{tab.pct}</div>}
+              {holdingStyle === tab.id && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#da0011]" />
+              )}
+            </button>
+          ))}
         </div>
 
         {/* Header Row */}
@@ -572,33 +616,41 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
           <div className="w-[25%] text-right">Total Return</div>
         </div>
 
-        {/* 第一部分内容 */}
+        {/* Main holdings content */}
         <div className="space-y-2.5 py-2.5">
-          {holdings.map((h, i) => (
-            <div key={`holdings-${i}`}>
-              <Row item={h} />
-            </div>
-          ))}
+          {filteredHoldings.length > 0 ? (
+            filteredHoldings.map((h, i) => (
+              <div key={`holdings-${i}`}>
+                <Row item={h} />
+              </div>
+            ))
+          ) : (
+            <div className="text-center py-4 text-[10px] text-gray-400">No matching holdings</div>
+          )}
         </div>
 
-        {/* 分隔标题 (CNY 部分) */}
-        <div className="bg-gray-100 px-3 py-2.5 my-3 border border-gray-100 rounded-[2px]">
-          <div className="text-[#767676] font-bold text-[10px] uppercase">ASSET MANAGEMENT & TRUST</div>
-          <div className="flex text-[9px] font-bold text-[#767676] uppercase tracking-tighter pt-2 border-t border-gray-100 mt-2">
-            <div className="w-[45%]">Holding</div>
-            <div className="w-[30%] text-center">Mkt Value</div>
-            <div className="w-[25%] text-right">Total Return</div>
-          </div>
-        </div>
-
-        {/* 第二部分内容 */}
-        <div className="space-y-2.5 py-2.5">
-          {trustHoldings.map((h, i) => (
-            <div key={`trust-${i}`}>
-              <Row item={h} />
+        {/* Section title (CNY portion) */}
+        {filteredTrust.length > 0 && (
+          <>
+            <div className="bg-gray-100 px-3 py-2.5 my-3 border border-gray-100 rounded-[2px]">
+              <div className="text-[#767676] font-bold text-[10px] uppercase">ASSET MANAGEMENT & TRUST</div>
+              <div className="flex text-[9px] font-bold text-[#767676] uppercase tracking-tighter pt-2 border-t border-gray-100 mt-2">
+                <div className="w-[45%]">Holding</div>
+                <div className="w-[30%] text-center">Mkt Value</div>
+                <div className="w-[25%] text-right">Total Return</div>
+              </div>
             </div>
-          ))}
-        </div>
+
+            {/* Trust holdings content */}
+            <div className="space-y-2.5 py-2.5">
+              {filteredTrust.map((h, i) => (
+                <div key={`trust-${i}`}>
+                  <Row item={h} />
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     );
   };
@@ -657,6 +709,7 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
       <div className="p-4 space-y-4 pb-10">
         {/* Total Holding with Link */}
         <div 
+          onClick={onGoToDetails}
           className="bg-white rounded-[3px] p-5 border border-[#ebeef0] shadow-sm active:bg-gray-50 transition-colors cursor-pointer"
         >
           {/* Checkbox and label */}

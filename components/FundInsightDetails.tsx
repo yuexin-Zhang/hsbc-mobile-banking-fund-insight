@@ -1,5 +1,10 @@
 
 import React, { useState, useMemo } from 'react';
+import { Chart as ChartJS, Title, Tooltip, Legend, CategoryScale, LinearScale } from 'chart.js';
+import { TreemapController, TreemapElement } from 'chartjs-chart-treemap';
+import { Chart } from 'react-chartjs-2';
+
+ChartJS.register(Title, Tooltip, Legend, CategoryScale, LinearScale, TreemapController, TreemapElement);
 
 interface FundInsightDetailsProps {
   onBack: () => void;
@@ -81,6 +86,129 @@ const GoalDetailItem: React.FC<{
   );
 };
 
+const PieChart = ({ data }: { data: any[] }) => {
+  const radius = 40;
+  const circumference = 2 * Math.PI * radius;
+  let offset = 0;
+
+  return (
+    <svg viewBox="0 0 100 100" className="w-28 h-28 -rotate-90 shrink-0">
+      {data.map((item, idx) => {
+        const strokeDash = (item.pct / 100) * circumference;
+        const currentOffset = (offset / 100) * circumference;
+        offset += item.pct;
+        return (
+          <circle
+            key={idx}
+            cx="50"
+            cy="50"
+            r={radius}
+            fill="transparent"
+            stroke={item.color}
+            strokeWidth="20"
+            strokeDasharray={`${strokeDash} ${circumference}`}
+            strokeDashoffset={-currentOffset}
+          />
+        );
+      })}
+    </svg>
+  );
+};
+
+const TreemapChart = ({ data }: { data: any[] }) => {
+  const chartData = {
+    datasets: [
+      {
+        tree: data,
+        key: 'pct',
+        // Flat treemap for direct data access
+        spacing: 1,
+        borderWidth: 1,
+        borderColor: '#ffffff',
+        borderRadius: 4,
+        backgroundColor: (ctx: any) => {
+          // Robust item access
+          const item = ctx.raw?._data || ctx.raw;
+          return item?.color || '#da0011';
+        },
+        labels: {
+          display: true,
+          formatter: (ctx: any) => {
+            const item = ctx.raw?._data || ctx.raw;
+            return [`${item?.label || ''}`, `${item?.pct ? item.pct + '%' : ''}`];
+          },
+          halign: 'right',
+          valign: 'bottom',
+          color: (ctx: any) => {
+            const item = ctx.raw?._data || ctx.raw;
+            const color = item?.color || '';
+            const darkTextColors = ['#ebeef0', '#fee2e2', '#fca5a5', '#9ca3af', '#cbd5e1', '#e2e8f0', '#f1f5f9', '#38bdf8', '#34d399', '#fbbf24'];
+            if (darkTextColors.includes(color)) return '#1e1e1e';
+            return '#ffffff';
+          },
+          font: {
+            size: 11,
+            weight: 'bold' as const
+          }
+        }
+      }
+    ]
+  };
+
+  const options = {
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: (item: any) => {
+            const dataItem = item.raw?._data || item.raw;
+            return `${dataItem.label}: ${dataItem.pct}%`;
+          }
+        }
+      }
+    }
+  };
+
+  return (
+    <div className="w-full h-40 shrink-0 bg-gray-50 rounded-lg overflow-hidden border border-gray-100 p-1 shadow-inner">
+      <Chart type="treemap" data={chartData as any} options={options as any} redraw={false} />
+    </div>
+  );
+};
+
+const AllocationSection = ({ title, data, showVal = true, useTreemap = false, insight }: { title: string, data: any[], showVal?: boolean, useTreemap?: boolean, insight?: string }) => (
+  <div className="space-y-4">
+    <div className="flex items-center gap-2 pb-2 border-b border-[#f4f5f6]">
+      <div className="w-1 h-3.5 bg-[#da0011]"></div>
+      <h3 className="text-[12px] font-bold text-[#333] uppercase tracking-tight">{title}</h3>
+    </div>
+    {insight && (
+      <div className="p-3 bg-gray-50/50 border-l-2 border-[#da0011] rounded-r">
+        <p className="text-[10px] text-[#767676] leading-snug">{insight}</p>
+      </div>
+    )}
+    <div className={`flex ${useTreemap ? 'flex-col' : 'gap-4'} items-start`}>
+      {useTreemap ? <TreemapChart data={data} /> : <PieChart data={data} />}
+      <div className={`flex-1 space-y-2.5 ${useTreemap ? 'w-full mt-4' : ''}`}>
+        {data.map((item, idx) => (
+          <div key={idx} className="flex gap-2">
+            <div className="w-1.5 h-3 shrink-0 mt-0.5" style={{ backgroundColor: item.color }}></div>
+            <div className="flex-1">
+              <div className="text-[10px] font-bold text-[#1e1e1e] leading-tight">
+                {item.pct}% <span className="font-normal text-gray-500 ml-1">{item.label}</span>
+              </div>
+              {showVal && item.val && (
+                <div className="text-[9px] text-[#767676] font-medium">CNY {item.val}</div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
 const FundInsightDetails: React.FC<FundInsightDetailsProps> = ({ onBack }) => {
   const detailTabs = ['Allocation', 'Asset Classes', 'Sectors', 'Top Holdings'];
   const [activeDetailTab, setActiveDetailTab] = useState('Allocation');
@@ -119,49 +247,49 @@ const FundInsightDetails: React.FC<FundInsightDetailsProps> = ({ onBack }) => {
   };
 
   const productAllocation = [
-    { label: 'Cash/Deposits', pct: 52.17, val: '80,773,627.08', color: '#1e1e1e' },
-    { label: 'Funds&Related', pct: 30.35, val: '46,995,624.56', color: '#da0011' },
-    { label: 'QDII Structured Note', pct: 6.56, val: '10,154,696.62', color: '#ebeef0' },
-    { label: 'QDII Bond', pct: 5.84, val: '9,044,989.92', color: '#f87171' },
-    { label: 'Structured Deposits', pct: 5.01, val: '7,760,775.21', color: '#9ca3af' },
-    { label: 'AMP&Trust', pct: 0.05, val: '78,200.00', color: '#fca5a5' },
-    { label: 'WMP', pct: 0.01, val: '15,000.00', color: '#fee2e2' },
-    { label: 'Insurance', pct: 0.01, val: '12,556.66', color: '#4b5563' },
+    { label: 'Cash/Deposits', pct: 52.17, val: '80,773,627.08', color: '#64748b' }, // Medium Slate
+    { label: 'Funds&Related', pct: 30.35, val: '46,995,624.56', color: '#da0011' }, // HSBC Red
+    { label: 'QDII Structured Note', pct: 6.56, val: '10,154,696.62', color: '#38bdf8' }, // Light Sky
+    { label: 'QDII Bond', pct: 5.84, val: '9,044,989.92', color: '#fb7185' }, // Light Rose
+    { label: 'Structured Deposits', pct: 5.01, val: '7,760,775.21', color: '#a78bfa' }, // Light Violet
+    { label: 'AMP&Trust', pct: 0.05, val: '78,200.00', color: '#34d399' }, // Light Emerald
+    { label: 'WMP', pct: 0.01, val: '15,000.00', color: '#fbbf24' }, // Light Amber
+    { label: 'Insurance', pct: 0.01, val: '12,556.66', color: '#818cf8' }, // Light Indigo
   ];
 
   const currencyAllocation = [
-    { label: 'CNY', pct: 65.91, val: '102,054,149.96', color: '#da0011' },
-    { label: 'USD', pct: 28.27, val: '43,764,015.03', color: '#9ca3af' },
-    { label: 'HKD', pct: 3.17, val: '4,907,550.23', color: '#666666' },
-    { label: 'EUR', pct: 2.56, val: '3,968,627.11', color: '#333333' },
-    { label: 'AUD', pct: 0.09, val: '141,127.71', color: '#111111' },
+    { label: 'CNY', pct: 65.91, val: '102,054,149.96', color: '#da0011' }, // HSBC Red
+    { label: 'USD', pct: 28.27, val: '43,764,015.03', color: '#38bdf8' }, // Light Sky
+    { label: 'HKD', pct: 3.17, val: '4,907,550.23', color: '#fb7185' }, // Light Rose
+    { label: 'EUR', pct: 2.56, val: '3,968,627.11', color: '#a78bfa' }, // Light Violet
+    { label: 'AUD', pct: 0.09, val: '141,127.71', color: '#34d399' }, // Light Emerald
   ];
 
   const assetClassesData = [
-    { label: 'Liquidity', pct: 53.71, val: '83,162,130.96', color: '#1e1e1e' },
-    { label: 'China Equity', pct: 25.71, val: '39,808,189.35', color: '#da0011' },
-    { label: 'Global Investment Grade Bond', pct: 8.53, val: '13,207,465.59', color: '#005f73' },
-    { label: 'China Fixed Income', pct: 6.04, val: '9,352,062.39', color: '#0a9396' },
-    { label: 'Remaining types', pct: 4.42, val: '6,843,737.79', color: '#ebeef0' },
-    { label: 'Developed Market Equity', pct: 1.59, val: '2,461,883.97', color: '#94d2bd' },
+    { label: 'Liquidity', pct: 53.71, val: '83,162,130.96', color: '#64748b' }, // Slate
+    { label: 'China Equity', pct: 25.71, val: '39,808,189.35', color: '#da0011' }, // HSBC Red
+    { label: 'Global Investment Grade Bond', pct: 8.53, val: '13,207,465.59', color: '#0ea5e9' }, // Sky Blue
+    { label: 'China Fixed Income', pct: 6.04, val: '9,352,062.39', color: '#10b981' }, // Emerald
+    { label: 'Remaining types', pct: 4.42, val: '6,843,737.79', color: '#ebeef0' }, // Light Grey
+    { label: 'Developed Market Equity', pct: 1.59, val: '2,461,883.97', color: '#8b5cf6' }, // Violet
   ];
 
   const geographiesData = [
-    { label: 'China', pct: 71.63, val: '110,908,647.20', color: '#da0011' },
-    { label: 'Remaining types', pct: 13.99, val: '21,661,482.26', color: '#ebeef0' },
-    { label: 'United States', pct: 8.26, val: '12,789,409.83', color: '#9ca3af' },
-    { label: 'Hong Kong, China', pct: 2.99, val: '4,629,580.55', color: '#666666' },
-    { label: 'Germany', pct: 1.60, val: '2,477,367.52', color: '#333333' },
-    { label: 'Taiwan, China', pct: 1.53, val: '2,368,982.69', color: '#111111' },
+    { label: 'China', pct: 71.63, val: '110,908,647.20', color: '#da0011' }, // HSBC Red
+    { label: 'Remaining types', pct: 13.99, val: '21,661,482.26', color: '#ebeef0' }, // Light Grey
+    { label: 'United States', pct: 8.26, val: '12,789,409.83', color: '#0ea5e9' }, // Sky Blue
+    { label: 'Hong Kong, China', pct: 2.99, val: '4,629,580.55', color: '#f43f5e' }, // Rose
+    { label: 'Germany', pct: 1.60, val: '2,477,367.52', color: '#8b5cf6' }, // Violet
+    { label: 'Taiwan, China', pct: 1.53, val: '2,368,982.69', color: '#f59e0b' }, // Amber
   ];
 
   const sectorsData = [
-    { label: 'Consumer Cyclical', pct: 8.71, color: '#001219' },
-    { label: 'Financial Services', pct: 4.35, color: '#005f73' },
-    { label: 'Healthcare', pct: 3.12, color: '#0a9396' },
-    { label: 'Communication Services', pct: 2.61, color: '#94d2bd' },
-    { label: 'Technology', pct: 2.33, color: '#e9d8a6' },
-    { label: 'Remaining types', pct: 78.87, color: '#ebeef0' },
+    { label: 'Consumer Cyclical', pct: 8.71, color: '#f43f5e' }, // Rose
+    { label: 'Financial Services', pct: 4.35, color: '#0ea5e9' }, // Sky Blue
+    { label: 'Healthcare', pct: 3.12, color: '#10b981' }, // Emerald
+    { label: 'Communication Services', pct: 2.61, color: '#8b5cf6' }, // Violet
+    { label: 'Technology', pct: 2.33, color: '#f59e0b' }, // Amber
+    { label: 'Remaining types', pct: 78.87, color: '#ebeef0' }, // Light Grey
   ];
 
   const holdingsData = [
@@ -190,64 +318,7 @@ const FundInsightDetails: React.FC<FundInsightDetailsProps> = ({ onBack }) => {
     { name: 'JD.com Inc', ticker: 'JD.US', sector: 'Consumer Cyclical', weight: '1.55%', value: '2,399,949.33', dailyChange: '-0.78%', marketCap: 'Large Cap', region: 'United States' },
   ];
 
-  const PieChart = ({ data }: { data: any[] }) => {
-    const radius = 40;
-    const circumference = 2 * Math.PI * radius;
-    let offset = 0;
-
-    return (
-      <svg viewBox="0 0 100 100" className="w-28 h-28 -rotate-90 shrink-0">
-        {data.map((item, idx) => {
-          const strokeDash = (item.pct / 100) * circumference;
-          const currentOffset = (offset / 100) * circumference;
-          offset += item.pct;
-          return (
-            <circle
-              key={idx}
-              cx="50"
-              cy="50"
-              r={radius}
-              fill="transparent"
-              stroke={item.color}
-              strokeWidth="20"
-              strokeDasharray={`${strokeDash} ${circumference}`}
-              strokeDashoffset={-currentOffset}
-            />
-          );
-        })}
-      </svg>
-    );
-  };
-
-  const AllocationSection = ({ title, data, showVal = true }: { title: string, data: any[], showVal?: boolean }) => (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2 pb-2 border-b border-[#f4f5f6]">
-        <div className="w-1 h-3.5 bg-[#da0011]"></div>
-        <h3 className="text-[12px] font-bold text-[#333] uppercase tracking-tight">{title}</h3>
-      </div>
-      <div className="flex gap-4 items-start">
-        <PieChart data={data} />
-        <div className="flex-1 space-y-2.5">
-          {data.map((item, idx) => (
-            <div key={idx} className="flex gap-2">
-              <div className="w-1.5 h-3 shrink-0 mt-0.5" style={{ backgroundColor: item.color }}></div>
-              <div className="flex-1">
-                <div className="text-[10px] font-bold text-[#1e1e1e] leading-tight">
-                  {item.pct}% <span className="font-normal text-gray-500 ml-1">{item.label}</span>
-                </div>
-                {showVal && item.val && (
-                  <div className="text-[9px] text-[#767676] font-medium">CNY {item.val}</div>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-
   const renderGoalTab = () => {
-    // Grouping simulated data for the three "pots"
     const pots = [
       { label: 'Flexible Access', val: '80,773,627.08', pct: 52, color: '#f97316' },
       { label: 'Future Security', val: '27,337,130.41', pct: 18, color: '#fbbf24' },
@@ -256,21 +327,15 @@ const FundInsightDetails: React.FC<FundInsightDetailsProps> = ({ onBack }) => {
 
     return (
       <div className="animate-fade-in space-y-6 pt-2">
-        {/* Pot of Money Overview */}
         <div className="bg-white p-2 rounded-[3px] space-y-5">
-           
            <div className="text-2xl font-bold text-[#1e1e1e] tracking-tight">
              {totalAssetValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}
            </div>
-
-           {/* Segmented Bar */}
            <div className="flex h-3 w-full rounded-full overflow-hidden bg-gray-100">
              {pots.map((pot, i) => (
                <div key={i} className="h-full border-r border-white/20 last:border-0" style={{ width: `${pot.pct}%`, backgroundColor: pot.color }} />
              ))}
            </div>
-
-           {/* Pot Details */}
            <div className="grid grid-cols-3 gap-2">
              {pots.map((pot, i) => (
                <div key={i} className="flex flex-col">
@@ -287,7 +352,6 @@ const FundInsightDetails: React.FC<FundInsightDetailsProps> = ({ onBack }) => {
            </div>
         </div>
 
-        {/* Separator / Professional Title */}
          <div className="flex items-center gap-3 mb-4 px-1">
           <div className="w-1.5 h-8 bg-[#da0011] mr-1 shadow-sm"></div>
           <div className="relative z-10">
@@ -397,37 +461,27 @@ const FundInsightDetails: React.FC<FundInsightDetailsProps> = ({ onBack }) => {
           </div>
         ) : (
           <>
-        {/* Total Asset Valuation Summary Card */}
-        <div className="bg-white rounded-[3px] p-6 border border-[#ebeef0] shadow-sm space-y-4">
-          <div>
-            <div className="text-[11px] text-[#767676] mb-1 font-bold uppercase tracking-tight text-center">Total Asset Valuation</div>
-            <div className="text-2xl font-bold text-[#1e1e1e] tracking-tight text-center">
-              {totalAssetValue.toLocaleString(undefined, { minimumFractionDigits: 2 })} <span className="text-xs font-medium text-[#767676]">CNY</span>
+        
+        {/* Goal Tracking Entry Point */}
+        <button
+          onClick={() => setShowGoalTracking(true)}
+          className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-[#da0011]/5 to-[#da0011]/10 border border-[#da0011]/20 rounded-[3px] active:bg-[#da0011]/20 transition-all group"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-[#da0011] rounded-full flex items-center justify-center shrink-0">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div className="text-left">
+              <div className="text-[13px] font-bold text-[#1e1e1e] uppercase tracking-tight">Goal Tracking</div>
+              <div className="text-[10px] text-[#767676] font-medium">Track your financial goals & progress</div>
             </div>
           </div>
-          
-          {/* Goal Tracking Entry Point */}
-          <button
-            onClick={() => setShowGoalTracking(true)}
-            className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-[#da0011]/5 to-[#da0011]/10 border border-[#da0011]/20 rounded-[3px] active:bg-[#da0011]/20 transition-all group"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#da0011] rounded-full flex items-center justify-center shrink-0">
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div className="text-left">
-                <div className="text-[13px] font-bold text-[#1e1e1e] uppercase tracking-tight">Goal Tracking</div>
-                <div className="text-[10px] text-[#767676] font-medium">Track your financial goals & progress</div>
-              </div>
-            </div>
-            <svg className="w-5 h-5 text-[#da0011] group-active:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </button>
-        </div>
-
+          <svg className="w-5 h-5 text-[#da0011] group-active:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
         {/* Tab Selection */}
         <div className="bg-white rounded-[3px] border border-[#ebeef0] overflow-hidden shadow-sm">
           <div className="flex border-b border-[#f4f5f6] overflow-x-auto no-scrollbar">
@@ -446,8 +500,19 @@ const FundInsightDetails: React.FC<FundInsightDetailsProps> = ({ onBack }) => {
           <div className="p-5">
             {activeDetailTab === 'Allocation' && (
               <div className="animate-fade-in space-y-10">
-                <AllocationSection title="Product Allocation" data={productAllocation} />
-                <AllocationSection title="Currency Allocation" data={currencyAllocation} />
+                <AllocationSection 
+                  title="Product Allocation" 
+                  data={productAllocation} 
+                  useTreemap={true} 
+                  insight="Your portfolio is heavily weighted in Cash/Deposits (52.17%), providing high liquidity. Consider diversifying into structured products to enhance long-term yield."
+                />
+
+                <AllocationSection 
+                  title="Currency Allocation" 
+                  data={currencyAllocation} 
+                  useTreemap={true} 
+                  insight="Dominant exposure in CNY (65.91%) ensures local stability. We recommend increasing USD/HKD holdings to hedge against domestic currency fluctuations."
+                />
                 
                 <div className="pt-6 border-t border-[#f4f5f6] space-y-2">
                   <div className="flex justify-between items-center text-[10px] text-[#1e1e1e]">
@@ -462,50 +527,26 @@ const FundInsightDetails: React.FC<FundInsightDetailsProps> = ({ onBack }) => {
                     <p className="text-[8px] text-[#767676] italic">Exchange rate: As of 30 December 2025 12:45</p>
                   </div>
                 </div>
-
-                {/* Professional Summary & Recommendation for Allocation */}
-                <div className="pt-8 border-t border-[#f4f5f6] space-y-6">
-                  <div className="bg-[#fcfcfc] border border-[#ebeef0] rounded-[3px] p-5">
-                    <div className="flex items-center gap-2 mb-4">
-                      <div className="w-1 h-3.5 bg-[#da0011]"></div>
-                      <h4 className="text-[11px] font-bold text-[#1e1e1e] uppercase tracking-widest">Allocation Summary</h4>
-                    </div>
-                    
-                    <div className="space-y-4">
-                      <div>
-                        <div className="flex items-center gap-2 mb-1.5">
-                          <span className="text-[10px] font-bold text-[#1e1e1e] uppercase tracking-tight">Product & Currency Analysis</span>
-                        </div>
-                        <p className="text-[11px] text-[#767676] leading-relaxed">
-                          Your holdings are concentrated in <span className="text-[#1e1e1e] font-bold">Cash/Deposits (52.17%)</span> with a dominant <span className="text-[#1e1e1e] font-bold">CNY (65.91%)</span> position. This setup prioritizes stability but significantly lags in capturing global market growth.
-                        </p>
-                      </div>
-
-                      <div className="p-3">
-                        <div className="flex items-center gap-2 mb-1.5">
-                          <span className="text-[10px] font-bold text-[#1e1e1e] uppercase tracking-tight">Actionable Recommendations</span>
-                        </div>
-                        <ul className="text-[10px] text-[#333] space-y-1.5 leading-tight">
-                          <li className="flex gap-2">
-                            <span className="text-[#767676]">•</span>
-                            <span>Transition idle CNY cash into <span className="font-bold">QDII Structured Notes</span> to target higher potential returns without excessive capital risk.</span>
-                          </li>
-                          <li className="flex gap-2">
-                            <span className="text-[#767676]">•</span>
-                            <span>Utilize your <span className="font-bold">USD (28.27%)</span> exposure to build a core position in USD-denominated Global High Yield assets.</span>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
               </div>
             )}
 
             {activeDetailTab === 'Asset Classes' && (
               <div className="animate-fade-in space-y-12">
-                <AllocationSection title="Asset Classes" data={assetClassesData} showVal={true} />
-                <AllocationSection title="Geographies" data={geographiesData} showVal={true} />
+                <AllocationSection 
+                  title="Asset Classes" 
+                  data={assetClassesData} 
+                  showVal={true} 
+                  useTreemap={true} 
+                  insight="Liquidity (53.71%) is your primary asset class. Consider reallocating a portion to Global Fixed Income for better risk-adjusted returns."
+                />
+
+                <AllocationSection 
+                  title="Geographies" 
+                  data={geographiesData} 
+                  showVal={true} 
+                  useTreemap={true} 
+                  insight="Your portfolio is 71.63% concentrated in China. Expand exposure to Developed Markets like the US and Germany to reduce regional risk."
+                />
 
                 {/* Footnote matching image */}
                 <div className="flex gap-2 p-3 bg-gray-50 rounded-[2px] border border-gray-100 mt-6">
@@ -514,49 +555,18 @@ const FundInsightDetails: React.FC<FundInsightDetailsProps> = ({ onBack }) => {
                      The data of the global asset allocation section are provided by Morningstar Information (ShenZhen) Co. Ltd. Please be aware that the proportion in the above figure is rounded up to two decimal places.
                    </p>
                 </div>
-
-                {/* Professional Summary & Recommendation Section */}
-                <div className="pt-8 border-t border-[#f4f5f6] space-y-6">
-                  <div className="bg-[#fcfcfc] border border-[#ebeef0] rounded-[3px] p-5">
-                    <div className="flex items-center gap-2 mb-4">
-                      <div className="w-1 h-3.5 bg-[#da0011]"></div>
-                      <h4 className="text-[11px] font-bold text-[#1e1e1e] uppercase tracking-widest">Summary & Recommendation</h4>
-                    </div>
-                    
-                    <div className="space-y-4">
-                      <div>
-                        <div className="flex items-center gap-2 mb-1.5">
-                          <span className="text-[10px] font-bold text-[#1e1e1e] uppercase tracking-tight">Portfolio Analysis</span>
-                        </div>
-                        <p className="text-[11px] text-[#767676] leading-relaxed">
-                          Your current allocation is <span className="text-[#1e1e1e] font-bold">highly liquid (53.71%)</span> and <span className="text-[#1e1e1e] font-bold">China-centric (71.63%)</span>. While this provides exceptional capital stability, it exposes your wealth to domestic market cycles and potential inflation drag.
-                        </p>
-                      </div>
-
-                      <div className="p-3">
-                        <div className="flex items-center gap-2 mb-1.5">
-                          <span className="text-[10px] font-bold text-[#1e1e1e] uppercase tracking-tight">Tactical Advice</span>
-                        </div>
-                        <ul className="text-[10px] text-[#333] space-y-1.5 leading-tight">
-                          <li className="flex gap-2">
-                            <span className="text-[#767676]">•</span>
-                            <span>Consider diversifying <span className="font-bold">10-15% of Liquidity</span> into Global Investment Grade Bonds to enhance risk-adjusted yields.</span>
-                          </li>
-                          <li className="flex gap-2">
-                            <span className="text-[#767676]">•</span>
-                            <span>Increase exposure to <span className="font-bold">Developed Market Equities</span> to balance geographic risk.</span>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
               </div>
             )}
 
             {activeDetailTab === 'Sectors' && (
               <div className="animate-fade-in space-y-8">
-                <AllocationSection title="Equity Sector Allocation" data={sectorsData} showVal={false} />
+                <AllocationSection 
+                  title="Equity Sector Allocation" 
+                  data={sectorsData} 
+                  showVal={false} 
+                  useTreemap={true} 
+                  insight='High concentration in "Remaining types" (78.87%). Diversify into Technology and Healthcare sectors to capture growth in emerging industries.'
+                />
 
                 {/* Fund List Header */}
                 <div className="mt-8 border-t border-[#f4f5f6] pt-6">
@@ -593,13 +603,6 @@ const FundInsightDetails: React.FC<FundInsightDetailsProps> = ({ onBack }) => {
                       </div>
                     ))}
                   </div>
-                </div>
-
-                <div className="p-4 bg-gray-50 rounded-[3px] border border-gray-100 mt-6">
-                  <h4 className="text-[11px] font-bold text-[#1e1e1e] mb-3 uppercase tracking-tighter">Sector Commentary</h4>
-                  <p className="text-[11px] text-[#767676] leading-relaxed">
-                    Your portfolio is currently broadly distributed across "Remaining types" (78.87%), with specific strategic overweighting in <span className="font-bold text-[#1e1e1e]">Consumer Cyclical (8.71%)</span> and <span className="font-bold text-[#1e1e1e]">Financial Services (4.35%)</span>.
-                  </p>
                 </div>
               </div>
             )}
