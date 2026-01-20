@@ -115,7 +115,7 @@ const PieChart = ({ data }: { data: any[] }) => {
   );
 };
 
-const TreemapChart = ({ data }: { data: any[] }) => {
+const TreemapChart = ({ data, onItemClick }: { data: any[], onItemClick?: (label: string) => void }) => {
   const chartData = {
     datasets: [
       {
@@ -157,6 +157,15 @@ const TreemapChart = ({ data }: { data: any[] }) => {
 
   const options = {
     maintainAspectRatio: false,
+    onClick: (_e: any, elements: any) => {
+      if (elements && elements.length > 0) {
+        const element = elements[0];
+        const datasetIndex = element.datasetIndex;
+        const index = element.index;
+        const item = chartData.datasets[datasetIndex].tree[index];
+        if (item) onItemClick?.(item.label);
+      }
+    },
     plugins: {
       legend: { display: false },
       tooltip: {
@@ -171,38 +180,49 @@ const TreemapChart = ({ data }: { data: any[] }) => {
   };
 
   return (
-    <div className="w-full h-40 shrink-0 bg-gray-50 rounded-lg overflow-hidden border border-gray-100 p-1 shadow-inner">
+    <div className="w-full h-40 shrink-0 bg-gray-50 rounded-lg overflow-hidden border border-gray-100 p-1 shadow-inner cursor-pointer">
       <Chart type="treemap" data={chartData as any} options={options as any} redraw={false} />
     </div>
   );
 };
 
-const AllocationSection = ({ title, data, showVal = true, useTreemap = false, insight }: { title: string, data: any[], showVal?: boolean, useTreemap?: boolean, insight?: string }) => (
+const AllocationSection = ({ title, data, showVal = true, useTreemap = false, insight, onItemClick, selectedItem, hideTitle = false }: { title: string, data: any[], showVal?: boolean, useTreemap?: boolean, insight?: string, onItemClick?: (label: string) => void, selectedItem?: string | null, hideTitle?: boolean }) => (
   <div className="space-y-4">
-    <div className="flex items-center gap-2 pb-2 border-b border-[#f4f5f6]">
-      <div className="w-1 h-3.5 bg-[#da0011]"></div>
-      <h3 className="text-[12px] font-bold text-[#333] uppercase tracking-tight">{title}</h3>
-    </div>
+    {!hideTitle && (
+      <div className="flex items-center gap-2 pb-2 border-b border-[#f4f5f6]">
+        <div className="w-1 h-3.5 bg-[#da0011]"></div>
+        <h3 className="text-[12px] font-bold text-[#333] uppercase tracking-tight">{title}</h3>
+      </div>
+    )}
     {insight && (
       <div className="p-3 bg-gray-50/50 border-l-2 border-[#da0011] rounded-r">
         <p className="text-[10px] text-[#767676] leading-snug">{insight}</p>
       </div>
     )}
     <div className={`flex ${useTreemap ? 'flex-col' : 'gap-4'} items-start`}>
-      {useTreemap ? <TreemapChart data={data} /> : <PieChart data={data} />}
+      {useTreemap ? <TreemapChart data={data} onItemClick={onItemClick} /> : <PieChart data={data} />}
       <div className={`flex-1 space-y-2.5 ${useTreemap ? 'w-full mt-4' : ''}`}>
         {data.map((item, idx) => (
-          <div key={idx} className="flex gap-2">
-            <div className="w-1.5 h-3 shrink-0 mt-0.5" style={{ backgroundColor: item.color }}></div>
-            <div className="flex-1">
-              <div className="text-[10px] font-bold text-[#1e1e1e] leading-tight">
-                {item.pct}% <span className="font-normal text-gray-500 ml-1">{item.label}</span>
+            <div 
+              key={idx} 
+              className={`flex gap-2 p-2 rounded-md transition-all cursor-pointer border ${selectedItem === item.label ? 'shadow-sm' : 'border-transparent hover:bg-gray-50'}`}
+              style={selectedItem === item.label ? { 
+                backgroundColor: `${item.color}10`, // 10 is hex for ~6% opacity
+                borderColor: `${item.color}40`  // 40 is hex for ~25% opacity
+              } : {}}
+              onClick={() => onItemClick?.(item.label)}
+            >
+              <div className="w-1.5 h-3 shrink-0 mt-0.5" style={{ backgroundColor: item.color }}></div>
+              <div className="flex-1">
+                <div className="text-[10px] font-bold text-[#1e1e1e] leading-tight flex justify-between">
+                  <span>{item.label}</span>
+                  <span style={{ color: item.color }}>{item.pct}%</span>
+                </div>
+                {showVal && item.val && (
+                  <div className="text-[9px] text-[#767676] font-medium mt-0.5">{item.currency || 'CNY'} {item.val}</div>
+                )}
               </div>
-              {showVal && item.val && (
-                <div className="text-[9px] text-[#767676] font-medium">CNY {item.val}</div>
-              )}
             </div>
-          </div>
         ))}
       </div>
     </div>
@@ -210,12 +230,96 @@ const AllocationSection = ({ title, data, showVal = true, useTreemap = false, in
 );
 
 const FundInsightDetails: React.FC<FundInsightDetailsProps> = ({ onBack }) => {
-  const detailTabs = ['Allocation', 'Asset Classes', 'Sectors', 'Top Holdings'];
-  const [activeDetailTab, setActiveDetailTab] = useState('Allocation');
-  const [showGoalTracking, setShowGoalTracking] = useState(false);
+  const detailTabs = ['Style', 'Classes', 'Concentration'];
 
-  const totalAssetValue = 124835470.05;
-  const totalFundsInTransit = 72251756.00;
+  const totalAssetValue = 9395746.24;
+  const totalFundsInTransit = 0.00;
+
+  const styleHoldings = [
+    { name: 'BGF WLD MIN', id: 'IPFD3004', returnRate: '21.76%', holdingDays: '458 Days', threeMonthChange: '+8.45%', isPositive: true, style: 'Value' },
+    { name: 'BGF ENERGY', id: 'IPFD3145', returnRate: '-0.86%', holdingDays: '124 Days', threeMonthChange: '-2.15%', isPositive: false, style: 'Growth' },
+    { name: 'BGF GOLD', id: 'IPFD3131', returnRate: '18.53%', holdingDays: '562 Days', threeMonthChange: '+12.30%', isPositive: true, style: 'Balanced' },
+    { name: 'BLK Sys GE High Inc', id: 'IPFD3116', returnRate: '42.56%', holdingDays: '890 Days', threeMonthChange: '+5.12%', isPositive: true, style: 'Value' },
+    { name: 'BLK Sys GE High Inc', id: 'IPFD2116', returnRate: '11.10%', holdingDays: '215 Days', threeMonthChange: '+3.88%', isPositive: true, style: 'Balanced' },
+    { name: 'BIK World Tech', id: 'IPFD2254', returnRate: '0.20%', holdingDays: '15 Days', threeMonthChange: '-0.45%', isPositive: true, style: 'Growth' },
+    { name: 'JPM GEHI USD', id: 'IPFD3540', returnRate: '4.41%', holdingDays: '180 Days', threeMonthChange: '+1.20%', isPositive: true, style: 'Growth' },
+  ];
+
+  const styleTrustHoldings = [
+    { name: 'CR Trust FirstEagle No.1', id: 'T1C477', returnRate: '20.91%', holdingDays: '630 Days', threeMonthChange: '+7.15%', isPositive: true, style: 'Balanced' },
+    { name: 'CR Trust FirstEagle No.8', id: 'T1E648', returnRate: '-1.49%', holdingDays: '92 Days', threeMonthChange: '+0.55%', isPositive: false, style: 'Balanced' },
+  ];
+
+  const assetClassesData = [
+    { label: 'Domestic Equity', pct: 42.14, val: '3,959,446.47', color: '#0ea5e9', currency: '¥' }, 
+    { label: 'Commodities & Others', pct: 35.42, val: '3,328,154.55', color: '#da0011', currency: '¥' }, 
+    { label: 'Overseas Market', pct: 15.15, val: '200,486.70', color: '#10b981', currency: '$' }, 
+    { label: 'Domestic Fixed Income', pct: 7.29, val: '684,689.66', color: '#64748b', currency: '¥' }, 
+  ];
+
+  const concentrationSectorData = [
+    { label: 'Cycle', pct: 58.33, val: '5,480,538.78', color: '#da0011', currency: '¥' },
+    { label: 'Manufacturing', pct: 10.64, val: '999,707.40', color: '#0ea5e9', currency: '¥' },
+    { label: 'Utilities', pct: 10.21, val: '959,305.69', color: '#10b981', currency: '¥' },
+    { label: 'Others', pct: 20.82, val: '1,956,165.06', color: '#64748b', currency: '¥' },
+  ];
+
+  const concentrationIndustryData = [
+    { label: 'Financials', pct: 31.92, val: '2,999,122.20', color: '#da0011', currency: '¥' },
+    { label: 'Materials', pct: 21.91, val: '2,058,637.31', color: '#0ea5e9', currency: '¥' },
+    { label: 'Technology', pct: 10.64, val: '999,707.40', color: '#f59e0b', currency: '¥' },
+    { label: 'Healthcare', pct: 10.21, val: '959,305.69', color: '#10b981', currency: '¥' },
+    { label: 'Energy', pct: 7.57, val: '711,257.99', color: '#8b5cf6', currency: '¥' },
+    { label: 'Consumer', pct: 7.57, val: '711,257.99', color: '#ec4899', currency: '¥' },
+    { label: 'Others', pct: 10.18, val: '956,457.66', color: '#94a3b8', currency: '¥' },
+  ];
+
+  const concentrationTopHoldingsData = [
+    { label: 'Tencent', pct: 4.82, val: '452,875.00', color: '#da0011', currency: '¥' },
+    { label: 'Alibaba', pct: 3.94, val: '370,192.00', color: '#0ea5e9', currency: '¥' },
+    { label: 'TSMC', pct: 3.67, val: '344,824.00', color: '#f59e0b', currency: '¥' },
+    { label: 'Meituan', pct: 2.88, val: '270,597.00', color: '#10b981', currency: '¥' },
+    { label: 'Ping An', pct: 2.54, val: '238,652.00', color: '#8b5cf6', currency: '¥' },
+    { label: 'BYD', pct: 2.31, val: '217,042.00', color: '#ec4899', currency: '¥' },
+    { label: 'Others', pct: 79.84, val: '7,501,564.24', color: '#94a3b8', currency: '¥' },
+  ];
+
+  const holdingsData = [
+    { name: 'BGF WLD MIN', code: 'IPFD3004', returnRate: '21.76%', holdingDays: '458 Days', threeMonthChange: '+8.45%', assetClass: 'Overseas Market', mktValue: 939574.62, weight: '9.77%', sectorWeight: { 'Cycle': '7.57%', 'Others': '2.43%' }, industryWeight: { 'Consumer': '7.57%', 'Financials': '0.50%', 'Others': '1.93%' }, topStocks: [{ name: 'Alibaba', contribution: '2.00%' }, { name: 'Meituan', contribution: '1.88%' }] },
+    { name: 'BGF ENERGY', code: 'IPFD3145', returnRate: '-0.86%', holdingDays: '124 Days', threeMonthChange: '-2.15%', assetClass: 'Overseas Market', mktValue: 939574.62, weight: '10.02%', sectorWeight: { 'Cycle': '7.57%', 'Others': '2.43%' }, industryWeight: { 'Energy': '7.57%', 'Financials': '0.35%', 'Others': '2.08%' }, topStocks: [{ name: 'BYD', contribution: '1.31%' }] },
+    { name: 'BGF GOLD', code: 'IPFD3131', returnRate: '18.53%', holdingDays: '562 Days', threeMonthChange: '+12.30%', assetClass: 'Commodities & Others', mktValue: 1348936.56, weight: '23.17%', sectorWeight: { 'Cycle': '21.91%', 'Others': '3.09%' }, industryWeight: { 'Materials': '21.91%', 'Others': '3.09%' }, topStocks: [{ name: 'TSMC', contribution: '1.67%' }] },
+    { name: 'BLK Sys GE High Inc', code: 'IPFD3116', returnRate: '42.56%', holdingDays: '890 Days', threeMonthChange: '+5.12%', assetClass: 'Domestic Equity', mktValue: 1137489.55, weight: '12.56%', sectorWeight: { 'Cycle': '10.64%', 'Others': '1.36%' }, industryWeight: { 'Financials': '10.64%', 'Others': '1.36%' }, topStocks: [{ name: 'Ping An', contribution: '2.54%' }, { name: 'Tencent', contribution: '1.50%' }] },
+    { name: 'BLK Sys GE High Inc', code: 'IPFD2116', returnRate: '11.10%', holdingDays: '215 Days', threeMonthChange: '+3.88%', assetClass: 'Domestic Equity', mktValue: 1126489.55, weight: '11.33%', sectorWeight: { 'Cycle': '10.64%', 'Others': '1.36%' }, industryWeight: { 'Financials': '10.64%', 'Others': '1.36%' }, topStocks: [{ name: 'Tencent', contribution: '1.50%' }] },
+    { name: 'BIK World Tech', code: 'IPFD2254', returnRate: '0.20%', holdingDays: '15 Days', threeMonthChange: '-0.45%', assetClass: 'Domestic Equity', mktValue: 1033532.09, weight: '12.56%', sectorWeight: { 'Manufacturing': '10.64%', 'Others': '0.36%' }, industryWeight: { 'Technology': '10.64%', 'Others': '0.36%' }, topStocks: [{ name: 'TSMC', contribution: '2.00%' }, { name: 'Alibaba', contribution: '1.94%' }] },
+    { name: 'JPM GEHI USD', code: 'IPFD3540', returnRate: '4.41%', holdingDays: '180 Days', threeMonthChange: '+1.20%', assetClass: 'Domestic Equity', mktValue: 859305.69, weight: '10.21%', sectorWeight: { 'Utilities': '10.21%' }, industryWeight: { 'Healthcare': '10.21%' }, topStocks: [{ name: 'BYD', contribution: '1.00%' }] },
+    { name: 'CR Trust FirstEagle No.1', code: 'T1C477', returnRate: '20.91%', holdingDays: '630 Days', threeMonthChange: '+7.15%', assetClass: 'Commodities & Others', mktValue: 459451.99, weight: '4.89%', sectorWeight: { 'Others': '4.89%' }, industryWeight: { 'Financials': '4.89%' }, topStocks: [{ name: 'Tencent', contribution: '1.82%' }, { name: 'Meituan', contribution: '1.00%' }] },
+    { name: 'CR Trust FirstEagle No.8', code: 'T1E648', returnRate: '-1.49%', holdingDays: '92 Days', threeMonthChange: '+0.55%', assetClass: 'Domestic Fixed Income', mktValue: 460391.57, weight: '10.90%', sectorWeight: { 'Others': '4.90%' }, industryWeight: { 'Others': '4.90%' }, topStocks: [] },
+  ];
+
+  const [activeDetailTab, setActiveDetailTab] = useState('Style');
+  const [showGoalTracking, setShowGoalTracking] = useState(false);
+  const [selectedAssetClass, setSelectedAssetClass] = useState<string | null>(null);
+  const [holdingStyle, setHoldingStyle] = useState('Balanced');
+  const [concentrationTab, setConcentrationTab] = useState('Sector');
+  const [selectedConcentrationItem, setSelectedConcentrationItem] = useState<string | null>(null);
+
+  const geographiesData = [
+    { label: 'China', pct: 71.63, val: '6,730,173.03', color: '#da0011', currency: '¥' }, 
+    { label: 'Remaining types', pct: 13.99, val: '1,314,464.90', color: '#ebeef0', currency: '¥' }, 
+    { label: 'United States', pct: 8.26, val: '109,308.26', color: '#0ea5e9', currency: '$' }, 
+    { label: 'Hong Kong, China', pct: 2.99, val: '308,717.37', color: '#f43f5e', currency: 'HK$' }, 
+    { label: 'Germany', pct: 1.60, val: '19,780.52', color: '#8b5cf6', currency: '€' }, 
+    { label: 'Taiwan, China', pct: 1.53, val: '668,627.53', color: '#f59e0b', currency: 'NT$' }, 
+  ];
+
+  const topStockHoldings = [
+    { name: 'Tencent Holdings Ltd', ticker: '0700.HK', sector: 'Communication Services', weight: '4.82%', value: '452,875.00', dailyChange: '+1.35%', marketCap: 'Large Cap', region: 'Hong Kong' },
+    { name: 'Alibaba Group Holding Ltd', ticker: 'BABA.US', sector: 'Consumer Cyclical', weight: '3.94%', value: '370,192.00', dailyChange: '+2.12%', marketCap: 'Large Cap', region: 'United States' },
+    { name: 'TSMC', ticker: '2330.TW', sector: 'Technology', weight: '3.67%', value: '344,824.00', dailyChange: '-0.45%', marketCap: 'Large Cap', region: 'Taiwan' },
+    { name: 'Meituan', ticker: '3690.HK', sector: 'Consumer Cyclical', weight: '2.88%', value: '270,597.00', dailyChange: '+3.21%', marketCap: 'Large Cap', region: 'Hong Kong' },
+    { name: 'Ping An Insurance', ticker: '2318.HK', sector: 'Financial Services', weight: '2.54%', value: '238,652.00', dailyChange: '+0.67%', marketCap: 'Large Cap', region: 'Hong Kong' },
+    { name: 'BYD Company Ltd', ticker: '1211.HK', sector: 'Consumer Cyclical', weight: '2.31%', value: '217,042.00', dailyChange: '+4.56%', marketCap: 'Large Cap', region: 'Hong Kong' },
+  ];
 
   const GoalIcons = {
     Wealth: (
@@ -245,78 +349,6 @@ const FundInsightDetails: React.FC<FundInsightDetailsProps> = ({ onBack }) => {
       </svg>
     )
   };
-
-  const productAllocation = [
-    { label: 'Cash/Deposits', pct: 52.17, val: '80,773,627.08', color: '#64748b' }, // Medium Slate
-    { label: 'Funds&Related', pct: 30.35, val: '46,995,624.56', color: '#da0011' }, // HSBC Red
-    { label: 'QDII Structured Note', pct: 6.56, val: '10,154,696.62', color: '#38bdf8' }, // Light Sky
-    { label: 'QDII Bond', pct: 5.84, val: '9,044,989.92', color: '#fb7185' }, // Light Rose
-    { label: 'Structured Deposits', pct: 5.01, val: '7,760,775.21', color: '#a78bfa' }, // Light Violet
-    { label: 'AMP&Trust', pct: 0.05, val: '78,200.00', color: '#34d399' }, // Light Emerald
-    { label: 'WMP', pct: 0.01, val: '15,000.00', color: '#fbbf24' }, // Light Amber
-    { label: 'Insurance', pct: 0.01, val: '12,556.66', color: '#818cf8' }, // Light Indigo
-  ];
-
-  const currencyAllocation = [
-    { label: 'CNY', pct: 65.91, val: '102,054,149.96', color: '#da0011' }, // HSBC Red
-    { label: 'USD', pct: 28.27, val: '43,764,015.03', color: '#38bdf8' }, // Light Sky
-    { label: 'HKD', pct: 3.17, val: '4,907,550.23', color: '#fb7185' }, // Light Rose
-    { label: 'EUR', pct: 2.56, val: '3,968,627.11', color: '#a78bfa' }, // Light Violet
-    { label: 'AUD', pct: 0.09, val: '141,127.71', color: '#34d399' }, // Light Emerald
-  ];
-
-  const assetClassesData = [
-    { label: 'Liquidity', pct: 53.71, val: '83,162,130.96', color: '#64748b' }, // Slate
-    { label: 'China Equity', pct: 25.71, val: '39,808,189.35', color: '#da0011' }, // HSBC Red
-    { label: 'Global Investment Grade Bond', pct: 8.53, val: '13,207,465.59', color: '#0ea5e9' }, // Sky Blue
-    { label: 'China Fixed Income', pct: 6.04, val: '9,352,062.39', color: '#10b981' }, // Emerald
-    { label: 'Remaining types', pct: 4.42, val: '6,843,737.79', color: '#ebeef0' }, // Light Grey
-    { label: 'Developed Market Equity', pct: 1.59, val: '2,461,883.97', color: '#8b5cf6' }, // Violet
-  ];
-
-  const geographiesData = [
-    { label: 'China', pct: 71.63, val: '110,908,647.20', color: '#da0011' }, // HSBC Red
-    { label: 'Remaining types', pct: 13.99, val: '21,661,482.26', color: '#ebeef0' }, // Light Grey
-    { label: 'United States', pct: 8.26, val: '12,789,409.83', color: '#0ea5e9' }, // Sky Blue
-    { label: 'Hong Kong, China', pct: 2.99, val: '4,629,580.55', color: '#f43f5e' }, // Rose
-    { label: 'Germany', pct: 1.60, val: '2,477,367.52', color: '#8b5cf6' }, // Violet
-    { label: 'Taiwan, China', pct: 1.53, val: '2,368,982.69', color: '#f59e0b' }, // Amber
-  ];
-
-  const sectorsData = [
-    { label: 'Consumer Cyclical', pct: 8.71, color: '#f43f5e' }, // Rose
-    { label: 'Financial Services', pct: 4.35, color: '#0ea5e9' }, // Sky Blue
-    { label: 'Healthcare', pct: 3.12, color: '#10b981' }, // Emerald
-    { label: 'Communication Services', pct: 2.61, color: '#8b5cf6' }, // Violet
-    { label: 'Technology', pct: 2.33, color: '#f59e0b' }, // Amber
-    { label: 'Remaining types', pct: 78.87, color: '#ebeef0' }, // Light Grey
-  ];
-
-  const holdingsData = [
-    { name: 'HSBC Global Consumer Equity Fund', code: '003412', sector: 'Consumer Cyclical', dailyChange: '+2.88%', weight: '8.71%', periodChange: '1.56%', periodTrend: 'up' },
-    { name: 'BlackRock World Financials', code: '005671', sector: 'Financial Services', dailyChange: '+0.25%', weight: '4.35%', periodChange: '0.41%', periodTrend: 'up' },
-    { name: 'JPM Global Healthcare Fund', code: '012945', sector: 'Healthcare', dailyChange: '-1.09%', weight: '3.12%', periodChange: '3.93%', periodTrend: 'up' },
-    { name: 'Fidelity Global Communications', code: '067820', sector: 'Communication Services', dailyChange: '-0.81%', weight: '2.61%', periodChange: '0.03%', periodTrend: 'up' },
-    { name: 'Allianz Global High Tech', code: '098165', sector: 'Technology', dailyChange: '-0.16%', weight: '2.33%', periodChange: '0.92%', periodTrend: 'down' },
-    { name: 'HSBC Multi-Asset Income Fund', code: '011223', sector: 'Remaining types', dailyChange: '+0.52%', weight: '35.42%', periodChange: '2.33%', periodTrend: 'down' },
-    { name: 'Schroders ISF Global Bond', code: '009112', sector: 'Fixed Income', dailyChange: '+2.31%', weight: '15.15%', periodChange: '2.92%', periodTrend: 'down' },
-    { name: 'PIMCO Income Fund', code: '004456', sector: 'Fixed Income', dailyChange: '+1.16%', weight: '10.54%', periodChange: '3.44%', periodTrend: 'down' },
-    { name: 'HSBC China Growth Fund', code: '008776', sector: 'Equity', dailyChange: '+0.91%', weight: '12.14%', periodChange: 'New', periodTrend: 'none' },
-    { name: 'Invesco Asian Equity', code: '002134', sector: 'Equity', dailyChange: '+1.45%', weight: '5.63%', periodChange: '0.88%', periodTrend: 'up' },
-  ];
-
-  const topStockHoldings = [
-    { name: 'Tencent Holdings Ltd', ticker: '0700.HK', sector: 'Communication Services', weight: '4.82%', value: '7,463,027.66', dailyChange: '+1.35%', marketCap: 'Large Cap', region: 'Hong Kong' },
-    { name: 'Alibaba Group Holding Ltd', ticker: 'BABA.US', sector: 'Consumer Cyclical', weight: '3.94%', value: '6,100,476.33', dailyChange: '+2.12%', marketCap: 'Large Cap', region: 'United States' },
-    { name: 'TSMC', ticker: '2330.TW', sector: 'Technology', weight: '3.67%', value: '5,682,381.99', dailyChange: '-0.45%', marketCap: 'Large Cap', region: 'Taiwan' },
-    { name: 'Meituan', ticker: '3690.HK', sector: 'Consumer Cyclical', weight: '2.88%', value: '4,459,260.86', dailyChange: '+3.21%', marketCap: 'Large Cap', region: 'Hong Kong' },
-    { name: 'Ping An Insurance', ticker: '2318.HK', sector: 'Financial Services', weight: '2.54%', value: '3,932,821.12', dailyChange: '+0.67%', marketCap: 'Large Cap', region: 'Hong Kong' },
-    { name: 'BYD Company Ltd', ticker: '1211.HK', sector: 'Consumer Cyclical', weight: '2.31%', value: '3,576,707.27', dailyChange: '+4.56%', marketCap: 'Large Cap', region: 'Hong Kong' },
-    { name: 'China Construction Bank', ticker: '0939.HK', sector: 'Financial Services', weight: '2.19%', value: '3,390,884.55', dailyChange: '-0.12%', marketCap: 'Large Cap', region: 'Hong Kong' },
-    { name: 'Kweichow Moutai', ticker: '600519.SS', sector: 'Consumer Defensive', weight: '1.98%', value: '3,065,733.21', dailyChange: '+0.89%', marketCap: 'Large Cap', region: 'China' },
-    { name: 'CATL', ticker: '300750.SZ', sector: 'Technology', weight: '1.76%', value: '2,725,103.44', dailyChange: '+1.23%', marketCap: 'Large Cap', region: 'China' },
-    { name: 'JD.com Inc', ticker: 'JD.US', sector: 'Consumer Cyclical', weight: '1.55%', value: '2,399,949.33', dailyChange: '-0.78%', marketCap: 'Large Cap', region: 'United States' },
-  ];
 
   const renderGoalTab = () => {
     const pots = [
@@ -488,7 +520,21 @@ const FundInsightDetails: React.FC<FundInsightDetailsProps> = ({ onBack }) => {
             {detailTabs.map((tab) => (
               <button
                 key={tab}
-                onClick={() => setActiveDetailTab(tab)}
+                onClick={() => {
+                  setActiveDetailTab(tab);
+                  // Default selection logic
+                  if (tab === 'Classes') {
+                    const maxItem = [...assetClassesData].sort((a, b) => b.pct - a.pct)[0];
+                    if (maxItem) setSelectedAssetClass(maxItem.label);
+                  } else if (tab === 'Concentration') {
+                    let data = [];
+                    if (concentrationTab === 'Sector') data = concentrationSectorData;
+                    else if (concentrationTab === 'Industry') data = concentrationIndustryData;
+                    else if (concentrationTab === 'Top Holdings') data = concentrationTopHoldingsData;
+                    const maxItem = [...data].sort((a, b) => b.pct - a.pct)[0];
+                    if (maxItem) setSelectedConcentrationItem(maxItem.label);
+                  }
+                }}
                 className={`flex-1 py-4 text-[12px] font-bold relative whitespace-nowrap transition-colors ${activeDetailTab === tab ? 'text-[#da0011]' : 'text-[#767676]'}`}
               >
                 {tab}
@@ -498,21 +544,107 @@ const FundInsightDetails: React.FC<FundInsightDetailsProps> = ({ onBack }) => {
           </div>
 
           <div className="p-5">
-            {activeDetailTab === 'Allocation' && (
-              <div className="animate-fade-in space-y-10">
-                <AllocationSection 
-                  title="Product Allocation" 
-                  data={productAllocation} 
-                  useTreemap={true} 
-                  insight="Your portfolio is heavily weighted in Cash/Deposits (52.17%), providing high liquidity. Consider diversifying into structured products to enhance long-term yield."
-                />
+            {activeDetailTab === 'Style' && (
+              <div className="animate-fade-in space-y-5">
+                {/* Simplified Insight Box */}
+                <div className="flex items-center gap-2 p-3 bg-blue-50/50 border border-blue-100 rounded-[3px]">
+                  <div className="p-0.5 bg-blue-500 rounded-full flex-shrink-0">
+                    <svg className="w-2 h-2 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <p className="text-[10px] text-blue-800 font-medium">
+                    Maintain <span className="font-bold">70% Balanced</span> core while increasing Growth for long-term upside.
+                  </p>
+                </div>
 
-                <AllocationSection 
-                  title="Currency Allocation" 
-                  data={currencyAllocation} 
-                  useTreemap={true} 
-                  insight="Dominant exposure in CNY (65.91%) ensures local stability. We recommend increasing USD/HKD holdings to hedge against domestic currency fluctuations."
-                />
+                {/* Style Toggle Buttons */}
+                <div className="flex gap-2.5 bg-[#f4f5f6] p-1 rounded-full w-fit">
+                  {[
+                    { id: 'Value', label: 'Value', pct: '15%' },
+                    { id: 'Balanced', label: 'Balanced', pct: '70%' },
+                    { id: 'Growth', label: 'Growth', pct: '15%' }
+                  ].map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setHoldingStyle(tab.id)}
+                      className={`px-5 py-2 rounded-full flex flex-col items-center transition-all ${
+                        holdingStyle === tab.id 
+                        ? 'bg-white text-[#da0011] shadow-sm' 
+                        : 'text-[#767676] hover:text-[#da0011]/60'
+                      }`}
+                    >
+                      <span className="text-[10px] font-bold uppercase leading-tight">{tab.label}</span>
+                      <span className="text-[9px] font-bold opacity-80">{tab.pct}</span>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Fund List Header */}
+                <div className="flex text-[9px] font-bold text-[#767676] uppercase tracking-tighter pb-2 border-b border-gray-100 mt-4">
+                  <div className="w-[45%]">Holding</div>
+                  <div className="w-[30%] text-center">Holding Return Rate</div>
+                  <div className="w-[25%] text-right pr-1">3M Change</div>
+                </div>
+
+                {/* Main Style Holdings */}
+                <div className="space-y-4">
+                  {styleHoldings
+                    .filter(h => h.style === holdingStyle)
+                    .sort((a, b) => parseFloat(b.returnRate) - parseFloat(a.returnRate)) // Sorting style holdings as well
+                    .map((item, idx) => {
+                    const isRatePositive = !item.returnRate.startsWith('-');
+                    const is3MPositive = !item.threeMonthChange.startsWith('-');
+                    return (
+                    <div key={idx} className="flex items-center py-1 border-b border-gray-50 last:border-0 pb-3">
+                      <div className="w-[45%] text-[11px] font-bold text-[#1e1e1e] leading-tight pr-2">
+                        {item.name}
+                        <div className="text-[9px] text-[#767676] font-medium mt-0.5">{item.id}</div>
+                      </div>
+                      <div className="w-[30%] text-center">
+                        <div className={`text-[11px] font-bold ${isRatePositive ? 'text-[#da0011]' : 'text-[#008c4a]'}`}>
+                          {item.returnRate}
+                        </div>
+                        <div className="text-[9px] text-[#767676] font-medium mt-0.5">{item.holdingDays}</div>
+                      </div>
+                      <div className="w-[25%] text-right pr-1">
+                        <div className={`text-[11px] font-bold ${is3MPositive ? 'text-[#da0011]' : 'text-[#008c4a]'}`}>
+                          {item.threeMonthChange}
+                        </div>
+                      </div>
+                    </div>
+                  );})}
+                </div>
+
+                {/* Trust Section if applicable */}
+                {styleTrustHoldings.filter(h => h.style === holdingStyle).length > 0 && (
+                  <div className="mt-4 space-y-4">
+                    {styleTrustHoldings
+                      .filter(h => h.style === holdingStyle)
+                      .map((item, idx) => {
+                      const isRatePositive = !item.returnRate.startsWith('-');
+                      const is3MPositive = !item.threeMonthChange.startsWith('-');
+                      return (
+                      <div key={`trust-${idx}`} className="flex items-center py-1 border-b border-gray-50 last:border-0 pb-3">
+                        <div className="w-[45%] text-[11px] font-bold text-[#1e1e1e] leading-tight pr-2">
+                          {item.name}
+                          <div className="text-[9px] text-[#767676] font-medium mt-0.5">{item.id}</div>
+                        </div>
+                        <div className="w-[30%] text-center">
+                          <div className={`text-[11px] font-bold ${isRatePositive ? 'text-[#da0011]' : 'text-[#008c4a]'}`}>
+                            {item.returnRate}
+                          </div>
+                          <div className="text-[9px] text-[#767676] font-medium mt-0.5">{item.holdingDays}</div>
+                        </div>
+                        <div className="w-[25%] text-right pr-1">
+                          <div className={`text-[11px] font-bold ${is3MPositive ? 'text-[#da0011]' : 'text-[#008c4a]'}`}>
+                            {item.threeMonthChange}
+                          </div>
+                        </div>
+                      </div>
+                    );})}
+                  </div>
+                )}
                 
                 <div className="pt-6 border-t border-[#f4f5f6] space-y-2">
                   <div className="flex justify-between items-center text-[10px] text-[#1e1e1e]">
@@ -530,16 +662,68 @@ const FundInsightDetails: React.FC<FundInsightDetailsProps> = ({ onBack }) => {
               </div>
             )}
 
-            {activeDetailTab === 'Asset Classes' && (
+            {activeDetailTab === 'Classes' && (
               <div className="animate-fade-in space-y-12">
                 <AllocationSection 
                   title="Asset Classes" 
                   data={assetClassesData} 
                   showVal={true} 
                   useTreemap={true} 
-                  insight="Liquidity (53.71%) is your primary asset class. Consider reallocating a portion to Global Fixed Income for better risk-adjusted returns."
+                  insight="Your portfolio is mainly in Domestic Equity (42.14%). Consider increasing exposure to Overseas Markets for better global diversification."
+                  onItemClick={(label) => setSelectedAssetClass(label === selectedAssetClass ? null : label)}
+                  selectedItem={selectedAssetClass}
+                  hideTitle={true}
                 />
 
+                {selectedAssetClass && (
+                  <div className="border-t border-[#f4f5f6] pt-4 animate-fade-in" style={{ marginTop: '0.5rem' }}>
+                    <div className="flex flex-start gap-2 mb-4 px-1">
+                      <div 
+                        className="w-1 h-4 mt-0.5" 
+                        style={{ backgroundColor: assetClassesData.find(a => a.label === selectedAssetClass)?.color || '#da0011' }}
+                      ></div>
+                      <h4 className="text-[11px] font-bold text-[#1e1e1e] uppercase tracking-tight">{selectedAssetClass} Holdings</h4>
+                    </div>
+                    
+                    <div className="flex text-[9px] font-bold text-[#767676] mb-4 uppercase tracking-tighter px-1 border-b border-gray-100 pb-2">
+                      <div className="w-[45%]">Holding</div>
+                      <div className="w-[30%] text-center">Holding Return Rate</div>
+                      <div className="w-[25%] text-right pr-1">3M Change</div>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      {holdingsData
+                        .filter(f => f.assetClass === selectedAssetClass)
+                        .sort((a, b) => parseFloat(b.weight) - parseFloat(a.weight))
+                        .map((fund, idx) => {
+                          const isRatePositive = !fund.returnRate.startsWith('-');
+                          const is3MPositive = !fund.threeMonthChange.startsWith('-');
+                          return (
+                            <div key={idx} className="flex items-center text-[11px] px-1 group active:bg-gray-50 transition-colors py-1 border-b border-gray-50 last:border-0 pb-3">
+                              <div className="w-[45%] flex flex-col">
+                                <span className="font-bold text-[#1e1e1e] line-clamp-1">{fund.name}</span>
+                                <span className="text-[9px] text-[#767676] mt-0.5 font-medium">{fund.code}</span>
+                              </div>
+                              <div className="w-[30%] text-center">
+                                <div className={`text-[11px] font-bold ${isRatePositive ? 'text-[#da0011]' : 'text-[#008c4a]'}`}>
+                                  {fund.returnRate}
+                                </div>
+                                <div className="text-[9px] text-[#767676] font-medium mt-0.5">{fund.holdingDays}</div>
+                              </div>
+                              <div className="w-[25%] text-right pr-1 font-bold">
+                                <span className={is3MPositive ? 'text-[#da0011]' : 'text-[#008c4a]'}>
+                                  {fund.threeMonthChange}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Geographies analysis shows regional distribution of assets */}
+                {/* 
                 <AllocationSection 
                   title="Geographies" 
                   data={geographiesData} 
@@ -547,189 +731,258 @@ const FundInsightDetails: React.FC<FundInsightDetailsProps> = ({ onBack }) => {
                   useTreemap={true} 
                   insight="Your portfolio is 71.63% concentrated in China. Expand exposure to Developed Markets like the US and Germany to reduce regional risk."
                 />
+                */}
 
-                {/* Footnote matching image */}
-                <div className="flex gap-2 p-3 bg-gray-50 rounded-[2px] border border-gray-100 mt-6">
-                   <div className="w-4 h-4 bg-orange-400 rounded-full flex items-center justify-center text-white text-[10px] shrink-0 font-bold">!</div>
-                   <p className="text-[8.5px] text-[#767676] leading-relaxed italic">
-                     The data of the global asset allocation section are provided by Morningstar Information (ShenZhen) Co. Ltd. Please be aware that the proportion in the above figure is rounded up to two decimal places.
-                   </p>
-                </div>
               </div>
             )}
 
-            {activeDetailTab === 'Sectors' && (
-              <div className="animate-fade-in space-y-8">
-                <AllocationSection 
-                  title="Equity Sector Allocation" 
-                  data={sectorsData} 
-                  showVal={false} 
-                  useTreemap={true} 
-                  insight='High concentration in "Remaining types" (78.87%). Diversify into Technology and Healthcare sectors to capture growth in emerging industries.'
-                />
-
-                {/* Fund List Header */}
-                <div className="mt-8 border-t border-[#f4f5f6] pt-6">
-                  <div className="flex text-[10px] font-bold text-[#767676] mb-4 uppercase tracking-tighter px-1">
-                    <div className="w-[45%]">Fund</div>
-                    <div className="w-[15%] text-center">1D Var</div>
-                    <div className="w-[15%] text-center">Weight</div>
-                    <div className="w-[25%] text-right pr-1">Change vs L/P</div>
-                  </div>
-                  
-                  {/* Fund List Items */}
-                  <div className="space-y-6">
-                    {holdingsData.map((fund, idx) => (
-                      <div key={idx} className="flex items-center text-[11px] px-1 group active:bg-gray-50 transition-colors">
-                        <div className="w-[45%] flex flex-col">
-                          <span className="font-bold text-[#1e1e1e] line-clamp-1">{fund.name}</span>
-                          <span className="text-[9px] text-[#767676] mt-0.5">{fund.code} | {fund.sector}</span>
-                        </div>
-                        <div className={`w-[15%] text-center font-bold ${fund.dailyChange.startsWith('+') ? 'text-[#da0011]' : fund.dailyChange.startsWith('-') ? 'text-[#008c4a]' : 'text-[#1e1e1e]'}`}>
-                          {fund.dailyChange}
-                        </div>
-                        <div className="w-[15%] text-center font-bold text-[#1e1e1e]">
-                          {fund.weight}
-                        </div>
-                        <div className="w-[25%] text-right flex items-center justify-end pr-1 font-bold text-[#1e1e1e]">
-                          {fund.periodChange}
-                          {fund.periodTrend === 'up' && (
-                            <span className="text-[#da0011] ml-1 text-[8px]">▲</span>
-                          )}
-                          {fund.periodTrend === 'down' && (
-                            <span className="text-[#008c4a] ml-1 text-[8px]">▼</span>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {activeDetailTab === 'Top Holdings' && (
+            {activeDetailTab === 'Concentration' && (
               <div className="animate-fade-in space-y-6">
-                {/* Summary Card */}
-                <div className="bg-gradient-to-br from-[#fcfcfc] to-white border border-[#ebeef0] rounded-[3px] p-5 shadow-sm">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="w-1 h-3.5 bg-[#da0011]"></div>
-                    <h3 className="text-[11px] font-bold text-[#333] uppercase tracking-tight">Top Stock Holdings Overview</h3>
-                  </div>
-                  <p className="text-[10px] text-[#767676] leading-relaxed">
-                    These are the individual equity positions with the highest concentration across your entire portfolio. Top holdings represent {topStockHoldings.reduce((sum, h) => sum + parseFloat(h.weight), 0).toFixed(2)}% of your total assets.
-                  </p>
+                {/* Concentration Toggle Buttons */}
+                <div className="flex gap-2 p-1 bg-[#f4f5f6] rounded-[4px]">
+                  {[
+                    { id: 'Sector', label: 'Sector' },
+                    { id: 'Industry', label: 'Industry' },
+                    { id: 'Top Holdings', label: 'Top Holdings' }
+                  ].map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => {
+                        setConcentrationTab(tab.id);
+                        // Default to the highest percentage item in the new tab
+                        let data = [];
+                        if (tab.id === 'Sector') data = concentrationSectorData;
+                        else if (tab.id === 'Industry') data = concentrationIndustryData;
+                        else if (tab.id === 'Top Holdings') data = concentrationTopHoldingsData;
+                        const maxItem = [...data].sort((a, b) => b.pct - a.pct)[0];
+                        if (maxItem) setSelectedConcentrationItem(maxItem.label);
+                      }}
+                      className={`flex-1 py-2 text-[11px] font-bold rounded-[3px] transition-all ${
+                        concentrationTab === tab.id 
+                        ? 'bg-white text-[#da0011] shadow-sm' 
+                        : 'text-[#767676]'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
                 </div>
 
-                {/* Holdings List Header */}
-                <div className="space-y-1">
-                  <div className="flex text-[9px] font-bold text-[#767676] uppercase tracking-tighter px-2 pb-2 border-b border-[#f4f5f6]">
-                    <div className="w-[40%]">Stock / Ticker</div>
-                    <div className="w-[15%] text-center">Weight</div>
-                    <div className="w-[20%] text-right">Value (CNY)</div>
-                    <div className="w-[15%] text-right">1D Change</div>
-                    <div className="w-[10%] text-right pr-1">Region</div>
-                  </div>
-                  
-                  {/* Holdings Items */}
-                  <div className="space-y-0">
-                    {topStockHoldings.map((stock, idx) => (
-                      <div 
-                        key={idx} 
-                        className="flex items-center text-[10px] px-2 py-4 border-b border-[#f4f5f6] last:border-0 hover:bg-gray-50/50 transition-colors group"
-                      >
-                        <div className="w-[40%] flex flex-col">
-                          <span className="font-bold text-[#1e1e1e] leading-tight line-clamp-1">{stock.name}</span>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-[8px] text-[#767676] font-medium">{stock.ticker}</span>
-                            <span className="text-[7px] text-[#999] bg-gray-100 px-1.5 py-0.5 rounded">{stock.sector}</span>
+                {concentrationTab === 'Sector' && (
+                  <div className="space-y-6 animate-fade-in">
+                    <AllocationSection 
+                      title="Sector Concentration" 
+                      data={[...concentrationSectorData].sort((a, b) => b.pct - a.pct)} 
+                      showVal={true} 
+                      useTreemap={true} 
+                      insight="Your portfolio is heavily biased towards Cyclical sectors (58.33%), which may increase volatility during economic shifts."
+                      onItemClick={(label) => setSelectedConcentrationItem(label === selectedConcentrationItem ? null : label)}
+                      selectedItem={selectedConcentrationItem}
+                      hideTitle={true}
+                    />
+
+                    {selectedConcentrationItem && (
+                      <div className="border-t border-[#f4f5f6] pt-4 animate-fade-in">
+                        <div className="flex flex-start gap-2 mb-4 px-1">
+                          <div 
+                            className="w-1 h-4 mt-0.5" 
+                            style={{ backgroundColor: concentrationSectorData.find(s => s.label === selectedConcentrationItem)?.color || '#da0011' }}
+                          ></div>
+                          <div className="flex flex-col">
+                            <h4 className="text-[11px] font-bold text-[#1e1e1e] uppercase tracking-tight">
+                              {selectedConcentrationItem} is heavily held by the following funds:
+                            </h4>
+                            <p className="text-[9px] text-[#999] font-medium mt-0.5 leading-tight italic">
+                              High concentration indicates this fund allocates a significant portion of its equity to this sector.
+                            </p>
                           </div>
                         </div>
-                        <div className="w-[15%] text-center">
-                          <span className="font-bold text-[#1e1e1e] text-[11px]">{stock.weight}</span>
+                        
+                        <div className="flex text-[9px] font-bold text-[#767676] mb-4 uppercase tracking-tighter px-1 border-b border-gray-100 pb-2">
+                          <div className="w-[40%]">Holdings</div>
+                          <div className="w-[35%] text-center">Weight / Amount</div>
+                          <div className="w-[25%] text-right pr-1">Concentration</div>
                         </div>
-                        <div className="w-[20%] text-right">
-                          <span className="font-bold text-[#1e1e1e]">{parseFloat(stock.value.replace(/,/g, '')).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
-                        </div>
-                        <div className="w-[15%] text-right">
-                          <span className={`font-bold text-[10px] ${
-                            stock.dailyChange.startsWith('+') ? 'text-[#da0011]' : 
-                            stock.dailyChange.startsWith('-') ? 'text-[#008c4a]' : 
-                            'text-[#1e1e1e]'
-                          }`}>
-                            {stock.dailyChange}
-                          </span>
-                        </div>
-                        <div className="w-[10%] text-right pr-1">
-                          <span className="text-[8px] text-[#767676] font-medium">{stock.region}</span>
+                        
+                        <div className="space-y-4">
+                          {holdingsData
+                            .filter(f => (f.sectorWeight as any)[selectedConcentrationItem!])
+                            .sort((a, b) => parseFloat((b.sectorWeight as any)[selectedConcentrationItem!]) - parseFloat((a.sectorWeight as any)[selectedConcentrationItem!]))
+                            .map((fund, idx) => (
+                              <div key={idx} className="flex items-center text-[11px] px-1 py-1 border-b border-gray-50 last:border-0 pb-3">
+                                <div className="w-[40%] flex flex-col">
+                                  <span className="font-bold text-[#1e1e1e] line-clamp-1">{fund.name}</span>
+                                  <span className="text-[9px] text-[#767676] mt-0.5 font-medium">{fund.code}</span>
+                                </div>
+                                <div className="w-[35%] text-center">
+                                  <div className="font-bold text-[#1e1e1e]">{((fund.mktValue / totalAssetValue) * 100).toFixed(2)}%</div>
+                                  <div className="text-[9px] text-[#767676] font-medium mt-0.5">¥{fund.mktValue.toLocaleString()}</div>
+                                </div>
+                                <div className="w-[25%] text-right pr-1 font-bold" style={{ color: concentrationSectorData.find(s => s.label === selectedConcentrationItem)?.color || '#da0011' }}>
+                                  {(fund.sectorWeight as any)[selectedConcentrationItem!]}
+                                </div>
+                              </div>
+                            ))}
                         </div>
                       </div>
-                    ))}
+                    )}
                   </div>
-                </div>
+                )}
 
-                {/* Geographic Distribution */}
-                <div className="pt-6 border-t border-[#f4f5f6]">
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="w-1 h-3.5 bg-[#da0011]"></div>
-                    <h4 className="text-[11px] font-bold text-[#1e1e1e] uppercase tracking-tight">Regional Concentration</h4>
-                  </div>
-                  <div className="grid grid-cols-3 gap-3">
-                    {[
-                      { region: 'Hong Kong', count: 5, pct: '52.4%' },
-                      { region: 'China', count: 3, pct: '31.2%' },
-                      { region: 'Others', count: 2, pct: '16.4%' }
-                    ].map((item, idx) => (
-                      <div key={idx} className="bg-white border border-[#ebeef0] rounded-[3px] p-3 text-center">
-                        <div className="text-[9px] text-[#767676] mb-1 uppercase tracking-tight">{item.region}</div>
-                        <div className="text-[13px] font-bold text-[#1e1e1e]">{item.pct}</div>
-                        <div className="text-[8px] text-[#999] mt-0.5">{item.count} stocks</div>
+                {concentrationTab === 'Industry' && (
+                  <div className="space-y-6 animate-fade-in">
+                    <AllocationSection 
+                      title="Industry Concentration" 
+                      data={[...concentrationIndustryData].sort((a, b) => b.pct - a.pct)} 
+                      showVal={true} 
+                      useTreemap={true} 
+                      insight="Financials and Materials dominate your industry exposure. Consider diversifying into defensive sectors like Utilities."
+                      onItemClick={(label) => setSelectedConcentrationItem(label === selectedConcentrationItem ? null : label)}
+                      selectedItem={selectedConcentrationItem}
+                      hideTitle={true}
+                    />
+
+                    {selectedConcentrationItem && (
+                      <div className="border-t border-[#f4f5f6] pt-4 animate-fade-in">
+                        <div className="flex flex-start gap-2 mb-4 px-1">
+                          <div 
+                            className="w-1 h-4 mt-0.5" 
+                            style={{ backgroundColor: concentrationIndustryData.find(i => i.label === selectedConcentrationItem)?.color || '#da0011' }}
+                          ></div>
+                          <div className="flex flex-col">
+                            <h4 className="text-[11px] font-bold text-[#1e1e1e] uppercase tracking-tight">
+                              {selectedConcentrationItem} is heavily held by the following funds:
+                            </h4>
+                            <p className="text-[9px] text-[#999] font-medium mt-0.5 leading-tight italic">
+                              High concentration indicates this fund allocates a significant portion of its equity to this industry.
+                            </p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex text-[9px] font-bold text-[#767676] mb-4 uppercase tracking-tighter px-1 border-b border-gray-100 pb-2">
+                          <div className="w-[40%]">Holdings</div>
+                          <div className="w-[35%] text-center">Weight / Amount</div>
+                          <div className="w-[25%] text-right pr-1">Concentration</div>
+                        </div>
+                        
+                        <div className="space-y-4">
+                          {holdingsData
+                            .filter(f => (f.industryWeight as any)[selectedConcentrationItem!])
+                            .sort((a, b) => parseFloat((b.industryWeight as any)[selectedConcentrationItem!]) - parseFloat((a.industryWeight as any)[selectedConcentrationItem!]))
+                            .map((fund, idx) => (
+                              <div key={idx} className="flex items-center text-[11px] px-1 py-1 border-b border-gray-50 last:border-0 pb-3">
+                                <div className="w-[40%] flex flex-col">
+                                  <span className="font-bold text-[#1e1e1e] line-clamp-1">{fund.name}</span>
+                                  <span className="text-[9px] text-[#767676] mt-0.5 font-medium">{fund.code}</span>
+                                </div>
+                                <div className="w-[35%] text-center">
+                                  <div className="font-bold text-[#1e1e1e]">{((fund.mktValue / totalAssetValue) * 100).toFixed(2)}%</div>
+                                  <div className="text-[9px] text-[#767676] font-medium mt-0.5">¥{fund.mktValue.toLocaleString()}</div>
+                                </div>
+                                <div className="w-[25%] text-right pr-1 font-bold" style={{ color: concentrationIndustryData.find(i => i.label === selectedConcentrationItem)?.color || '#da0011' }}>
+                                  {(fund.industryWeight as any)[selectedConcentrationItem!]}
+                                </div>
+                              </div>
+                            ))}
+                        </div>
                       </div>
-                    ))}
+                    )}
                   </div>
-                </div>
+                )}
 
-                {/* Risk & Recommendation */}
-                <div className="bg-[#fcfcfc] border border-[#ebeef0] rounded-[3px] p-5">
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="w-1 h-3.5 bg-[#da0011]"></div>
-                    <h4 className="text-[11px] font-bold text-[#1e1e1e] uppercase tracking-widest">Holdings Analysis</h4>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1.5">
-                        <span className="text-[10px] font-bold text-[#1e1e1e] uppercase tracking-tight">Concentration Risk</span>
+                {concentrationTab === 'Top Holdings' && (
+                  <div className="space-y-6 animate-fade-in">
+                    <AllocationSection 
+                      title="Top Holdings Concentration" 
+                      data={[...concentrationTopHoldingsData].sort((a, b) => b.pct - a.pct)} 
+                      showVal={true} 
+                      useTreemap={true} 
+                      insight="Your top 6 stocks represent 20.16% of total assets. Monitor these closely for idiosyncratic risk."
+                      onItemClick={(label) => setSelectedConcentrationItem(label === selectedConcentrationItem ? null : label)}
+                      selectedItem={selectedConcentrationItem}
+                      hideTitle={true}
+                    />
+
+                    {selectedConcentrationItem && (
+                      <div className="border-t border-[#f4f5f6] pt-4 animate-fade-in">
+                        <div className="flex flex-start gap-2 mb-4 px-1">
+                          <div 
+                            className="w-1 h-4 mt-0.5" 
+                            style={{ backgroundColor: concentrationTopHoldingsData.find(t => t.label === selectedConcentrationItem)?.color || '#da0011' }}
+                          ></div>
+                          <div className="flex flex-col">
+                            <h4 className="text-[11px] font-bold text-[#1e1e1e] uppercase tracking-tight">
+                              {selectedConcentrationItem === 'Others' ? 'Other Assets Breakdown' : `Funds holding ${selectedConcentrationItem}:`}
+                            </h4>
+                            <p className="text-[9px] text-[#999] font-medium mt-0.5 leading-tight italic">
+                              {selectedConcentrationItem === 'Others' 
+                                ? "These funds contain secondary positions and cash not listed in the top holdings."
+                                : `High concentration indicates ${selectedConcentrationItem} is a core position for these funds.`}
+                            </p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex text-[9px] font-bold text-[#767676] mb-4 uppercase tracking-tighter px-1 border-b border-gray-100 pb-2">
+                          <div className="w-[40%]">Holdings</div>
+                          <div className="w-[35%] text-center">Weight / Amount</div>
+                          <div className="w-[25%] text-right pr-1">Concentration</div>
+                        </div>
+                        
+                        <div className="space-y-4">
+                          {holdingsData
+                            .filter(f => {
+                              if (selectedConcentrationItem === 'Others') {
+                                // If "Others" is selected, show funds where top stocks don't account for 100% of the weight
+                                const totalWeight = (f.mktValue / totalAssetValue) * 100;
+                                const topStocksWeight = (f.topStocks as any[]).reduce((sum, s) => sum + parseFloat(s.contribution), 0);
+                                return totalWeight > topStocksWeight;
+                              }
+                              return f.topStocks.some(s => s.name === selectedConcentrationItem);
+                            })
+                            .sort((a, b) => {
+                              const getContrib = (fund: any) => {
+                                if (selectedConcentrationItem === 'Others') {
+                                  const totalWeight = (fund.mktValue / totalAssetValue) * 100;
+                                  const topStocksWeight = (fund.topStocks as any[]).reduce((sum, s) => sum + parseFloat(s.contribution), 0);
+                                  return totalWeight - topStocksWeight;
+                                }
+                                return parseFloat(fund.topStocks.find((s: any) => s.name === selectedConcentrationItem)?.contribution || '0');
+                              };
+                              return getContrib(b) - getContrib(a);
+                            })
+                            .map((fund, idx) => {
+                              let concentrationValue = '';
+                              const themeColor = concentrationTopHoldingsData.find(t => t.label === selectedConcentrationItem)?.color || '#da0011';
+                              
+                              if (selectedConcentrationItem === 'Others') {
+                                const totalWeight = (fund.mktValue / totalAssetValue) * 100;
+                                const topStocksWeight = (fund.topStocks as any[]).reduce((sum, s) => sum + parseFloat(s.contribution), 0);
+                                concentrationValue = (totalWeight - topStocksWeight).toFixed(2) + '%';
+                              } else {
+                                concentrationValue = fund.topStocks.find(s => s.name === selectedConcentrationItem)?.contribution || '0%';
+                              }
+
+                              return (
+                                <div key={idx} className="flex items-center text-[11px] px-1 py-1 border-b border-gray-50 last:border-0 pb-3">
+                                  <div className="w-[40%] flex flex-col">
+                                    <span className="font-bold text-[#1e1e1e] line-clamp-1">{fund.name}</span>
+                                    <span className="text-[9px] text-[#767676] mt-0.5 font-medium">{fund.code}</span>
+                                  </div>
+                                  <div className="w-[35%] text-center">
+                                    <div className="font-bold text-[#1e1e1e]">{((fund.mktValue / totalAssetValue) * 100).toFixed(2)}%</div>
+                                    <div className="text-[9px] text-[#767676] font-medium mt-0.5">¥{fund.mktValue.toLocaleString()}</div>
+                                  </div>
+                                  <div className="w-[25%] text-right pr-1 font-bold" style={{ color: themeColor }}>
+                                    {concentrationValue}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                        </div>
                       </div>
-                      <p className="text-[11px] text-[#767676] leading-relaxed">
-                        Your top 10 stock positions account for <span className="text-[#1e1e1e] font-bold">27.64%</span> of total assets, with significant exposure to <span className="text-[#1e1e1e] font-bold">Consumer Cyclical</span> and <span className="text-[#1e1e1e] font-bold">Technology</span> sectors in Greater China markets.
-                      </p>
-                    </div>
-
-                    <div className="p-3">
-                      <div className="flex items-center gap-2 mb-1.5">
-                        <span className="text-[10px] font-bold text-[#1e1e1e] uppercase tracking-tight">Portfolio Insight</span>
-                      </div>
-                      <ul className="text-[10px] text-[#333] space-y-1.5 leading-tight">
-                        <li className="flex gap-2">
-                          <span className="text-[#767676]">•</span>
-                          <span>Consider rebalancing if any single stock exceeds <span className="font-bold">5% threshold</span> to manage idiosyncratic risk.</span>
-                        </li>
-                        <li className="flex gap-2">
-                          <span className="text-[#767676]">•</span>
-                          <span>Enhance diversification by adding exposure to <span className="font-bold">US/European large-caps</span> and <span className="font-bold">Healthcare sector</span>.</span>
-                        </li>
-                      </ul>
-                    </div>
+                    )}
                   </div>
-                </div>
-
-                {/* Disclaimer */}
-                <div className="flex gap-2 p-3 bg-gray-50 rounded-[2px] border border-gray-100">
-                  <div className="w-4 h-4 bg-orange-400 rounded-full flex items-center justify-center text-white text-[10px] shrink-0 font-bold">!</div>
-                  <p className="text-[8.5px] text-[#767676] leading-relaxed italic">
-                    Stock holdings data is aggregated from underlying fund positions and may include indirect exposure. Values are calculated based on latest available NAV and exchange rates as of 30 December 2025.
-                  </p>
-                </div>
+                )}
               </div>
             )}
           </div>

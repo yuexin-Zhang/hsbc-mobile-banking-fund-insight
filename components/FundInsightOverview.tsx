@@ -772,7 +772,7 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
           
         </div>
         {/* Holding Performance Table */}
-        {PortfolioTable()}
+        {/* {PortfolioTable()} */}
 
         {/* Asset Allocation Comparison Section */}
         {/* {renderSAAComparison()} */}
