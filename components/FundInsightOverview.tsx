@@ -1,6 +1,16 @@
 
-import React, { useState, useRef, useMemo, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import AIAssistant from './AIAssistant';
+import { Chart as ChartJS, Title, Tooltip, Legend, CategoryScale, LinearScale } from 'chart.js';
+import { TreemapController, TreemapElement } from 'chartjs-chart-treemap';
+import HoldingsOverview from './overview/HoldingsOverview';
+import StyleTab from './tabs/StyleTab';
+import PerformanceTab from './tabs/PerformanceTab';
+import ClassesTab from './tabs/ClassesTab';
+import ConcentrationTab from './tabs/ConcentrationTab';
+import FloatingAIButton from './FloatingAIButton';
+
+ChartJS.register(Title, Tooltip, Legend, CategoryScale, LinearScale, TreemapController, TreemapElement);
 
 interface FundInsightOverviewProps {
   onBack: () => void;
@@ -9,18 +19,9 @@ interface FundInsightOverviewProps {
 }
 
 const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoToDetails, onGoToSimulation }) => {
-  const [hoverData, setHoverData] = useState<{ index: number; x: number; y: number } | null>(null);
   const [showToast, setShowToast] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [dateRange, setDateRange] = useState<'1M' | '3M' | '6M' | '1Y' | 'YTD'>('1Y');
   const [showAIAssistant, setShowAIAssistant] = useState(false);
-
-  // State for line visibility toggles
-  const [visibleLines, setVisibleLines] = useState({
-    fund: true,
-    saa: true
-  });
-  const [holdingStyle, setHoldingStyle] = useState<'All' | 'Value' | 'Balanced' | 'Growth'>('All');
+  const [activeDetailTab, setActiveDetailTab] = useState('Performance');
 
   const colors = {
     red: '#da0011',
@@ -83,6 +84,70 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
     { class: 'Others', saa: 0.9, current: 0.9, comp: '0.0%', lpChange: '0.0%', trend: 'none' },
   ];
 
+  const totalAssetValue = 9395746.24;
+  const detailTabs = ['Performance', 'Style', 'Classes', 'Concentration'];
+
+  const styleHoldings = [
+    { name: 'BGF WLD MIN', id: 'IPFD3004', returnRate: '21.76%', holdingDays: '458 Days', threeMonthChange: '+8.45%', isPositive: true, style: 'Value' },
+    { name: 'BGF ENERGY', id: 'IPFD3145', returnRate: '-0.86%', holdingDays: '124 Days', threeMonthChange: '-2.15%', isPositive: false, style: 'Growth' },
+    { name: 'BGF GOLD', id: 'IPFD3131', returnRate: '18.53%', holdingDays: '562 Days', threeMonthChange: '+12.30%', isPositive: true, style: 'Balanced' },
+    { name: 'BLK Sys GE High Inc', id: 'IPFD3116', returnRate: '42.56%', holdingDays: '890 Days', threeMonthChange: '+5.12%', isPositive: true, style: 'Value' },
+    { name: 'BLK Sys GE High Inc', id: 'IPFD2116', returnRate: '11.10%', holdingDays: '215 Days', threeMonthChange: '+3.88%', isPositive: true, style: 'Balanced' },
+    { name: 'BIK World Tech', id: 'IPFD2254', returnRate: '0.20%', holdingDays: '15 Days', threeMonthChange: '-0.45%', isPositive: true, style: 'Growth' },
+    { name: 'JPM GEHI USD', id: 'IPFD3540', returnRate: '4.41%', holdingDays: '180 Days', threeMonthChange: '+1.20%', isPositive: true, style: 'Growth' },
+  ];
+
+  const styleTrustHoldings = [
+    { name: 'CR Trust FirstEagle No.1', id: 'T1C477', returnRate: '20.91%', holdingDays: '630 Days', threeMonthChange: '+7.15%', isPositive: true, style: 'Balanced' },
+    { name: 'CR Trust FirstEagle No.8', id: 'T1E648', returnRate: '-1.49%', holdingDays: '92 Days', threeMonthChange: '+0.55%', isPositive: false, style: 'Balanced' },
+  ];
+
+  const assetClassesData = [
+    { label: 'Domestic Equity', pct: 42.14, val: '3,959,446.47', color: '#0ea5e9', currency: '¥' }, 
+    { label: 'Commodities & Others', pct: 35.42, val: '3,328,154.55', color: '#da0011', currency: '¥' }, 
+    { label: 'Overseas Market', pct: 15.15, val: '200,486.70', color: '#10b981', currency: '$' }, 
+    { label: 'Domestic Fixed Income', pct: 7.29, val: '684,689.66', color: '#64748b', currency: '¥' }, 
+  ];
+
+  const concentrationSectorData = [
+    { label: 'Cycle', pct: 58.33, val: '5,480,538.78', color: '#da0011', currency: '¥' },
+    { label: 'Manufacturing', pct: 10.64, val: '999,707.40', color: '#0ea5e9', currency: '¥' },
+    { label: 'Utilities', pct: 10.21, val: '959,305.69', color: '#10b981', currency: '¥' },
+    { label: 'Others', pct: 20.82, val: '1,956,165.06', color: '#64748b', currency: '¥' },
+  ];
+
+  const concentrationIndustryData = [
+    { label: 'Financials', pct: 31.92, val: '2,999,122.20', color: '#da0011', currency: '¥' },
+    { label: 'Materials', pct: 21.91, val: '2,058,637.31', color: '#0ea5e9', currency: '¥' },
+    { label: 'Technology', pct: 10.64, val: '999,707.40', color: '#f59e0b', currency: '¥' },
+    { label: 'Healthcare', pct: 10.21, val: '959,305.69', color: '#10b981', currency: '¥' },
+    { label: 'Energy', pct: 7.57, val: '711,257.99', color: '#8b5cf6', currency: '¥' },
+    { label: 'Consumer', pct: 7.57, val: '711,257.99', color: '#ec4899', currency: '¥' },
+    { label: 'Others', pct: 10.18, val: '956,457.66', color: '#94a3b8', currency: '¥' },
+  ];
+
+  const concentrationTopHoldingsData = [
+    { label: 'Tencent', pct: 4.82, val: '452,875.00', color: '#da0011', currency: '¥' },
+    { label: 'Alibaba', pct: 3.94, val: '370,192.00', color: '#0ea5e9', currency: '¥' },
+    { label: 'TSMC', pct: 3.67, val: '344,824.00', color: '#f59e0b', currency: '¥' },
+    { label: 'Meituan', pct: 2.88, val: '270,597.00', color: '#10b981', currency: '¥' },
+    { label: 'Ping An', pct: 2.54, val: '238,652.00', color: '#8b5cf6', currency: '¥' },
+    { label: 'BYD', pct: 2.31, val: '217,042.00', color: '#ec4899', currency: '¥' },
+    { label: 'Others', pct: 79.84, val: '7,501,564.24', color: '#94a3b8', currency: '¥' },
+  ];
+
+  const holdingsData = [
+    { name: 'BGF WLD MIN', code: 'IPFD3004', returnRate: '21.76%', holdingDays: '458 Days', threeMonthChange: '+8.45%', assetClass: 'Overseas Market', mktValue: 939574.62, weight: '9.77%', sectorWeight: { 'Cycle': '7.57%', 'Others': '2.43%' }, industryWeight: { 'Consumer': '7.57%', 'Financials': '0.50%', 'Others': '1.93%' }, topStocks: [{ name: 'Alibaba', contribution: '2.00%' }, { name: 'Meituan', contribution: '1.88%' }] },
+    { name: 'BGF ENERGY', code: 'IPFD3145', returnRate: '-0.86%', holdingDays: '124 Days', threeMonthChange: '-2.15%', assetClass: 'Overseas Market', mktValue: 939574.62, weight: '10.02%', sectorWeight: { 'Cycle': '7.57%', 'Others': '2.43%' }, industryWeight: { 'Energy': '7.57%', 'Financials': '0.35%', 'Others': '2.08%' }, topStocks: [{ name: 'BYD', contribution: '1.31%' }] },
+    { name: 'BGF GOLD', code: 'IPFD3131', returnRate: '18.53%', holdingDays: '562 Days', threeMonthChange: '+12.30%', assetClass: 'Commodities & Others', mktValue: 1348936.56, weight: '23.17%', sectorWeight: { 'Cycle': '21.91%', 'Others': '3.09%' }, industryWeight: { 'Materials': '21.91%', 'Others': '3.09%' }, topStocks: [{ name: 'TSMC', contribution: '1.67%' }] },
+    { name: 'BLK Sys GE High Inc', code: 'IPFD3116', returnRate: '42.56%', holdingDays: '890 Days', threeMonthChange: '+5.12%', assetClass: 'Domestic Equity', mktValue: 1137489.55, weight: '12.56%', sectorWeight: { 'Cycle': '10.64%', 'Others': '1.36%' }, industryWeight: { 'Financials': '10.64%', 'Others': '1.36%' }, topStocks: [{ name: 'Ping An', contribution: '2.54%' }, { name: 'Tencent', contribution: '1.50%' }] },
+    { name: 'BLK Sys GE High Inc', code: 'IPFD2116', returnRate: '11.10%', holdingDays: '215 Days', threeMonthChange: '+3.88%', assetClass: 'Domestic Equity', mktValue: 1126489.55, weight: '11.33%', sectorWeight: { 'Cycle': '10.64%', 'Others': '1.36%' }, industryWeight: { 'Financials': '10.64%', 'Others': '1.36%' }, topStocks: [{ name: 'Tencent', contribution: '1.50%' }] },
+    { name: 'BIK World Tech', code: 'IPFD2254', returnRate: '0.20%', holdingDays: '15 Days', threeMonthChange: '-0.45%', assetClass: 'Domestic Equity', mktValue: 1033532.09, weight: '12.56%', sectorWeight: { 'Manufacturing': '10.64%', 'Others': '0.36%' }, industryWeight: { 'Technology': '10.64%', 'Others': '0.36%' }, topStocks: [{ name: 'TSMC', contribution: '2.00%' }, { name: 'Alibaba', contribution: '1.94%' }] },
+    { name: 'JPM GEHI USD', code: 'IPFD3540', returnRate: '4.41%', holdingDays: '180 Days', threeMonthChange: '+1.20%', assetClass: 'Domestic Equity', mktValue: 859305.69, weight: '10.21%', sectorWeight: { 'Utilities': '10.21%' }, industryWeight: { 'Healthcare': '10.21%' }, topStocks: [{ name: 'BYD', contribution: '1.00%' }] },
+    { name: 'CR Trust FirstEagle No.1', code: 'T1C477', returnRate: '20.91%', holdingDays: '630 Days', threeMonthChange: '+7.15%', assetClass: 'Commodities & Others', mktValue: 459451.99, weight: '4.89%', sectorWeight: { 'Others': '4.89%' }, industryWeight: { 'Financials': '4.89%' }, topStocks: [{ name: 'Tencent', contribution: '1.82%' }, { name: 'Meituan', contribution: '1.00%' }] },
+    { name: 'CR Trust FirstEagle No.8', code: 'T1E648', returnRate: '-1.49%', holdingDays: '92 Days', threeMonthChange: '+0.55%', assetClass: 'Domestic Fixed Income', mktValue: 460391.57, weight: '10.90%', sectorWeight: { 'Others': '4.90%' }, industryWeight: { 'Others': '4.90%' }, topStocks: [] },
+  ];
+
   const handleExport = () => {
     setShowToast(true);
   };
@@ -94,566 +159,6 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
     }
   }, [showToast]);
 
-  const toggleLine = (line: 'fund' | 'saa') => {
-    setVisibleLines(prev => ({ ...prev, [line]: !prev[line] }));
-  };
-
-  const getFilteredChartData = () => {
-    const allData = chartData;
-    // Data goes from 2025-01 to 2026-01 (latest date in data)
-    // Total 36 data points across 13 months
-    
-    let startIndex = 0;
-    
-    switch (dateRange) {
-      case '1M':
-        // Last 1 month (2026-01): last 3 data points
-        startIndex = Math.max(0, allData.length - 3);
-        break;
-      case '3M':
-        // Last 3 months (2025-11, 2025-12, 2026-01): ~12 data points
-        // Find first data point from 2025-11
-        startIndex = allData.findIndex(d => d.date >= '2025-11');
-        if (startIndex === -1) startIndex = Math.max(0, allData.length - 12);
-        break;
-      case '6M':
-        // Last 6 months (2025-08 to 2026-01): ~18 data points
-        // Find first data point from 2025-08
-        startIndex = allData.findIndex(d => d.date >= '2025-08');
-        if (startIndex === -1) startIndex = Math.max(0, allData.length - 18);
-        break;
-      case '1Y':
-        // Last 1 year (all data from 2025-01 to 2026-01)
-        startIndex = 0;
-        break;
-      case 'YTD':
-        // Year to date (from 2026-01-01 to current)
-        // Since we're in Jan 2026, this should only show 2026-01 data
-        startIndex = allData.findIndex(d => d.date.startsWith('2026-01'));
-        if (startIndex === -1) startIndex = 0;
-        break;
-    }
-    
-    return allData.slice(startIndex);
-  };
-
-  const renderLineChart = () => {
-    const filteredData = getFilteredChartData();
-    // Dynamically calculate Y-axis scale based on current data range
-    const maxValue = Math.max(...filteredData.map(d => Math.max(d.fund, d.saa)));
-    const minValue = Math.min(...filteredData.map(d => Math.min(d.fund, d.saa)));
-    // If min value is > 0, Y-axis starts from 0
-    const yMax = maxValue;
-    const yMin = Math.min(minValue, 0);
-    const yTicks = [
-      Math.ceil(yMax),
-      Math.ceil(yMax * 0.8),
-      Math.ceil(yMax * 0.6),
-      Math.ceil(yMax * 0.4),
-      Math.ceil(yMax * 0.2),
-      yMin >= 0 ? 0 : Math.floor(yMin * 0.5)
-    ].filter(val => val !== undefined && !isNaN(val)).sort((a, b) => b - a); // Ensure unique and sorted
-      
-    // Recalculate X-axis ticks based on filtered data to ensure correct months
-    const getXTicksIndices = () => {
-      if (filteredData.length <= 1) return [0];
-      
-      // Get unique months from filtered data
-      const monthsMap = new Map<string, number>();
-      filteredData.forEach((d, idx) => {
-        if (!monthsMap.has(d.date)) {
-          monthsMap.set(d.date, idx);
-        }
-      });
-      
-      const uniqueMonths = Array.from(monthsMap.entries());
-      
-      // For different ranges, show appropriate month labels
-      if (dateRange === '1M' || dateRange === 'YTD') {
-        // Show first and last
-        return [0, filteredData.length - 1];
-      } else if (dateRange === '3M') {
-        // Show 3-4 labels distributed across 3 months
-        const indices = uniqueMonths.map(([_, idx]) => idx);
-        if (indices.length <= 4) return [...indices, filteredData.length - 1].filter((v, i, a) => a.indexOf(v) === i).sort((a, b) => a - b);
-        // Select evenly distributed indices
-        return [indices[0], indices[Math.floor(indices.length / 2)], filteredData.length - 1];
-      } else if (dateRange === '6M') {
-        // Show 4-6 labels distributed across 6 months
-        const indices = uniqueMonths.map(([_, idx]) => idx);
-        if (indices.length <= 6) return [...indices, filteredData.length - 1].filter((v, i, a) => a.indexOf(v) === i).sort((a, b) => a - b);
-        // Select evenly distributed indices
-        return [indices[0], indices[Math.floor(indices.length / 3)], indices[Math.floor(indices.length * 2 / 3)], filteredData.length - 1];
-      } else {
-        // 1Y: Show more labels
-        const indices = uniqueMonths.map(([_, idx]) => idx);
-        if (indices.length <= 8) return [...indices].sort((a, b) => a - b);
-        // Select evenly distributed indices every 2-3 months
-        const step = Math.floor(indices.length / 6);
-        return indices.filter((_, i) => i % step === 0 || i === indices.length - 1).sort((a, b) => a - b);
-      }
-    };
-    
-    const xTicksIndices = getXTicksIndices();
-  
-    const getYForFiltered = (val: number) => 100 - ((val - yMin) / (yMax - yMin)) * 100;
-    const getXForFiltered = (index: number) => (index / Math.max(1, filteredData.length - 1)) * 100;
-  
-    const getSmoothPathForFiltered = (data: typeof chartData, key: 'all' | 'fund' | 'saa') => {
-      if (data.length < 2) return '';
-      const points = data.map((d, i) => ({ x: getXForFiltered(i), y: getYForFiltered(d[key]) }));
-      let d = `M ${points[0].x},${points[0].y}`;
-      for (let i = 0; i < points.length - 1; i++) {
-        const p0 = points[i];
-        const p1 = points[i + 1];
-        const cp1x = p0.x + (p1.x - p0.x) / 2;
-        d += ` C ${cp1x},${p0.y} ${cp1x},${p1.y} ${p1.x},${p1.y}`;
-      }
-      return d;
-    };
-  
-    return (
-      <div className="relative w-full mt-4 bg-white rounded-[3px] pb-2">
-        {/* Toggle Controls */}
-        <div className="flex flex-wrap gap-2 mb-3">
-          <button 
-            onClick={() => toggleLine('fund')}
-            className={`flex items-center gap-1.5 px-2 py-0.5 rounded-[2px] border text-[9px] font-bold transition-all ${visibleLines.fund ? 'bg-red-50 border-red-100 text-[#fca5a5]' : 'bg-gray-50 border-gray-200 text-gray-400 opacity-60'}`}
-          >
-            <div className={`w-1.5 h-0.5 ${visibleLines.fund ? 'bg-[#fca5a5]' : 'bg-gray-300'}`}></div>
-            Fund
-          </button>
-          <button 
-            onClick={() => toggleLine('saa')}
-            className={`flex items-center gap-1.5 px-2 py-0.5 rounded-[2px] border text-[9px] font-bold transition-all ${visibleLines.saa ? 'bg-blue-50 border-blue-200 text-blue-600' : 'bg-gray-50 border-gray-200 text-gray-400 opacity-60'}`}
-          >
-            <div className={`w-1.5 h-0.5 ${visibleLines.saa ? 'bg-blue-500' : 'bg-gray-300'}`}></div>
-            SAA
-          </button>
-        </div>
-  
-        <div className="flex h-32 relative">
-          <div className="w-8 relative h-full pointer-events-none flex flex-col justify-between">
-            {yTicks.map((val) => (
-              <div key={val} className="absolute right-1 text-[7px] font-medium text-[#767676] -translate-y-1/2" style={{ top: `${getYForFiltered(val)}%` }}>
-                {val > 0 ? `+${val}%` : `${val}%`}
-              </div>
-            ))}
-          </div>
-            
-          <div className="flex-1 relative h-full" onMouseMove={(e) => {
-              if (!containerRef.current || filteredData.length === 0) return;
-              const rect = containerRef.current.getBoundingClientRect();
-              const x = e.clientX - rect.left;
-              const index = Math.min(filteredData.length - 1, Math.max(0, Math.round((x / rect.width) * (filteredData.length - 1))));
-              setHoverData({ index, x, y: getYForFiltered(filteredData[index].fund) });
-            }} onMouseLeave={() => setHoverData(null)} ref={containerRef}>
-                          
-            <div className="absolute inset-0 flex flex-col justify-between opacity-[0.03] pointer-events-none">
-              {yTicks.map((_, i) => <div key={i} className="border-t border-black w-full"></div>)}
-            </div>
-              
-            <svg className="absolute inset-0 w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 100 100">
-              <line x1="0" y1="0" x2="0" y2="100" stroke={colors.axis} strokeWidth="0.5" />
-              <line x1="0" y1="100" x2="100" y2="100" stroke={colors.axis} strokeWidth="0.5" />
-                            
-              {visibleLines.fund && (
-                <path d={getSmoothPathForFiltered(filteredData, 'fund')} fill="none" stroke={colors.lightRed} strokeWidth="1.2" strokeLinecap="round" />
-              )}
-                            
-              {visibleLines.saa && (
-                <path d={getSmoothPathForFiltered(filteredData, 'saa')} fill="none" stroke="#3b82f6" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="3 2" />
-              )}
-            
-              {/* Drawdown area - highlighting the maximum drawdown period */}
-              {visibleLines.fund && (() => {
-                // Find peak and trough for max drawdown
-                let peakIndex = 0;
-                let troughIndex = 0;
-                let maxDrawdown = 0;
-                
-                for (let i = 0; i < filteredData.length; i++) {
-                  for (let j = i + 1; j < filteredData.length; j++) {
-                    const drawdown = ((filteredData[i].fund - filteredData[j].fund) / filteredData[i].fund) * 100;
-                    if (drawdown > maxDrawdown) {
-                      maxDrawdown = drawdown;
-                      peakIndex = i;
-                      troughIndex = j;
-                    }
-                  }
-                }
-                
-                if (maxDrawdown > 5) { // Only show if drawdown is significant
-                  const peakX = getXForFiltered(peakIndex);
-                  const peakY = getYForFiltered(filteredData[peakIndex].fund);
-                  const troughX = getXForFiltered(troughIndex);
-                  const troughY = getYForFiltered(filteredData[troughIndex].fund);
-                  
-                  // Create path for drawdown area (vertical rectangle)
-                  return (
-                    <>
-                      <path 
-                        d={`M ${peakX},${peakY} L ${troughX},${troughY} L ${troughX},${peakY} Z`}
-                        fill="#34d399" 
-                        fillOpacity="0.15" 
-                        stroke="#34d399" 
-                        strokeWidth="0.8" 
-                        strokeDasharray="3 2" 
-                      />
-                      {/* Vertical line at peak */}
-                      <line 
-                        x1={peakX} 
-                        y1={peakY} 
-                        x2={peakX} 
-                        y2="100" 
-                        stroke="#34d399" 
-                        strokeWidth="0.5" 
-                        strokeDasharray="2 2" 
-                        opacity="0.6"
-                      />
-                      {/* Vertical line at trough */}
-                      <line 
-                        x1={troughX} 
-                        y1={troughY} 
-                        x2={troughX} 
-                        y2="100" 
-                        stroke="#34d399" 
-                        strokeWidth="0.5" 
-                        strokeDasharray="2 2" 
-                        opacity="0.6"
-                      />
-                    </>
-                  );
-                }
-                return null;
-              })()}
-            
-              {hoverData && <line x1={getXForFiltered(hoverData.index)} y1="0" x2={getXForFiltered(hoverData.index)} y2="100" stroke={colors.muted} strokeWidth="0.5" strokeDasharray="3 2" />}
-            </svg>
-              
-            <div className="absolute top-[108%] left-0 right-0 pointer-events-none">
-              {xTicksIndices.map((idx, i) => (
-                <div key={`tick-${i}-${idx}`} className="absolute text-[7px] font-medium text-[#767676] -translate-x-1/2" style={{ left: `${getXForFiltered(idx)}%` }}>
-                  {filteredData[idx]?.date.substring(2) || ''}
-                </div>
-              ))}
-            </div>
-  
-            {hoverData && (
-              <div className="absolute z-20 bg-[#1e1e1e]/90 shadow-2xl rounded-[2px] p-1.5 text-white pointer-events-none transform -translate-x-1/2 -translate-y-full mb-2" style={{ left: `${getXForFiltered(hoverData.index)}%`, top: `${getYForFiltered(filteredData[hoverData.index]?.fund || 0)}%` }}>
-                <div className="text-[7px] opacity-60 text-center leading-none mb-1">{filteredData[hoverData.index]?.date}</div>
-                <div className="space-y-0.5">
-                  {visibleLines.fund && <div className="flex justify-between items-center gap-2 text-[8px]"><span className="opacity-70">Fund:</span><span className="font-bold text-red-200">{filteredData[hoverData.index]?.fund.toFixed(2)}%</span></div>}
-                  {visibleLines.saa && <div className="flex justify-between items-center gap-2 text-[8px]"><span className="opacity-70">SAA:</span><span className="font-bold text-blue-300">{filteredData[hoverData.index]?.saa.toFixed(2)}%</span></div>}
-                  {/* Show only fund drawdown when hovering over any period where fund value drops */}
-                  {hoverData.index > 0 && filteredData[hoverData.index]?.fund < filteredData[hoverData.index - 1]?.fund && (
-                    <div className="flex justify-between items-center gap-2 text-[8px] border-t border-white/20 pt-0.5 mt-0.5">
-                      <span className="opacity-70">Drawdown:</span>
-                      <span className="font-bold text-emerald-400">{(filteredData[hoverData.index - 1]?.fund - filteredData[hoverData.index]?.fund).toFixed(2)}%</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-  
-        {/* Date Range Filter */}
-        <div className="flex flex-wrap gap-2 pt-3 mt-3 border-gray-100 justify-center">
-          {(['1M', '3M', '6M', '1Y', 'YTD'] as const).map((range) => (
-            <button
-              key={range}
-              onClick={() => setDateRange(range)}
-              className={`px-3 py-1.5 rounded-[2px] text-[9px] font-bold transition-all border ${
-                dateRange === range
-                  ? 'bg-[#da0011] text-white border-[#da0011]'
-                  : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
-              }`}
-            >
-              {range}
-            </button>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  const renderSAAComparison = () => {
-    return (
-      <div className="bg-white rounded-[3px] p-5 border border-[#ebeef0] shadow-sm">
-        <div className="flex items-center justify-between mb-5">
-          <div className="flex items-center gap-2">
-            <div className="w-1 h-4 bg-[#da0011] rounded-full"></div>
-            <h3 className="text-[10px] font-bold text-[#1e1e1e] uppercase">Asset Allocation vs SAA</h3>
-          </div>
-          <div className="flex items-center gap-1.5 bg-gray-100 px-2 py-0.5 rounded-full">
-            <span className="text-[9px] font-bold text-[#767676]">Adventurous</span>
-            <div className="w-3.5 h-3.5 bg-[#767676] rounded-full flex items-center justify-center text-white text-[8px] font-bold">4</div>
-          </div>
-        </div>
-
-        {/* Legend */}
-        <div className="flex gap-4 mb-4 justify-center">
-          <div className="flex items-center gap-1.5">
-            <div className="w-2.5 h-2.5 bg-[#da0011]"></div>
-            <span className="text-[9px] text-[#767676] font-medium">SAA</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-2.5 h-2.5 bg-[#dcddde]"></div>
-            <span className="text-[9px] text-[#767676] font-medium">Your Allocation</span>
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          {/* Header Row */}
-          <div className="flex text-[9px] font-bold text-[#767676] uppercase tracking-tighter pb-2 border-b border-gray-100">
-            <div className="w-[35%]">Asset Class</div>
-            <div className="w-[35%] text-center">Percentage</div>
-            <div className="w-[15%] text-center">Comp</div>
-            <div className="w-[15%] text-right pr-1">vs L/P</div>
-          </div>
-
-          {/* Data Rows */}
-          {saaComparisonData.map((item, idx) => (
-            <div key={idx} className="flex items-center py-0.5">
-              <div className="w-[35%] text-[10px] font-bold text-[#1e1e1e] leading-tight pr-2">
-                {item.class}
-              </div>
-              <div className="w-[35%] space-y-1">
-                {/* SAA Bar */}
-                <div className="flex items-center gap-1">
-                  <div className="flex-1 h-2.5 bg-gray-50 rounded-sm overflow-hidden">
-                    <div className="h-full bg-[#da0011]" style={{ width: `${item.saa}%` }}></div>
-                  </div>
-                  <span className="text-[8px] font-bold text-[#da0011] w-6 shrink-0">{item.saa}%</span>
-                </div>
-                {/* Current Bar */}
-                <div className="flex items-center gap-1">
-                  <div className="flex-1 h-2.5 bg-gray-50 rounded-sm overflow-hidden">
-                    <div className="h-full bg-[#dcddde]" style={{ width: `${item.current}%` }}></div>
-                  </div>
-                  <span className="text-[8px] font-bold text-[#767676] w-6 shrink-0">{item.current}%</span>
-                </div>
-              </div>
-              <div className={`w-[15%] text-center text-[10px] font-bold ${item.comp.startsWith('+') ? 'text-[#da0011]' : item.comp.startsWith('-') ? 'text-[#008c4a]' : 'text-[#1e1e1e]'}`}>
-                {item.comp}
-              </div>
-              <div className="w-[15%] text-right text-[10px] font-bold text-[#1e1e1e] pr-1 flex items-center justify-end gap-0.5">
-                {item.lpChange}
-                {item.trend === 'up' && <span className="text-[#da0011] text-[7px] scale-90">▲</span>}
-                {item.trend === 'down' && <span className="text-[#008c4a] text-[7px] scale-90">▼</span>}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-6 p-3 bg-gray-50 rounded-[2px] border border-gray-100">
-          <p className="text-[9px] text-[#767676] italic leading-tight">
-            *SAA (Strategic Asset Allocation) refers to the optimal long-term allocation for your risk profile (Adventurous 4).
-          </p>
-        </div>
-      </div>
-    );
-  };
-
-  const HoldingsOverview = () => {
-    return (
-      <div className="bg-white rounded-[3px] border border-[#ebeef0] shadow-sm overflow-hidden">
-        <div className="px-5 py-3">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-1 h-5 bg-[#4a90e2] rounded-sm"></div>
-            <h3 className="text-[15px] font-bold text-[#1e1e1e]">Holdings Overview</h3>
-          </div>
-
-          <div className="space-y-2.5">
-            {/* Performance */}
-            <div className="flex items-start">
-              <span className="text-[12px] text-[#767676] font-medium w-[85px] flex-shrink-0">Performance</span>
-              <div className="flex-1 flex items-center gap-1 flex-wrap">
-                <span className="text-[12px]">1Y Return: </span>
-                <span className="text-[12px] font-bold text-[#da0011]">28.59%</span>
-                <span className="text-[12px]">| Max Drawdown: </span>
-                <span className="text-[12px] font-bold text-[#da0011]">16.70%</span>
-              </div>
-            </div>
-
-            {/* Category */}
-            <div className="flex items-start">
-              <span className="text-[12px] text-[#767676] font-medium w-[85px] flex-shrink-0">Category</span>
-              <div className="flex-1 flex items-center">
-                <span className="text-[12px] font-bold text-[#da0011]">92%</span>
-                <span className="text-[12px] ml-[2px]">Domestic Equity</span>
-                <span className="text-[10px] font-medium text-[#da0011] border border-[#da0011] px-0.5 rounded-sm ml-[4px] bg-[#FFF1F0]">Highest</span>
-              </div>
-            </div>
-
-            {/* Style */}
-            <div className="flex items-start">
-              <span className="text-[12px] text-[#767676] font-medium w-[85px] flex-shrink-0">Style</span>
-              <div className="flex-1 flex items-center">
-                <span className="text-[12px] font-bold text-[#da0011]">70%</span>
-                <span className="text-[12px] ml-[2px]">Balanced Style</span>
-                <span className="text-[10px] font-medium text-[#da0011] border border-[#da0011] px-0.5 rounded-sm ml-[4px] bg-[#FFF1F0]">Concentrated</span>
-              </div>
-            </div>
-
-            {/* Manager */}
-            <div className="flex items-start">
-              <span className="text-[12px] text-[#767676] font-medium w-[85px] flex-shrink-0">Manager</span>
-              <div className="flex-1">
-                <span className="text-[12px]">Balanced Manager Distribution</span>
-              </div>
-            </div>
-
-            {/* Assets */}
-            <div className="flex items-start">
-              <span className="text-[12px] text-[#767676] font-medium w-[85px] flex-shrink-0">Assets</span>
-              <div className="flex-1">
-                <span className="text-[12px]">Diversified Sector Allocation</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const PortfolioTable = () => {
-    // Mock data based on provided visuals
-    const holdings = [
-      { name: 'BGF WLD MIN', id: 'IPFD3004', mktValue: '$134,832.39', returnVal: '+$24,098.31', returnPct: '21.76%', isPositive: true, style: 'Value' },
-      { name: 'BGF ENERGY', id: 'IPFD3145', mktValue: '$160,062.60', returnVal: '-$1,390.27', returnPct: '0.86%', isPositive: false, style: 'Growth' },
-      { name: 'BGF GOLD', id: 'IPFD3131', mktValue: '$59,266.81', returnVal: '+$9,266.81', returnPct: '18.53%', isPositive: true, style: 'Balanced' },
-      { name: 'BLK Sys GE High Inc', id: 'IPFD3116', mktValue: '$215,204.06', returnVal: '+$85,395.59', returnPct: '42.56%', isPositive: true, style: 'Value' },
-      { name: 'BLK Sys GE High Inc', id: 'IPFD2116', mktValue: '$213,257.23', returnVal: '+$23,283.08', returnPct: '11.10%', isPositive: true, style: 'Balanced' },
-      { name: 'BIK World Tech', id: 'IPFD2254', mktValue: '$76,635.33', returnVal: '+$156.18', returnPct: '0.20%', isPositive: true, style: 'Growth' },
-      { name: 'JPM GEHI USD', id: 'IPFD3540', mktValue: '$83,452.34', returnVal: '+$3,592.43', returnPct: '4.41%', isPositive: true, style: 'Growth' },
-    ];
-
-    const trustHoldings = [
-      { name: 'CR Trust FirstEagle No.1', id: 'T1C477', mktValue: '¥1,269,517.24', returnVal: '+¥219,517.24', returnPct: '20.91%', isPositive: true, style: 'Balanced' },
-      { name: 'CR Trust FirstEagle No.8', id: 'T1E648', mktValue: '¥1,034,379.31', returnVal: '-¥15,620.69', returnPct: '1.49%', isPositive: false, style: 'Balanced' },
-    ];
-
-    const filteredHoldings = holdingStyle === 'All' ? holdings : holdings.filter(h => h.style === holdingStyle);
-    const filteredTrust = holdingStyle === 'All' ? trustHoldings : trustHoldings.filter(h => h.style === holdingStyle);
-
-    const tabs = [
-      { id: 'All', label: 'All', pct: '' },
-      { id: 'Value', label: 'Value', pct: '15%' },
-      { id: 'Balanced', label: 'Balanced', pct: '70%' },
-      { id: 'Growth', label: 'Growth', pct: '15%' }
-    ];
-
-    // Row rendering component
-    const Row = ({ item }) => (
-      <div className="flex items-center py-2.5 border-b border-gray-100 last:border-0">
-        <div className="w-[45%] text-[10px] font-bold text-[#1e1e1e] leading-tight pr-2">
-          {item.name}
-          <div className="text-[#767676] font-normal">{item.id}</div>
-        </div>
-        <div className="w-[30%] text-[10px] font-bold text-[#1e1e1e] text-center">
-          {item.mktValue}
-        </div>
-        <div className="w-[25%] text-right">
-          <div className={`text-[10px] font-bold ${item.isPositive ? 'text-[#da0011]' : 'text-[#008c4a]'}`}>
-            {item.returnVal}
-          </div>
-          <div className={`text-[10px] flex items-center justify-end font-medium ${item.isPositive ? 'text-[#da0011]' : 'text-[#008c4a]'}`}>
-            {item.returnPct}
-            <span className="ml-1">{item.isPositive ? '▲' : '▼'}</span>
-          </div>
-        </div>
-      </div>
-    );
-
-    return (
-      <div className="bg-white rounded-[3px] p-5 border border-[#ebeef0] shadow-sm">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <div className="w-1 h-5 bg-[#da0011] rounded-sm"></div>
-            <h3 className="text-[15px] font-bold text-[#1e1e1e]">Holdings Detail</h3>
-          </div>
-        </div>
-
-        {/* Integrated Insight & Recommendation */}
-        <div className="mb-4 p-3 bg-blue-50/50 border border-blue-100 rounded-[4px]">
-          <div className="flex items-start gap-2">
-            <div className="mt-0.5 p-0.5 bg-blue-500 rounded-full flex-shrink-0">
-              <svg className="w-2 h-2 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <p className="text-[10px] text-blue-800 leading-tight font-medium">
-              Maintain core stability via your <span className="font-bold">70% Balanced</span> core while gradually increasing Growth exposure for long-term upside.
-            </p>
-          </div>
-        </div>
-
-        {/* Tab Bar */}
-        <div className="flex border-b border-gray-100 mb-4 overflow-x-auto no-scrollbar">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setHoldingStyle(tab.id as any)}
-              className={`flex-1 min-w-[70px] py-2 flex flex-col items-center relative transition-colors ${
-                holdingStyle === tab.id ? 'text-[#da0011]' : 'text-[#767676]'
-              }`}
-            >
-              <div className="text-[10px] font-bold uppercase">{tab.label}</div>
-              {tab.pct && <div className="text-[9px] font-bold mt-0.5">{tab.pct}</div>}
-              {holdingStyle === tab.id && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#da0011]" />
-              )}
-            </button>
-          ))}
-        </div>
-
-        {/* Header Row */}
-        <div className="flex text-[9px] font-bold text-[#767676] tracking-tighter pb-2 border-b border-gray-100">
-          <div className="w-[45%]">Holding</div>
-          <div className="w-[30%] text-center">Mkt Value</div>
-          <div className="w-[25%] text-right">Total Return</div>
-        </div>
-
-        {/* Main holdings content */}
-        <div className="space-y-2.5 py-2.5">
-          {filteredHoldings.length > 0 ? (
-            filteredHoldings.map((h, i) => (
-              <div key={`holdings-${i}`}>
-                <Row item={h} />
-              </div>
-            ))
-          ) : (
-            <div className="text-center py-4 text-[10px] text-gray-400">No matching holdings</div>
-          )}
-        </div>
-
-        {/* Section title (CNY portion) */}
-        {filteredTrust.length > 0 && (
-          <>
-            <div className="bg-gray-100 px-3 py-2.5 my-3 border border-gray-100 rounded-[2px]">
-              <div className="text-[#767676] font-bold text-[10px] uppercase">ASSET MANAGEMENT & TRUST</div>
-              <div className="flex text-[9px] font-bold text-[#767676] uppercase tracking-tighter pt-2 border-t border-gray-100 mt-2">
-                <div className="w-[45%]">Holding</div>
-                <div className="w-[30%] text-center">Mkt Value</div>
-                <div className="w-[25%] text-right">Total Return</div>
-              </div>
-            </div>
-
-            {/* Trust holdings content */}
-            <div className="space-y-2.5 py-2.5">
-              {filteredTrust.map((h, i) => (
-                <div key={`trust-${i}`}>
-                  <Row item={h} />
-                </div>
-              ))}
-            </div>
-          </>
-        )}
-      </div>
-    );
-  };
   return (
     <div className="flex flex-col h-full bg-[#f4f5f6] font-sans relative">
       {/* Scrollable content wrapper */}
@@ -671,7 +176,7 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
       )}
 
       {/* Header */}
-      <div className="bg-[#da0011] pt-12 pb-4 px-4 sticky top-0 z-50">
+      <div className="bg-[#da0011] pt-4 pb-2 px-4 sticky top-0 z-50">
         <div className="flex items-center justify-between text-white">
           <button onClick={onBack} className="p-1 active:opacity-60 transition-opacity">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -706,124 +211,66 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
         </div>
       </div>
 
-      <div className="p-4 space-y-4 pb-10">
-        {/* Total Holding with Link */}
-        <div 
-          onClick={onGoToDetails}
-          className="bg-white rounded-[3px] p-5 border border-[#ebeef0] shadow-sm active:bg-gray-50 transition-colors cursor-pointer"
-        >
-          {/* Checkbox and label */}
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-4 h-4 rounded bg-[#4a90e2] flex items-center justify-center flex-shrink-0">
-              <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path>
-              </svg>
+      <div className="space-y-2 pb-10">
+        <HoldingsOverview
+          totalAssetValue={totalAssetValue}
+        ></HoldingsOverview>
+
+        {/* Tab Selection for Style, Classes, Concentration */}
+        <div className="bg-white rounded-[3px] border border-[#ebeef0] overflow-visible shadow-sm">
+          <div className="sticky top-[56px] z-40 bg-white border-b border-[#f4f5f6] overflow-x-auto no-scrollbar shadow-sm">
+            <div className="flex">
+              {detailTabs.map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveDetailTab(tab)}
+                  className={`flex-1 py-4 text-[12px] font-bold relative whitespace-nowrap transition-colors ${activeDetailTab === tab ? 'text-[#da0011]' : 'text-[#767676]'}`}
+                >
+                  {tab}
+                  {activeDetailTab === tab && <div className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#da0011]" />}
+                </button>
+              ))}
             </div>
-            <span className="text-[11px] text-[#767676] font-medium">Include Money Market Funds</span>
           </div>
 
-          {/* Amount and link row */}
-          <div className="flex justify-between items-end">
-            <div>
-              <div className="text-[28px] font-bold text-[#1e1e1e] tracking-tight leading-none mb-1.5">9,395,746.24</div>
-              <div className="text-[11px] text-[#767676] font-medium">Holding Amount (CNY)</div>
-            </div>
-            <div className="flex items-center gap-1 text-[#767676] pb-0.5">
-              <span className="text-[11px] font-medium">Total 9 Funds</span>
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"></path>
-              </svg>
-            </div>
+          <div className="px-2 py-3">
+            {activeDetailTab === 'Performance' && (
+              <PerformanceTab 
+                chartData={chartData}
+                colors={colors}
+              />
+            )}
+
+            {activeDetailTab === 'Style' && (
+              <StyleTab 
+                styleHoldings={styleHoldings}
+                styleTrustHoldings={styleTrustHoldings}
+                totalAssetValue={totalAssetValue}
+              />
+            )}
+
+            {activeDetailTab === 'Classes' && (
+              <ClassesTab 
+                assetClassesData={assetClassesData}
+                holdingsData={holdingsData}
+              />
+            )}
+
+            {activeDetailTab === 'Concentration' && (
+              <ConcentrationTab 
+                concentrationSectorData={concentrationSectorData}
+                concentrationIndustryData={concentrationIndustryData}
+                concentrationTopHoldingsData={concentrationTopHoldingsData}
+                holdingsData={holdingsData}
+                totalAssetValue={totalAssetValue}
+              />
+            )}
           </div>
         </div>
-
-        {HoldingsOverview()}
-        {/* Portfolio Performance Section */}
-        <div className="bg-white rounded-[3px] p-4 border border-[#ebeef0] shadow-sm">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-1 h-5 bg-[#4a90e2] rounded-sm"></div>
-            <h3 className="text-[15px] font-bold text-[#1e1e1e]">Holdings Performance</h3>
-          </div>
-
-          {/* Metrics with dots */}
-          <div class="flex items-center text-[10px] gap-2">
-            <div class="flex items-center">
-              <span class="w-2 h-2 rounded-full bg-red-600 mr-1"></span>
-              <span class="text-gray-900 font-medium">Funds:</span>
-              <span class="ml-1 text-red-600 font-bold">28.59%</span>
-            </div>
-
-            <div class="flex items-center">
-              <span class="w-2 h-2 rounded-full bg-emerald-400 mr-1"></span>
-              <span class="text-gray-900 font-medium">Drawdown:</span>
-              <span class="ml-1 text-gray-900 font-medium">16.70%</span>
-            </div>
-
-            <div class="flex items-center">
-              <span class="w-2 h-2 rounded-full bg-blue-500 mr-1"></span>
-              <span class="text-gray-900 font-medium">SAA:</span>
-              <span class="ml-1 text-gray-900 font-medium">25.83%</span>
-            </div>
-          </div>
-
-          {/* Chart Section */}
-          {renderLineChart()}
-
-          
-        </div>
-        {/* Holding Performance Table */}
-        {/* {PortfolioTable()} */}
-
-        {/* Asset Allocation Comparison Section */}
-        {/* {renderSAAComparison()} */}
-
       </div>
 
       {/* Floating Action Button */}
-      <div className="sticky bottom-4 left-0 right-0 z-50 pointer-events-none px-4">
-        <div className="flex justify-center">
-          <button 
-            className="group relative flex items-center gap-3 px-6 py-3.5 rounded-full shadow-2xl overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 pointer-events-auto"
-            style={{
-              background: 'linear-gradient(135deg, #da0011 0%, #ff4757 50%, #ff6b7a 100%)',
-            }}
-            onClick={() => {
-              setShowAIAssistant(true);
-            }}
-          >
-          {/* Animated background gradient overlay */}
-          <div 
-            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-            style={{
-              background: 'linear-gradient(135deg, #ff4757 0%, #da0011 50%, #b8000e 100%)',
-            }}
-          />
-          
-          {/* Microphone Icon */}
-          <div className="relative z-10 flex items-center justify-center w-8 h-8 bg-white/20 rounded-full backdrop-blur-sm">
-            <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
-              <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
-            </svg>
-          </div>
-
-          {/* Button Text */}
-          <span className="relative z-10 text-white font-bold text-[10px] tracking-wide whitespace-nowrap">
-            Ask: "Will the market continue to rise?"
-          </span>
-
-          {/* Chat Icon */}
-          <div className="relative z-10 flex items-center justify-center">
-            <svg className="w-5 h-5 text-white/90" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-            </svg>
-          </div>
-
-          {/* Shimmer effect */}
-          <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-        </button>
-        </div>
-      </div>
+      {/* <FloatingAIButton onClick={() => setShowAIAssistant(true)} /> */}
       </div>
 
       {/* AI Assistant Modal - Outside scrollable area */}

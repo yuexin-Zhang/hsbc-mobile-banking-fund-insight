@@ -7,7 +7,6 @@ import ContactSection from './components/ContactSection';
 import PromoBanner from './components/PromoBanner';
 import BottomNav from './components/BottomNav';
 import FundInsightOverview from './components/FundInsightOverview';
-import FundInsightDetails from './components/FundInsightDetails';
 import PortfolioSimulation from './components/PortfolioSimulation';
 import MyHoldings from './components/MyHoldings';
 
@@ -41,12 +40,6 @@ const App: React.FC = () => {
             onBack={navigateToHome} 
             onGoToDetails={navigateToDetails} 
             onGoToSimulation={navigateToSimulation}
-          />
-        )}
-
-        {currentPage === 'details' && (
-          <FundInsightDetails 
-            onBack={navigateToOverview} 
           />
         )}
 
