@@ -27,6 +27,12 @@ const PerformanceTab: React.FC<PerformanceTabProps> = ({ chartData, colors }) =>
 
   return (
     <div className="animate-fade-in space-y-5">
+      {/* Section Title */}
+      <div className="flex items-start gap-2 mb-4">
+        <div className="w-[3px] h-[18px] bg-[#da0011] rounded-full mt-0.5"></div>
+        <h2 className="text-[15px] font-bold text-[#1e1e1e] leading-tight">Holdings Performance</h2>
+      </div>
+
       {/* Metrics with dots */}
       <div className="flex items-center text-[10px] gap-2">
         <div className="flex items-center">

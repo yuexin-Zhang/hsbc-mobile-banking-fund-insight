@@ -172,6 +172,12 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
 
   return (
     <div className="animate-fade-in space-y-6">
+      {/* Section Title */}
+      <div className="flex items-start gap-2 mb-4">
+        <div className="w-[3px] h-[18px] bg-[#da0011] rounded-full mt-0.5"></div>
+        <h2 className="text-[15px] font-bold text-[#1e1e1e] leading-tight">Portfolio Concentration</h2>
+      </div>
+
       {/* Concentration Toggle Buttons */}
       <div className="flex gap-2 p-1 bg-[#f4f5f6] rounded-[4px]">
         {[

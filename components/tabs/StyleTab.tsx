@@ -21,6 +21,12 @@ const StyleTab: React.FC<StyleTabProps> = ({ styleHoldings, styleTrustHoldings, 
 
   return (
     <div className="animate-fade-in space-y-5">
+      {/* Section Title */}
+      <div className="flex items-start gap-2 mb-4">
+        <div className="w-[3px] h-[18px] bg-[#da0011] rounded-full mt-0.5"></div>
+        <h2 className="text-[15px] font-bold text-[#1e1e1e] leading-tight">Fund Style</h2>
+      </div>
+
       {/* Insight Box */}
       <div className="flex items-center gap-2 p-3 bg-blue-50/50 border border-blue-100 rounded-[3px]">
         <div className="p-0.5 bg-blue-500 rounded-full flex-shrink-0">
@@ -34,7 +40,7 @@ const StyleTab: React.FC<StyleTabProps> = ({ styleHoldings, styleTrustHoldings, 
       </div>
 
       {/* Style Toggle Buttons */}
-      <div className="flex gap-2.5 bg-[#f4f5f6] p-1 rounded-full w-fit">
+      <div className="flex gap-2.5 bg-[#f4f5f6] p-1 rounded-full">
         {[
           { id: 'Value', label: 'Value', pct: '15%' },
           { id: 'Balanced', label: 'Balanced', pct: '70%' },
@@ -43,7 +49,7 @@ const StyleTab: React.FC<StyleTabProps> = ({ styleHoldings, styleTrustHoldings, 
           <button
             key={tab.id}
             onClick={() => setHoldingStyle(tab.id as any)}
-            className={`px-5 py-2 rounded-full flex flex-col items-center transition-all ${
+            className={`flex-1 py-2 rounded-full flex flex-col items-center transition-all ${
               holdingStyle === tab.id 
               ? 'bg-white text-[#da0011] shadow-sm' 
               : 'text-[#767676] hover:text-[#da0011]/60'

@@ -61,7 +61,7 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue }) 
         <div className="mb-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="px-0.5 py-0.5 bg-[#4a90e2] rounded text-white text-[10px] font-bold">Revenue Analysis</div>
+              <div className="text-[13px] font-bold text-[#1e1e1e]">Revenue Analysis</div>
             </div>
             <div className="flex items-center gap-0.5 text-[#9ca3af] cursor-pointer">
               <span className="text-[11px] font-medium">View Analysis</span>
@@ -104,9 +104,20 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue }) 
       {/* Holdings Overview Section */}
       <div className="bg-white rounded-[3px] border border-[#ebeef0] shadow-sm overflow-hidden">
         <div className="px-3 py-2">
-        <div className="flex items-center gap-2 mb-1">
-          <div className="w-1 h-5 bg-[#4a90e2] rounded-sm"></div>
-          <h3 className="text-[15px] font-bold text-[#1e1e1e]">Holdings Overview</h3>
+        <div className="flex items-center justify-between mb-1">
+          <div className="flex items-center gap-2">
+            <div className="w-1 h-5 bg-[#da0011] rounded-sm"></div>
+            <h3 className="text-[15px] font-bold text-[#1e1e1e]">Holdings Summary</h3>
+          </div>
+          <div className="flex items-center gap-1 text-[#9ca3af] cursor-pointer hover:text-[#767676] transition-colors">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+            </svg>
+            <span className="text-[12px] font-medium">Rebalancing tips</span>
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
         </div>
 
         <div className="space-y-1">

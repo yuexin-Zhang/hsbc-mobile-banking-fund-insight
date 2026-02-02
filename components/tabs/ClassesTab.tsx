@@ -32,7 +32,13 @@ const ClassesTab: React.FC<ClassesTabProps> = ({ assetClassesData, holdingsData 
   });
 
   return (
-    <div className="animate-fade-in space-y-12">
+    <div className="animate-fade-in">
+      {/* Section Title */}
+      <div className="flex items-start gap-2 mb-4">
+        <div className="w-[3px] h-[18px] bg-[#da0011] rounded-full mt-0.5"></div>
+        <h2 className="text-[15px] font-bold text-[#1e1e1e] leading-tight">Asset Classes</h2>
+      </div>
+
       <AllocationSection 
         title="Asset Classes" 
         data={assetClassesData} 

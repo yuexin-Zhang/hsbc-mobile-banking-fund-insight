@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import AIAssistant from './AIAssistant';
 import { Chart as ChartJS, Title, Tooltip, Legend, CategoryScale, LinearScale } from 'chart.js';
 import { TreemapController, TreemapElement } from 'chartjs-chart-treemap';
@@ -22,6 +22,30 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
   const [showToast, setShowToast] = useState(false);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const [activeDetailTab, setActiveDetailTab] = useState('Performance');
+  const [currentTime, setCurrentTime] = useState('');
+  
+  // Refs for tab sections
+  const performanceRef = useRef<HTMLDivElement>(null);
+  const styleRef = useRef<HTMLDivElement>(null);
+  const classesRef = useRef<HTMLDivElement>(null);
+  const concentrationRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const isScrollingFromClick = useRef(false);
+
+  // Update current time
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      setCurrentTime(`${hours}:${minutes}`);
+    };
+    
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    
+    return () => clearInterval(interval);
+  }, []);
 
   const colors = {
     red: '#da0011',
@@ -85,7 +109,7 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
   ];
 
   const totalAssetValue = 9395746.24;
-  const detailTabs = ['Performance', 'Style', 'Classes', 'Concentration'];
+  const detailTabs = ['Performance', 'Classes', 'Style', 'Concentration'];
 
   const styleHoldings = [
     { name: 'BGF WLD MIN', id: 'IPFD3004', returnRate: '21.76%', holdingDays: '458 Days', threeMonthChange: '+8.45%', isPositive: true, style: 'Value' },
@@ -159,10 +183,88 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
     }
   }, [showToast]);
 
+  // Handle scroll to update active tab
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    if (!scrollContainer) return;
+
+    const handleScroll = () => {
+      // Don't update tab during programmatic scroll from click
+      if (isScrollingFromClick.current) return;
+      
+      const scrollTop = scrollContainer.scrollTop;
+      const offset = 100; // Offset for sticky header
+
+      const sections = [
+        { ref: performanceRef, name: 'Performance' },
+        { ref: classesRef, name: 'Classes' },
+        { ref: styleRef, name: 'Style' },
+        { ref: concentrationRef, name: 'Concentration' }
+      ];
+
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const section = sections[i];
+        if (section.ref.current) {
+          const sectionTop = section.ref.current.offsetTop - offset;
+          if (scrollTop >= sectionTop - 50) {
+            setActiveDetailTab(section.name);
+            break;
+          }
+        }
+      }
+    };
+
+    scrollContainer.addEventListener('scroll', handleScroll);
+    return () => scrollContainer.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Handle tab click to scroll to section
+  const handleTabClick = (tab: string) => {
+    // Immediately set active tab for instant feedback
+    setActiveDetailTab(tab);
+    
+    // Disable auto-detection during programmatic scroll
+    isScrollingFromClick.current = true;
+    
+    let targetRef: React.RefObject<HTMLDivElement> | null = null;
+    
+    switch (tab) {
+      case 'Performance':
+        targetRef = performanceRef;
+        break;
+      case 'Classes':
+        targetRef = classesRef;
+        break;
+      case 'Style':
+        targetRef = styleRef;
+        break;
+      case 'Concentration':
+        targetRef = concentrationRef;
+        break;
+    }
+
+    if (targetRef?.current && scrollContainerRef.current) {
+      // Use different offset for Performance (pt-2) vs others (pt-4)
+      const headerOffset = tab === 'Performance' ? 110 : 110; // Ensure title visibility for all tabs
+      const elementPosition = targetRef.current.offsetTop;
+      const offsetPosition = elementPosition - headerOffset;
+
+      scrollContainerRef.current.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+      
+      // Re-enable auto-detection after scroll completes
+      setTimeout(() => {
+        isScrollingFromClick.current = false;
+      }, 800); // Adjust timing based on scroll duration
+    }
+  };
+
   return (
     <div className="flex flex-col h-full bg-[#f4f5f6] font-sans relative">
       {/* Scrollable content wrapper */}
-      <div className="flex-1 overflow-y-auto no-scrollbar">
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto no-scrollbar">
       {/* Toast Notification */}
       {showToast && (
         <div className="absolute top-24 left-1/2 -translate-x-1/2 z-[100] animate-fade-in">
@@ -175,39 +277,48 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
         </div>
       )}
 
+      {/* Mobile Status Bar */}
+      <div className="bg-white pt-2 pb-1 px-4 sticky top-0 z-50">
+        <div className="flex items-center justify-between text-[15px] font-semibold text-gray-900">
+          <span>{currentTime || '9:41'}</span>
+          <div className="flex items-center gap-1">
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+            </svg>
+            <svg className="w-4 h-3" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M0 6v8h2V6H0zm4 8h12V6H4v8zm14 0h2V6h-2v8z" />
+            </svg>
+            <span className="text-[11px] ml-0.5">5G</span>
+            <svg className="w-6 h-3 ml-1" fill="none" stroke="currentColor" strokeWidth="1" viewBox="0 0 24 12">
+              <rect x="1" y="1" width="18" height="10" rx="2" />
+              <rect x="3" y="3" width="14" height="6" fill="currentColor" />
+              <path d="M19 4v4" strokeLinecap="round" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
       {/* Header */}
-      <div className="bg-[#da0011] pt-4 pb-2 px-4 sticky top-0 z-50">
-        <div className="flex items-center justify-between text-white">
-          <button onClick={onBack} className="p-1 active:opacity-60 transition-opacity">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path>
+      <div className="bg-white px-3 border-b border-gray-200 sticky top-[30px] z-50">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button onClick={onBack} className="w-9 h-9 -ml-2 flex items-center justify-center active:bg-gray-100 rounded-full transition-colors">
+              <svg className="w-7 h-7 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+            </button>
+            <h1 className="text-[17px] font-semibold text-gray-900 whitespace-nowrap">Fund Holding Analysis</h1>
+          </div>
+          
+          <button 
+            onClick={handleExport}
+            className="w-9 h-9 flex items-center justify-center active:bg-gray-100 rounded-full transition-colors"
+            title="Export Report"
+          >
+            <svg className="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
             </svg>
           </button>
-          
-          <div className="flex flex-col items-center">
-             <h1 className="text-sm font-bold tracking-widest">Fund Holding Insights</h1>
-          </div>
-          
-          <div className="flex items-center space-x-2">
-            <button 
-              onClick={handleExport}
-              className="p-1 active:opacity-60 transition-opacity text-white/90 hover:text-white"
-              title="Export Report"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-              </svg>
-            </button>
-            <button 
-              onClick={onGoToSimulation}
-              className="p-1 active:opacity-60 transition-opacity text-white/90 hover:text-white"
-              title="Backtesting"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-              </svg>
-            </button>
-          </div>
         </div>
       </div>
 
@@ -218,12 +329,12 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
 
         {/* Tab Selection for Style, Classes, Concentration */}
         <div className="bg-white rounded-[3px] border border-[#ebeef0] overflow-visible shadow-sm">
-          <div className="sticky top-[56px] z-40 bg-white border-b border-[#f4f5f6] overflow-x-auto no-scrollbar shadow-sm">
+          <div className="sticky top-[66px] z-40 bg-white overflow-x-auto no-scrollbar shadow-sm">
             <div className="flex">
               {detailTabs.map((tab) => (
                 <button
                   key={tab}
-                  onClick={() => setActiveDetailTab(tab)}
+                  onClick={() => handleTabClick(tab)}
                   className={`flex-1 py-4 text-[12px] font-bold relative whitespace-nowrap transition-colors ${activeDetailTab === tab ? 'text-[#da0011]' : 'text-[#767676]'}`}
                 >
                   {tab}
@@ -234,29 +345,33 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
           </div>
 
           <div className="px-2 py-3">
-            {activeDetailTab === 'Performance' && (
+            {/* Performance Section */}
+            <div ref={performanceRef} className="scroll-mt-[100px] pt-2">
               <PerformanceTab 
                 chartData={chartData}
                 colors={colors}
               />
-            )}
+            </div>
 
-            {activeDetailTab === 'Style' && (
+            {/* Classes Section */}
+            <div ref={classesRef} className="scroll-mt-[100px] mt-8 pt-4 border-t-[6px] border-[#f4f5f6]">
+              <ClassesTab 
+                assetClassesData={assetClassesData}
+                holdingsData={holdingsData}
+              />
+            </div>
+
+            {/* Style Section */}
+            <div ref={styleRef} className="scroll-mt-[100px] mt-8 pt-4 border-t-[6px] border-[#f4f5f6]">
               <StyleTab 
                 styleHoldings={styleHoldings}
                 styleTrustHoldings={styleTrustHoldings}
                 totalAssetValue={totalAssetValue}
               />
-            )}
+            </div>
 
-            {activeDetailTab === 'Classes' && (
-              <ClassesTab 
-                assetClassesData={assetClassesData}
-                holdingsData={holdingsData}
-              />
-            )}
-
-            {activeDetailTab === 'Concentration' && (
+            {/* Concentration Section */}
+            <div ref={concentrationRef} className="scroll-mt-[100px] mt-8 pt-4 border-t-[6px] border-[#f4f5f6]">
               <ConcentrationTab 
                 concentrationSectorData={concentrationSectorData}
                 concentrationIndustryData={concentrationIndustryData}
@@ -264,7 +379,7 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
                 holdingsData={holdingsData}
                 totalAssetValue={totalAssetValue}
               />
-            )}
+            </div>
           </div>
         </div>
       </div>

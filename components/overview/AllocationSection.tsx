@@ -31,7 +31,7 @@ const AllocationSection: React.FC<AllocationSectionProps> = ({
   selectedItem, 
   hideTitle = false 
 }) => (
-  <div className="space-y-4">
+  <div>
     {!hideTitle && (
       <div className="flex items-center gap-2 pb-2 border-b border-[#f4f5f6]">
         <div className="w-1 h-3.5 bg-[#da0011]"></div>
