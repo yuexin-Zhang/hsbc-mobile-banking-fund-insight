@@ -130,12 +130,12 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
             {/* Portfolio Review */}
             <button 
               onClick={onGoToPortfolioOverview}
-              className="flex items-center gap-1.5 bg-white px-2 py-1 rounded border border-gray-200 active:opacity-60 transition-opacity"
+              className="flex items-center gap-1.5 bg-[#da0011] px-3 py-1.5 rounded active:opacity-80 transition-opacity"
             >
-              <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              <span className="text-[11px] text-gray-700 font-medium">Portfolio Review</span>
+              <span className="text-[11px] text-white font-semibold">Portfolio Review</span>
             </button>
           </div>
         </div>
@@ -150,8 +150,8 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
               </button>
             </div>
             <div className="text-right">
-              <span className="text-[13px] font-semibold text-[#31b0d5]">▲ 15,478.80</span>
-              <span className="text-[12px] text-[#31b0d5] ml-1">(+23.21%)</span>
+              <span className="text-[13px] font-semibold text-[#da0011]">▲ 15,478.80</span>
+              <span className="text-[12px] text-[#da0011] ml-1">(+23.21%)</span>
             </div>
           </div>
         </div>
@@ -172,45 +172,34 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
         </div>
 
         {/* Action Buttons Grid */}
-        <div className="bg-white px-4 pt-6 pb-4">
+        <div className="bg-white px-4 pt-6 pb-4 mt-4">
           <div className="grid grid-cols-4 gap-4">
             <button className="flex flex-col items-center gap-2">
-              <div className="w-12 h-12 bg-white rounded border border-gray-200 flex items-center justify-center">
-                <svg className="w-6 h-6 text-[#da0011]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
-                </svg>
+              <div className="w-16 h-16 flex items-center justify-center">
+                <img src="/icon1.png" alt="Trade stocks" className="w-full h-full object-contain" />
               </div>
-              <span className="text-[11px] text-center text-gray-900 leading-tight">Trade stocks</span>
+              <span className="text-[11px] text-center text-gray-900 leading-tight">Trade<br/>stocks</span>
             </button>
 
             <button className="flex flex-col items-center gap-2">
-              <div className="w-12 h-12 bg-white rounded border border-gray-200 flex items-center justify-center">
-                <svg className="w-6 h-6 text-[#da0011]" fill="none" viewBox="0 0 24 24">
-                  <rect x="3" y="3" width="7" height="7" stroke="currentColor" strokeWidth="2" />
-                  <rect x="3" y="14" width="7" height="7" stroke="currentColor" strokeWidth="2" />
-                  <rect x="14" y="3" width="7" height="7" stroke="currentColor" strokeWidth="2" />
-                  <rect x="14" y="14" width="7" height="7" stroke="currentColor" strokeWidth="2" />
-                </svg>
+              <div className="w-16 h-16 flex items-center justify-center">
+                <img src="/icon2.png" alt="Wealth Portfolio Lending" className="w-full h-full object-contain" />
               </div>
-              <span className="text-[11px] text-center text-gray-900 leading-tight">View stocks<br/>order status</span>
+              <span className="text-[11px] text-center text-gray-900 leading-tight">Wealth<br/>Portfolio<br/>Lending</span>
             </button>
 
             <button className="flex flex-col items-center gap-2">
-              <div className="w-12 h-12 bg-white rounded border border-gray-200 flex items-center justify-center">
-                <svg className="w-6 h-6 text-[#da0011]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+              <div className="w-16 h-16 flex items-center justify-center">
+                <img src="/icon3.png" alt="Trade funds" className="w-full h-full object-contain" />
               </div>
-              <span className="text-[11px] text-center text-gray-900 leading-tight">Trade funds</span>
+              <span className="text-[11px] text-center text-gray-900 leading-tight">Trade<br/>funds</span>
             </button>
 
             <button className="flex flex-col items-center gap-2">
-              <div className="w-12 h-12 bg-white rounded border border-gray-200 flex items-center justify-center">
-                <svg className="w-6 h-6 text-[#da0011]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
+              <div className="w-16 h-16 flex items-center justify-center">
+                <img src="/icon4.png" alt="Analyse your portfolio" className="w-full h-full object-contain" />
               </div>
-              <span className="text-[11px] text-center text-gray-900 leading-tight">Subscribe<br/>to IPO</span>
+              <span className="text-[11px] text-center text-gray-900 leading-tight">Analyse<br/>your<br/>portfolio</span>
             </button>
           </div>
         </div>

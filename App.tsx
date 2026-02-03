@@ -22,7 +22,10 @@ const App: React.FC = () => {
   const navigateToHoldings = () => setCurrentPage('holdings');
   const navigateToHome = () => setCurrentPage('home');
   const navigateToWealthOverview = () => setCurrentPage('wealthOverview');
-  const navigateToPortfolioOverview = () => setCurrentPage('portfolioOverview');
+  const navigateToPortfolioOverview = () => {
+    console.log('Navigating to Portfolio Overview');
+    setCurrentPage('portfolioOverview');
+  };
 
   return (
     <div className="flex justify-center items-center w-full">
@@ -42,7 +45,7 @@ const App: React.FC = () => {
         
         {currentPage === 'overview' && (
           <FundInsightOverview 
-            onBack={navigateToWealthOverview} 
+            onBack={navigateToPortfolioOverview} 
             onGoToDetails={navigateToDetails} 
             onGoToSimulation={navigateToSimulation}
             isAIGenerated={isAIGenerated}

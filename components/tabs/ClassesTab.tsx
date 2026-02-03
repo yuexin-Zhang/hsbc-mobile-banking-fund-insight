@@ -68,7 +68,7 @@ const ClassesTab: React.FC<ClassesTabProps> = ({ assetClassesData, holdingsData,
             <div className="w-[25%] text-right pr-1">3-month gain/loss</div>
           </div>
           
-          <div className="space-y-4">
+          <div className="space-y-2">
             {holdingsData
               .filter(f => f.assetClass === selectedAssetClass)
               .sort((a, b) => parseFloat(b.weight) - parseFloat(a.weight))
@@ -76,7 +76,7 @@ const ClassesTab: React.FC<ClassesTabProps> = ({ assetClassesData, holdingsData,
                 const isRatePositive = !fund.returnRate.startsWith('-');
                 const is3MPositive = !fund.threeMonthChange.startsWith('-');
                 return (
-                  <div key={idx} className="flex items-center text-[11px] px-1 group active:bg-gray-50 transition-colors py-1 border-b border-gray-50 last:border-0 pb-3">
+                  <div key={idx} className="flex items-center text-[11px] px-1 group active:bg-gray-50 transition-colors py-1 border-b border-gray-50 last:border-0 pb-2">
                     <div className="w-[45%] flex flex-col">
                       <span className="font-bold text-[#1e1e1e] line-clamp-1">{fund.name}</span>
                       <span className="text-[9px] text-[#767676] mt-0.5 font-medium">HKD {fund.mktValue.toLocaleString()}</span>

@@ -178,7 +178,7 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
   const assetClassesData = [
     { label: 'Equity', pct: 57.29, val: '5,382,407.79', color: '#266076', currency: 'HKD' }, 
     { label: 'Fixed Income', pct: 35.42, val: '3,328,154.55', color: '#4DA90F', currency: 'HKD' }, 
-    { label: 'Bonds', pct: 7.29, val: '684,689.66', color: '#C03954', currency: 'HKD' }, 
+    { label: 'Liquidity', pct: 7.29, val: '684,689.66', color: '#C03954', currency: 'HKD' }, 
   ];
 
   // Sector data (renamed from Industry)
@@ -202,15 +202,11 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
   ];
 
   const concentrationTopHoldingsData = [
+    { label: 'NVIDIA Corp.', pct: 52.0, val: '4,885,787.96', color: '#999', currency: 'HKD', dailyChange: 0.64 },
     { label: 'Tencent Holdings', pct: 18.5, val: '1,738,237.04', color: '#da0011', currency: 'HKD', dailyChange: 0.17 },
     { label: 'Alibaba Group', pct: 14.0, val: '1,315,408.47', color: '#31b0d5', currency: 'HKD', dailyChange: -0.23 },
-    { label: 'Meituan', pct: 12.5, val: '1,174,468.28', color: '#5cb85c', currency: 'HKD', dailyChange: 0.05 },
-    { label: 'CATL', pct: 11.0, val: '1,033,528.09', color: '#f0ad4e', currency: 'HKD', dailyChange: -0.42 },
-    { label: 'BYD Co.', pct: 9.5, val: '892,587.90', color: '#f0ad4e', currency: 'HKD', dailyChange: 0.31 },
-    { label: 'Ping An Insurance', pct: 8.0, val: '751,646.74', color: '#31708f', currency: 'HKD', dailyChange: -0.08 },
-    { label: 'HSBC Holdings', pct: 7.0, val: '657,702.24', color: '#5cb85c', currency: 'HKD', dailyChange: 0.12 },
-    { label: 'Apple Inc.', pct: 6.5, val: '616,730.49', color: '#da0011', currency: 'HKD', dailyChange: -0.15 },
-    { label: 'NVIDIA Corp.', pct: 13.0, val: '1,221,447.01', color: '#999', currency: 'HKD', dailyChange: 0.64 },
+    { label: 'Meituan', pct: 9.0, val: '845,617.16', color: '#5cb85c', currency: 'HKD', dailyChange: 0.05 },
+    { label: 'CATL', pct: 6.5, val: '610,723.61', color: '#f0ad4e', currency: 'HKD', dailyChange: -0.42 },
   ];
 
   const holdingsData = [
@@ -356,7 +352,7 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
       returnRate: '-1.49%',
       holdingDays: '92 Days',
       threeMonthChange: '+0.55%',
-      assetClass: 'Bonds',
+      assetClass: 'Liquidity',
       mktValue: 460391.57,
       weight: '10.90%',
       sectorWeight: { 'Others': '4.00%', 'Banking': '3.00%', 'Transportation': '3.90%' },
@@ -574,7 +570,7 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
             </div>
 
             {/* Classes Section */}
-            <div ref={classesRef} className="scroll-mt-[100px] mt-8 pt-4 border-t-[6px] border-[#f4f5f6]">
+            <div ref={classesRef} className="scroll-mt-[100px] mt-12 pt-4 border-t-[6px] border-[#f4f5f6]">
               <ClassesTab 
                 assetClassesData={assetClassesData}
                 holdingsData={holdingsData}
@@ -583,7 +579,7 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
             </div>
 
             {/* Style Section */}
-            <div ref={styleRef} className="scroll-mt-[100px] mt-8 pt-4 border-t-[6px] border-[#f4f5f6]">
+            <div ref={styleRef} className="scroll-mt-[100px] mt-12 pt-4 border-t-[6px] border-[#f4f5f6]">
               <StyleTab 
                 styleHoldings={styleHoldings}
                 styleTrustHoldings={styleTrustHoldings}
@@ -593,7 +589,7 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
             </div>
 
             {/* Manager Section - Hidden but code retained */}
-            {/* <div ref={managerRef} className="scroll-mt-[100px] mt-8 pt-4 border-t-[6px] border-[#f4f5f6]">
+            {/* <div ref={managerRef} className="scroll-mt-[100px] mt-12 pt-4 border-t-[6px] border-[#f4f5f6]">
               <ManagerTab 
                 managerHoldings={managerHoldings}
                 totalAssetValue={totalAssetValue}
@@ -602,7 +598,7 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
             </div> */}
 
             {/* Concentration Section */}
-            <div ref={concentrationRef} className="scroll-mt-[100px] mt-8 pt-4 border-t-[6px] border-[#f4f5f6]">
+            <div ref={concentrationRef} className="scroll-mt-[100px] mt-12 pt-4 border-t-[6px] border-[#f4f5f6]">
               <ConcentrationTab 
                 concentrationSectorData={concentrationSectorData}
                 concentrationRegionData={concentrationRegionData}
@@ -616,8 +612,8 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
         </div>
       </div>
 
-      {/* Floating Action Button */}
-      {/* <FloatingAIButton onClick={() => setShowAIAssistant(true)} /> */}
+      {/* Floating Action Button - Only show when AI mode is enabled */}
+      {isAIGenerated && <FloatingAIButton onClick={() => setShowAIAssistant(true)} />}
       </div>
 
       {/* AI Assistant Modal - Outside scrollable area */}

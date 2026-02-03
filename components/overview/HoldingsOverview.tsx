@@ -12,8 +12,6 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue, is
     { day: 'Wed', value: '+0.14%', isPositive: true },
     { day: 'Thu', value: '+0.07%', isPositive: true },
     { day: 'Fri', value: '-0.13%', isPositive: false },
-    { day: 'Sat', value: '0.00%', isPositive: null },
-    { day: 'Sun', value: '0.00%', isPositive: null },
   ];
 
   return (
@@ -22,9 +20,12 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue, is
       <div className="bg-white rounded-[3px] border border-[#ebeef0] shadow-sm overflow-hidden px-3 py-2">
         <div className="flex items-center justify-between">
           <div className="text-[13px] font-bold">My total assets</div>
-          <div className="flex items-center gap-0.5 text-[#999] cursor-pointer">
-            <span className="text-[12px] font-medium">Earnings Analysis</span>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <div className="flex items-center gap-0.5 text-[#999] cursor-pointer hover:text-[#767676] transition-colors">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+            </svg>
+            <span className="text-[12px] font-medium">Rebalancing tips</span>
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
@@ -60,19 +61,7 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue, is
 
         {/* Weekly Return Message */}
         <div className="mb-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="text-[13px] font-bold text-[#1e1e1e]">Revenue Analysis</div>
-            </div>
-            <div className="flex items-center gap-0.5 text-[#999] cursor-pointer">
-              <span className="text-[11px] font-medium">View Analysis</span>
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
-          </div>
-          <span className="text-[10px] text-[#1e1e1e]">Last week's return has been realized, weekly return </span>
-          <span className="text-[12px] text-[#5cb85c] font-bold">-0.17%</span>
+          <div className="text-[13px] font-bold text-[#1e1e1e]">Revenue Calendar</div>
         </div>
 
         {/* Weekly Calendar */}
@@ -99,14 +88,20 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue, is
               </div>
             </div>
           ))}
+          {/* More Button */}
+          <div className="flex-1 min-w-0">
+            <div className="w-full py-1.5 px-0.5 text-[10px] font-medium text-center bg-[#f5f5f5] cursor-pointer hover:bg-[#e5e5e5] transition-colors flex items-center justify-center h-full">
+              <span className="text-[#767676]">More</span>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Holdings Overview Section */}
-      <div className="bg-white rounded-[3px] border border-[#ebeef0] shadow-sm overflow-hidden relative">
+      <div className="rounded-[3px] border border-[#ebeef0] shadow-sm overflow-hidden relative bg-white">
         {/* AI Tag */}
         {isAIGenerated && (
-          <div className="absolute bottom-2 right-2 z-10">
+          <div className="absolute top-2 right-2 z-10">
             <div className="flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full shadow-md">
               <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -117,20 +112,9 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue, is
         )}
         
         <div className="px-3 py-2 relative z-20">
-        <div className="flex items-center justify-between mb-1">
-          <div className="flex items-center gap-1">
-            <div className="w-1 h-5 bg-[#da0011]"></div>
-            <h3 className="text-[15px] font-bold text-[#1e1e1e]">Holdings Summary</h3>
-          </div>
-          <div className="flex items-center gap-1 text-[#999] cursor-pointer hover:text-[#767676] transition-colors">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
-            </svg>
-            <span className="text-[12px] font-medium">Rebalancing tips</span>
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
+        <div className="flex items-center gap-1 mb-1">
+          <div className="w-1 h-5 bg-[#da0011]"></div>
+          <h3 className="text-[15px] font-bold text-[#1e1e1e]">Holdings Summary</h3>
         </div>
 
         <div className="space-y-1.5">

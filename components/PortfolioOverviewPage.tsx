@@ -90,8 +90,8 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
               </button>
             </div>
             <div className="text-right">
-              <span className="text-[14px] font-semibold text-[#31b0d5]">▲ 15,748.89</span>
-              <span className="text-[13px] text-[#31b0d5] ml-1">(+23.21%)</span>
+              <span className="text-[14px] font-semibold text-[#da0011]">▲ 15,748.89</span>
+              <span className="text-[13px] text-[#da0011] ml-1">(+23.21%)</span>
             </div>
           </div>
           
@@ -108,15 +108,14 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
         </div>
 
         {/* Asset Details Section */}
-        <div className="bg-[#f4f5f6] px-4 py-4">
-          <div className="bg-white rounded-sm border border-gray-200">
-            {/* Header with more link */}
+        <div className="bg-[#f4f5f6] py-4">
+          <div className="bg-white rounded-sm border-gray-200">
+            {/* Header with chevron */}
             <div className="flex items-center justify-between px-4 pt-3 pb-2">
-              <span className="text-[15px] font-semibold text-gray-900">Asset Details</span>
-              <button className="flex items-center gap-1 text-[13px] text-gray-600 active:opacity-60 transition-opacity">
-                <span>more</span>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              <button className="flex items-center gap-1 active:opacity-60 transition-opacity">
+                <span className="text-[15px] font-semibold text-gray-900">Asset Details</span>
+                <svg className="w-4 h-4 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                 </svg>
               </button>
             </div>
@@ -124,25 +123,22 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
             {/* Asset Summary Grid - 2x2 */}
             <div className="px-4 pb-3">
               <div className="grid grid-cols-2 gap-2">
-                {/* Top Left - Cash/Foreign Currency */}
-                <div className="bg-gray-50 px-2 py-2.5">
+                {/* Top Left - Stock */}
+                <div className="bg-gray-100 px-2 py-2.5">
                   <div className="flex items-center gap-1.5 mb-1.5">
-                    <div className="w-1.5 h-1.5 flex-shrink-0 rounded-full bg-[#266076]"></div>
-                    <span className="text-[10px] text-gray-600 whitespace-nowrap">Cash/Foreign Currency</span>
+                    <div className="w-1.5 h-1.5 flex-shrink-0 rounded-full bg-[#4DA90F]"></div>
+                    <span className="text-[10px] text-gray-600 whitespace-nowrap">Stock</span>
                   </div>
-                  <div className="text-[15px] font-bold text-gray-900">358,420.15</div>
+                  <div className="text-[15px] font-bold text-gray-900">158,920.30</div>
                 </div>
 
                 {/* Top Right - Unit Trust */}
-                <div className="bg-gray-50 pt-3 px-2 pb-2 relative">
+                <div className="bg-gray-100 pt-3 px-2 pb-2 relative overflow-hidden">
                   <button 
                     onClick={onGoToUnitTrusts}
-                    className="absolute top-1.5 right-1.5 flex items-center gap-0.5 text-[10px] text-gray-600 active:opacity-60 transition-opacity"
+                    className="absolute top-0 right-0 flex items-center gap-0.5 text-[10px] text-white bg-[#da0011] px-2 py-1 active:opacity-80 transition-opacity rounded-l-full"
                   >
                     <span>Analyze</span>
-                    <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
                   </button>
                   <div className="flex items-center gap-1.5 mb-1.5">
                     <div className="w-1.5 h-1.5 flex-shrink-0 rounded-full bg-[#EC7046]"></div>
@@ -151,28 +147,33 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
                   <div className="text-[15px] font-bold text-gray-900">89,395.70</div>
                 </div>
 
-                {/* Bottom Left - Time Deposit */}
-                <div className="bg-gray-50 px-2 py-2.5">
+                {/* Bottom Left - Structured Product */}
+                <div className="bg-gray-100 px-2 py-2.5">
                   <div className="flex items-center gap-1.5 mb-1.5">
                     <div className="w-1.5 h-1.5 flex-shrink-0 rounded-full bg-[#C03954]"></div>
-                    <span className="text-[10px] text-gray-600">Time Deposit</span>
+                    <span className="text-[10px] text-gray-600 whitespace-nowrap">Structured Product</span>
                   </div>
-                  <div className="text-[15px] font-bold text-gray-900">25,810.50</div>
+                  <div className="text-[15px] font-bold text-gray-900">125,810.50</div>
                 </div>
 
-                {/* Bottom Right - Stocks */}
-                <div className="bg-gray-50 px-2 py-2.5">
+                {/* Bottom Right - Bond */}
+                <div className="bg-gray-100 px-2 py-2.5">
                   <div className="flex items-center gap-1.5 mb-1.5">
-                    <div className="w-1.5 h-1.5 flex-shrink-0 rounded-full bg-[#4DA90F]"></div>
-                    <span className="text-[10px] text-gray-600">Stocks</span>
+                    <div className="w-1.5 h-1.5 flex-shrink-0 rounded-full bg-[#266076]"></div>
+                    <span className="text-[10px] text-gray-600">Bond</span>
                   </div>
-                  <div className="text-[15px] font-bold text-gray-900">158,920.30</div>
+                  <div className="text-[15px] font-bold text-gray-900">258,420.15</div>
                 </div>
               </div>
             </div>
+          </div>
 
+
+        </div>
+                  {/* Chart Section */}
+          <div className="bg-white rounded-sm border border-gray-200">
             {/* Tabs */}
-            <div className="border-t border-gray-200">
+            <div className="border-b border-gray-200">
               <div className="flex">
                 <button className="flex-1 py-3 text-[13px] font-medium text-[#da0011] border-b-2 border-[#da0011]">
                   Product type
@@ -255,23 +256,23 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-[#266076] rounded-sm"></div>
-                    <span className="text-[13px] text-gray-900">Cash/Foreign Currency</span>
+                    <span className="text-[13px] text-gray-900">Bond</span>
                   </div>
-                  <span className="text-[14px] font-semibold text-gray-900">HKD 358,420.15</span>
+                  <span className="text-[14px] font-semibold text-gray-900">HKD 258,420.15</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-[#4DA90F] rounded-sm"></div>
-                    <span className="text-[13px] text-gray-900">Stocks</span>
+                    <span className="text-[13px] text-gray-900">Stock</span>
                   </div>
                   <span className="text-[14px] font-semibold text-gray-900">HKD 158,920.30</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-[#C03954] rounded-sm"></div>
-                    <span className="text-[13px] text-gray-900">Time Deposit</span>
+                    <span className="text-[13px] text-gray-900">Structured Product</span>
                   </div>
-                  <span className="text-[14px] font-semibold text-gray-900">HKD 25,810.50</span>
+                  <span className="text-[14px] font-semibold text-gray-900">HKD 125,810.50</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -283,7 +284,6 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
               </div>
             </div>
           </div>
-        </div>
       </div>
     </div>
   );

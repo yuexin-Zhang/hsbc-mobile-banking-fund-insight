@@ -38,9 +38,9 @@ const ManagerTab: React.FC<ManagerTabProps> = ({ managerHoldings, totalAssetValu
 
       {/* Strategic Insight Box */}
       {isAIGenerated && (
-        <div className="p-3 bg-gray-50/50 border-l-2 border-[#da0011] rounded-r relative overflow-hidden">
+        <div className="p-3 pb-3 bg-[#f0f0f0] rounded-r relative overflow-hidden">
           {/* AI Tag */}
-          <div className="absolute bottom-1.5 right-1.5 z-10">
+          <div className="absolute top-0 right-0 z-10">
             <div className="flex items-center gap-1 px-1.5 py-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full shadow-sm">
               <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M13 10V3L4 14h7v7l9-11h-7z" />

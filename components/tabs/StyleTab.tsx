@@ -31,9 +31,9 @@ const StyleTab: React.FC<StyleTabProps> = ({ styleHoldings, styleTrustHoldings, 
 
       {/* Strategic Insight Box */}
       {isAIGenerated && (
-        <div className="p-3 bg-gray-50/50 border-l-2 border-[#da0011] rounded-r relative overflow-hidden">
+        <div className="p-3 pb-3 bg-[#f0f0f0] rounded-r relative overflow-hidden">
           {/* AI Tag */}
-          <div className="absolute bottom-1.5 right-1.5 z-10">
+          <div className="absolute top-0 right-0 z-10">
             <div className="flex items-center gap-1 px-1.5 py-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full shadow-sm">
               <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -77,7 +77,7 @@ const StyleTab: React.FC<StyleTabProps> = ({ styleHoldings, styleTrustHoldings, 
       </div>
 
       {/* Main Style Holdings */}
-      <div className="space-y-4">
+      <div className="space-y-2">
         {styleHoldings
           .filter(h => h.style === holdingStyle)
           .sort((a, b) => parseFloat(b.returnRate) - parseFloat(a.returnRate))
@@ -85,7 +85,7 @@ const StyleTab: React.FC<StyleTabProps> = ({ styleHoldings, styleTrustHoldings, 
           const isRatePositive = !item.returnRate.startsWith('-');
           const is3MPositive = !item.threeMonthChange.startsWith('-');
           return (
-          <div key={idx} className="flex items-center py-1 border-b border-gray-50 last:border-0 pb-3">
+          <div key={idx} className="flex items-center border-b border-gray-50 last:border-0 pb-2">
             <div className="w-[45%] text-[11px] font-bold text-[#1e1e1e] leading-tight pr-2">
               {item.name}
               <div className="text-[9px] text-[#767676] font-medium mt-0.5">HKD {item.mktValue.toLocaleString()}</div>
@@ -107,14 +107,14 @@ const StyleTab: React.FC<StyleTabProps> = ({ styleHoldings, styleTrustHoldings, 
 
       {/* Trust Section if applicable */}
       {styleTrustHoldings.filter(h => h.style === holdingStyle).length > 0 && (
-        <div className="mt-4 space-y-4">
+        <div className="mt-4 space-y-2">
           {styleTrustHoldings
             .filter(h => h.style === holdingStyle)
             .map((item, idx) => {
             const isRatePositive = !item.returnRate.startsWith('-');
             const is3MPositive = !item.threeMonthChange.startsWith('-');
             return (
-            <div key={`trust-${idx}`} className="flex items-center py-1 border-b border-gray-50 last:border-0 pb-3">
+            <div key={`trust-${idx}`} className="flex items-center border-b border-gray-50 last:border-0 pb-2">
               <div className="w-[45%] text-[11px] font-bold text-[#1e1e1e] leading-tight pr-2">
                 {item.name}
                 <div className="text-[9px] text-[#767676] font-medium mt-0.5">HKD {item.mktValue.toLocaleString()}</div>

@@ -77,7 +77,7 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
         .filter(f => (f.sectorWeight as any)[selectedConcentrationItem!])
         .sort((a, b) => parseFloat((b.sectorWeight as any)[selectedConcentrationItem!]) - parseFloat((a.sectorWeight as any)[selectedConcentrationItem!]))
         .map((fund, idx) => (
-          <div key={idx} className="flex items-center text-[11px] px-1 py-1 border-b border-gray-50 last:border-0 pb-3">
+          <div key={idx} className="flex items-center text-[11px] px-1 border-b border-gray-50 last:border-0 pb-2">
             <div className="w-[40%] flex flex-col">
               <span className="font-bold text-[#1e1e1e] line-clamp-1">{fund.name}</span>
               <span className="text-[9px] text-[#767676] mt-0.5 font-medium">{fund.code}</span>
@@ -98,7 +98,7 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
         .filter(f => (f.regionWeight as any)[selectedConcentrationItem!])
         .sort((a, b) => parseFloat((b.regionWeight as any)[selectedConcentrationItem!]) - parseFloat((a.regionWeight as any)[selectedConcentrationItem!]))
         .map((fund, idx) => (
-          <div key={idx} className="flex items-center text-[11px] px-1 py-1 border-b border-gray-50 last:border-0 pb-3">
+          <div key={idx} className="flex items-center text-[11px] px-1 border-b border-gray-50 last:border-0 pb-2">
             <div className="w-[40%] flex flex-col">
               <span className="font-bold text-[#1e1e1e] line-clamp-1">{fund.name}</span>
               <span className="text-[9px] text-[#767676] mt-0.5 font-medium">{fund.code}</span>
@@ -127,7 +127,7 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
           fund.topStocks.find(s => s.name === selectedConcentrationItem)?.contribution || '0%';
 
         return (
-          <div key={idx} className="flex items-center text-[11px] px-1 py-1 border-b border-gray-50 last:border-0 pb-3">
+          <div key={idx} className="flex items-center text-[11px] px-1 border-b border-gray-50 last:border-0 pb-2">
             <div className="w-[40%] flex flex-col">
               <span className="font-bold text-[#1e1e1e] line-clamp-1">{fund.name}</span>
               <span className="text-[9px] text-[#767676] mt-0.5 font-medium">{fund.code}</span>
@@ -220,7 +220,7 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
               <div className="w-[25%] text-right pr-1">Concentration</div>
             </div>
             
-            <div className="space-y-4">
+            <div className="space-y-2">
               {renderHoldingsList()}
             </div>
           </div>

@@ -11,7 +11,7 @@ const FloatingAIButton: React.FC<FloatingAIButtonProps> = ({ onClick }) => {
         <button 
           className="group relative flex items-center gap-3 px-6 py-3.5 rounded-full shadow-2xl overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 pointer-events-auto"
           style={{
-            background: 'linear-gradient(135deg, #da0011 0%, #da0011 50%, #ba000e 100%)',
+            background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)',
           }}
           onClick={onClick}
         >
@@ -19,7 +19,7 @@ const FloatingAIButton: React.FC<FloatingAIButtonProps> = ({ onClick }) => {
           <div 
             className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
             style={{
-              background: 'linear-gradient(135deg, #da0011 0%, #da0011 50%, #a7000d 100%)',
+              background: 'linear-gradient(135deg, #9333ea 0%, #db2777 100%)',
             }}
           />
           

@@ -67,7 +67,7 @@ const PerformanceTab: React.FC<PerformanceTabProps> = ({ chartData, colors }) =>
         </div>
 
         {/* Table Rows */}
-        <div className="space-y-4">
+        <div className="space-y-2">
           {/* Return Rate */}
           <div className="flex items-center py-1 border-b border-gray-50">
             <div className="w-[40%] text-[11px] font-bold text-[#1e1e1e]">Return Rate</div>
@@ -104,6 +104,7 @@ const PerformanceTab: React.FC<PerformanceTabProps> = ({ chartData, colors }) =>
       </div>
 
       {/* Detailed Earnings Data Section */}
+      {false && (
       <div className="mt-8 space-y-5">
         {/* Section Title with Expand/Collapse */}
         <button 
@@ -247,6 +248,7 @@ const PerformanceTab: React.FC<PerformanceTabProps> = ({ chartData, colors }) =>
         </div>
         )}
       </div>
+      )}
     </div>
   );
 };
