@@ -50,10 +50,8 @@ const TreemapChart: React.FC<TreemapChartProps> = ({ data, onItemClick, selected
             return '#f3f3f3';
           }
 
-          if (isSelected) {
-            return '#f2dede';
-          }
-          return '#f3f3f3';
+          // Use the actual color from the data item
+          return item?.color || '#f3f3f3';
         },
         labels: {
           display: true,

@@ -139,6 +139,9 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
                     className="absolute top-0 right-0 flex items-center gap-0.5 text-[10px] text-white bg-[#da0011] px-2 py-1 active:opacity-80 transition-opacity rounded-l-full"
                   >
                     <span>Analyze</span>
+                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
                   </button>
                   <div className="flex items-center gap-1.5 mb-1.5">
                     <div className="w-1.5 h-1.5 flex-shrink-0 rounded-full bg-[#EC7046]"></div>

@@ -20,7 +20,7 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue, is
       <div className="bg-white rounded-[3px] border border-[#ebeef0] shadow-sm overflow-hidden px-3 py-2">
         <div className="flex items-center justify-between">
           <div className="text-[13px] font-bold">My total assets</div>
-          <div className="flex items-center gap-0.5 text-[#999] cursor-pointer hover:text-[#767676] transition-colors">
+          <div className="flex items-center gap-0.5 text-[#f0ad4e] cursor-pointer hover:text-[#e09d3d] transition-colors">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
               <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
             </svg>
@@ -111,54 +111,48 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue, is
           </div>
         )}
         
-        <div className="px-3 py-2 relative z-20">
+        <div className="px-3 py-3 relative z-20">
         <div className="flex items-center gap-1 mb-1">
           <div className="w-1 h-5 bg-[#da0011]"></div>
           <h3 className="text-[15px] font-bold text-[#1e1e1e]">Holdings Summary</h3>
         </div>
 
-        <div className="space-y-1.5">
+        <div className="space-y-2">
           {/* Performance */}
           <div className="flex items-start gap-2">
-            <div className="flex items-center gap-1">
-              <div className="w-1 h-1 rounded-full bg-[#767676] flex-shrink-0"></div>
-              <div className="w-[70px] flex-shrink-0">
-                <span className="text-[12px] text-[#767676] font-medium">Performance</span>
-              </div>
-            </div>
-            <div className="flex-1 text-[12px] mt-[5px]">
+            <div className="w-1 h-1 rounded-full bg-[#767676] flex-shrink-0 mt-1.5"></div>
+            <div className="flex-1 text-[12px] leading-relaxed">
               {isAIGenerated ? (
                 // AI Mode: Concise insight
                 <>
+                  <span className="text-[#767676] font-medium">Performance: </span>
                   <span>Strong YTD returns of </span>
-                  <span className="font-bold text-[#da0011] whitespace-nowrap">12.00%</span>
+                  <span className="font-bold text-[#da0011]">12.00%</span>
                   <span> with low </span>
-                  <span className="font-bold text-[#5cb85c] whitespace-nowrap">1.17%</span>
+                  <span className="font-bold text-[#5cb85c]">1.17%</span>
                   <span> drawdown</span>
                 </>
               ) : (
                 // Non-AI Mode: Direct data
                 <>
+                  <span className="text-[#767676] font-medium">Performance: </span>
                   <span>YTD return </span>
-                  <span className="font-bold text-[#da0011] whitespace-nowrap">12.00%</span>
+                  <span className="font-bold text-[#da0011]">12.00%</span>
                   <span>, max drawdown </span>
-                  <span className="font-bold text-[#1e1e1e] whitespace-nowrap">1.17%</span>
+                  <span className="font-bold text-[#1e1e1e]">1.17%</span>
                 </>
               )}
             </div>
           </div>
+          
           {/* Asset Classes */}
           <div className="flex items-start gap-2">
-            <div className="flex items-center gap-1">
-              <div className="w-1 h-1 rounded-full bg-[#767676] flex-shrink-0"></div>
-              <div className="w-[70px] flex-shrink-0">
-                <span className="text-[12px] text-[#767676] font-medium">Classes</span>
-              </div>
-            </div>
-            <div className="flex-1 text-[12px] mt-[5px]">
+            <div className="w-1 h-1 rounded-full bg-[#767676] flex-shrink-0 mt-1.5"></div>
+            <div className="flex-1 text-[12px] leading-relaxed">
               {isAIGenerated ? (
                 // AI Mode: Strategic insight
                 <>
+                  <span className="text-[#767676] font-medium">Classes: </span>
                   <span>Growth-focused with </span>
                   <span className="font-bold text-[#da0011]">80%</span>
                   <span> in domestic equity</span>
@@ -166,6 +160,7 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue, is
               ) : (
                 // Non-AI Mode: Simple fact
                 <>
+                  <span className="text-[#767676] font-medium">Classes: </span>
                   <span>Domestic equity funds </span>
                   <span className="font-bold text-[#da0011]">80%</span>
                 </>
@@ -175,16 +170,12 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue, is
 
           {/* underlying assets */}
           <div className="flex items-start gap-2">
-            <div className="flex items-center gap-1">
-              <div className="w-1 h-1 rounded-full bg-[#767676] flex-shrink-0"></div>
-              <div className="w-[70px] flex-shrink-0">
-                <span className="text-[12px] text-[#767676] font-medium">Underlying</span>
-              </div>
-            </div>
-            <div className="flex-1 text-[12px] mt-[5px]">
+            <div className="w-1 h-1 rounded-full bg-[#767676] flex-shrink-0 mt-1.5"></div>
+            <div className="flex-1 text-[12px] leading-relaxed">
               {isAIGenerated ? (
                 // AI Mode: Sector summary
                 <>
+                  <span className="text-[#767676] font-medium">Underlying: </span>
                   <span>HK equities </span>
                   <span className="font-bold text-[#da0011]">28.0%</span>
                   <span>, cyclical </span>
@@ -193,8 +184,9 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue, is
               ) : (
                 // Non-AI Mode: Concentration risk
                 <>
+                  <span className="text-[#767676] font-medium">Underlying: </span>
                   <span>NVIDIA </span>
-                  <span className="font-bold text-[#f0ad4e]">79.84%</span>
+                  <span className="font-bold text-[#da0011]">79.84%</span>
                   <span>. Diversify to reduce risk</span>
                 </>
               )}

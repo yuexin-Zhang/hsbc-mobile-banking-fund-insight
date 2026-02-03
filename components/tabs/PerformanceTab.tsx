@@ -42,7 +42,7 @@ const PerformanceTab: React.FC<PerformanceTabProps> = ({ chartData, colors }) =>
         </div>
 
         <div className="flex items-center">
-          <span className="w-2 h-2 rounded-full bg-[#31b0d5] mr-1"></span>
+          <span className="w-2 h-2 rounded-full bg-[#999] mr-1"></span>
           <span className="text-gray-900 font-medium">Benchmark:</span>
           <span className="ml-1 text-gray-900 font-medium">25.83%</span>
         </div>

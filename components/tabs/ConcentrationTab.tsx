@@ -36,9 +36,9 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
   totalAssetValue,
   isAIGenerated
 }) => {
-  const [concentrationTab, setConcentrationTab] = useState('Sector');
+  const [concentrationTab, setConcentrationTab] = useState('Region');
   const [selectedConcentrationItem, setSelectedConcentrationItem] = useState<string | null>(() => {
-    const maxItem = [...concentrationSectorData].sort((a, b) => b.pct - a.pct)[0];
+    const maxItem = [...concentrationRegionData].sort((a, b) => b.pct - a.pct)[0];
     return maxItem ? maxItem.label : null;
   });
 
@@ -165,8 +165,8 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
       {/* Concentration Toggle Buttons */}
       <div className="flex p-1 bg-[#f4f5f6]">
         {[
-          { id: 'Sector', label: 'Sector' },
           { id: 'Region', label: 'Region' },
+          { id: 'Sector', label: 'Sector' },
           { id: 'Top Holdings', label: 'Top Holdings' }
         ].map((tab) => (
           <button

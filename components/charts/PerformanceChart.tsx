@@ -137,9 +137,9 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ chartData, colors }
         </button>
         <button 
           onClick={() => toggleLine('saa')}
-          className={`flex items-center gap-1.5 px-2 py-0.5 border text-[9px] font-bold transition-all ${visibleLines.saa ? 'bg-blue-50 border-blue-200 text-[#31b0d5]' : 'bg-gray-50 border-gray-200 text-gray-400 opacity-60'}`}
+          className={`flex items-center gap-1.5 px-2 py-0.5 border text-[9px] font-bold transition-all ${visibleLines.saa ? 'bg-gray-100 border-gray-300 text-[#767676]' : 'bg-gray-50 border-gray-200 text-gray-400 opacity-60'}`}
         >
-          <div className={`w-1.5 h-0.5 ${visibleLines.saa ? 'bg-[#31b0d5]' : 'bg-gray-300'}`}></div>
+          <div className={`w-1.5 h-0.5 ${visibleLines.saa ? 'bg-[#999]' : 'bg-gray-300'}`}></div>
           Benchmark
         </button>
       </div>
@@ -174,7 +174,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ chartData, colors }
             )}
                           
             {visibleLines.saa && (
-              <path d={getSmoothPathForFiltered(filteredData, 'saa')} fill="none" stroke="#5eb3d6" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="3 2" />
+              <path d={getSmoothPathForFiltered(filteredData, 'saa')} fill="none" stroke="#999" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="3 2" />
             )}
           
             {/* Drawdown area */}
@@ -264,7 +264,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ chartData, colors }
               <div className="text-[7px] opacity-60 text-center leading-none mb-1">{filteredData[hoverData.index]?.date}</div>
               <div className="space-y-0.5">
                 {visibleLines.fund && <div className="flex justify-between items-center gap-2 text-[8px]"><span className="opacity-70">Yours:</span><span className="font-bold text-red-200">{filteredData[hoverData.index]?.fund.toFixed(2)}%</span></div>}
-                {visibleLines.saa && <div className="flex justify-between items-center gap-2 text-[8px]"><span className="opacity-70">Benchmark:</span><span className="font-bold text-blue-300">{filteredData[hoverData.index]?.saa.toFixed(2)}%</span></div>}
+                {visibleLines.saa && <div className="flex justify-between items-center gap-2 text-[8px]"><span className="opacity-70">Benchmark:</span><span className="font-bold text-gray-300">{filteredData[hoverData.index]?.saa.toFixed(2)}%</span></div>}
                 {hoverData.index > 0 && filteredData[hoverData.index]?.fund < filteredData[hoverData.index - 1]?.fund && (
                   <div className="flex justify-between items-center gap-2 text-[8px] border-t border-white/20 pt-0.5 mt-0.5">
                     <span className="opacity-70">Drawdown:</span>

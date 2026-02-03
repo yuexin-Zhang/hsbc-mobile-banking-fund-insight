@@ -183,22 +183,22 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
 
   // Sector data (renamed from Industry)
   const concentrationSectorData = [
-    { label: 'Internet & Technology', pct: 22.0, val: '2,067,025.17', color: '#f0ad4e', currency: 'HKD' },
-    { label: 'Power Equipment', pct: 18.0, val: '1,691,234.32', color: '#31b0d5', currency: 'HKD' },
-    { label: 'Transportation', pct: 14.0, val: '1,315,408.47', color: '#5cb85c', currency: 'HKD' },
-    { label: 'Banking', pct: 12.0, val: '1,127,497.55', color: '#31708f', currency: 'HKD' },
-    { label: 'Insurance', pct: 10.0, val: '939,574.62', color: '#da0011', currency: 'HKD' },
-    { label: 'Consumer Staples', pct: 12.0, val: '1,127,497.55', color: '#5cb85c', currency: 'HKD' },
+    { label: 'Internet & Technology', pct: 22.0, val: '2,067,025.17', color: '#266076', currency: 'HKD' },
+    { label: 'Power Equipment', pct: 18.0, val: '1,691,234.32', color: '#4DA90F', currency: 'HKD' },
+    { label: 'Transportation', pct: 14.0, val: '1,315,408.47', color: '#C03954', currency: 'HKD' },
+    { label: 'Banking', pct: 12.0, val: '1,127,497.55', color: '#EC7046', currency: 'HKD' },
+    { label: 'Insurance', pct: 10.0, val: '939,574.62', color: '#509EBC', currency: 'HKD' },
+    { label: 'Consumer Staples', pct: 12.0, val: '1,127,497.55', color: '#E76E84', currency: 'HKD' },
     { label: 'Others', pct: 12.0, val: '1,127,497.55', color: '#999', currency: 'HKD' },
   ];
 
   // Region data
   const concentrationRegionData = [
-    { label: 'China', pct: 38.0, val: '3,570,378.37', color: '#da0011', currency: 'HKD' },
-    { label: 'United States', pct: 28.0, val: '2,630,812.95', color: '#31b0d5', currency: 'HKD' },
-    { label: 'Hong Kong', pct: 18.0, val: '1,691,234.32', color: '#f0ad4e', currency: 'HKD' },
-    { label: 'Europe', pct: 10.0, val: '939,574.62', color: '#5cb85c', currency: 'HKD' },
-    { label: 'Japan', pct: 6.0, val: '563,746.98', color: '#31708f', currency: 'HKD' },
+    { label: 'China', pct: 38.0, val: '3,570,378.37', color: '#266076', currency: 'HKD' },
+    { label: 'United States', pct: 28.0, val: '2,630,812.95', color: '#4DA90F', currency: 'HKD' },
+    { label: 'Hong Kong', pct: 18.0, val: '1,691,234.32', color: '#C03954', currency: 'HKD' },
+    { label: 'Europe', pct: 10.0, val: '939,574.62', color: '#EC7046', currency: 'HKD' },
+    { label: 'Japan', pct: 6.0, val: '563,746.98', color: '#509EBC', currency: 'HKD' },
   ];
 
   const concentrationTopHoldingsData = [
