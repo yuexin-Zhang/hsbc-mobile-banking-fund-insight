@@ -15,13 +15,13 @@ interface HoldingData {
   code: string;
   mktValue: number;
   sectorWeight: Record<string, string>;
-  industryWeight: Record<string, string>;
+  regionWeight: Record<string, string>;
   topStocks: Array<{ name: string; contribution: string }>;
 }
 
 interface ConcentrationTabProps {
   concentrationSectorData: AllocationData[];
-  concentrationIndustryData: AllocationData[];
+  concentrationRegionData: AllocationData[];
   concentrationTopHoldingsData: AllocationData[];
   holdingsData: HoldingData[];
   totalAssetValue: number;
@@ -30,7 +30,7 @@ interface ConcentrationTabProps {
 
 const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
   concentrationSectorData,
-  concentrationIndustryData,
+  concentrationRegionData,
   concentrationTopHoldingsData,
   holdingsData,
   totalAssetValue,
@@ -44,16 +44,16 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
 
   const getCurrentData = () => {
     if (concentrationTab === 'Sector') return concentrationSectorData;
-    if (concentrationTab === 'Industry') return concentrationIndustryData;
+    if (concentrationTab === 'Region') return concentrationRegionData;
     return concentrationTopHoldingsData;
   };
 
   const getInsight = () => {
     if (concentrationTab === 'Sector') {
-      return 'Your portfolio has high exposure to Hong Kong equities, cyclical and overseas sectors, resulting in a more growth-oriented and volatile risk profile.';
+      return 'Power equipment, transportation and internet & technology sectors are key drivers of your portfolio; consider monitoring policy changes and sector cycles closely.';
     }
-    if (concentrationTab === 'Industry') {
-      return 'Power equipment, transportation and internet & technology industries are key drivers of your portfolio; consider monitoring policy changes and sector cycles closely.';
+    if (concentrationTab === 'Region') {
+      return 'Your portfolio has significant exposure to China and United States markets, with diversification across Hong Kong and Europe, balancing growth opportunities with geographic risk.';
     }
     return 'Top positions are concentrated in leaders such as Tencent Holdings, Alibaba Group and Apple Inc., so the portfolio still relies on a small group of large names even though single-stock weights are not extreme.';
   };
@@ -62,7 +62,7 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
     setConcentrationTab(tabId);
     let data: AllocationData[] = [];
     if (tabId === 'Sector') data = concentrationSectorData;
-    else if (tabId === 'Industry') data = concentrationIndustryData;
+    else if (tabId === 'Region') data = concentrationRegionData;
     else if (tabId === 'Top Holdings') data = concentrationTopHoldingsData;
     const maxItem = [...data].sort((a, b) => b.pct - a.pct)[0];
     if (maxItem) setSelectedConcentrationItem(maxItem.label);
@@ -84,7 +84,7 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
             </div>
             <div className="w-[35%] text-center">
               <div className="font-bold text-[#1e1e1e]">{((fund.mktValue / totalAssetValue) * 100).toFixed(2)}%</div>
-              <div className="text-[9px] text-[#767676] font-medium mt-0.5">¥{fund.mktValue.toLocaleString()}</div>
+              <div className="text-[9px] text-[#767676] font-medium mt-0.5">HKD {fund.mktValue.toLocaleString()}</div>
             </div>
             <div className="w-[25%] text-right pr-1 font-bold text-[#1e1e1e]">
               {(fund.sectorWeight as any)[selectedConcentrationItem!]}
@@ -93,10 +93,10 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
         ));
     }
 
-    if (concentrationTab === 'Industry') {
+    if (concentrationTab === 'Region') {
       return holdingsData
-        .filter(f => (f.industryWeight as any)[selectedConcentrationItem!])
-        .sort((a, b) => parseFloat((b.industryWeight as any)[selectedConcentrationItem!]) - parseFloat((a.industryWeight as any)[selectedConcentrationItem!]))
+        .filter(f => (f.regionWeight as any)[selectedConcentrationItem!])
+        .sort((a, b) => parseFloat((b.regionWeight as any)[selectedConcentrationItem!]) - parseFloat((a.regionWeight as any)[selectedConcentrationItem!]))
         .map((fund, idx) => (
           <div key={idx} className="flex items-center text-[11px] px-1 py-1 border-b border-gray-50 last:border-0 pb-3">
             <div className="w-[40%] flex flex-col">
@@ -105,10 +105,10 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
             </div>
             <div className="w-[35%] text-center">
               <div className="font-bold text-[#1e1e1e]">{((fund.mktValue / totalAssetValue) * 100).toFixed(2)}%</div>
-              <div className="text-[9px] text-[#767676] font-medium mt-0.5">¥{fund.mktValue.toLocaleString()}</div>
+              <div className="text-[9px] text-[#767676] font-medium mt-0.5">HKD {fund.mktValue.toLocaleString()}</div>
             </div>
             <div className="w-[25%] text-right pr-1 font-bold text-[#1e1e1e]">
-              {(fund.industryWeight as any)[selectedConcentrationItem!]}
+              {(fund.regionWeight as any)[selectedConcentrationItem!]}
             </div>
           </div>
         ));
@@ -134,7 +134,7 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
             </div>
             <div className="w-[35%] text-center">
               <div className="font-bold text-[#1e1e1e]">{((fund.mktValue / totalAssetValue) * 100).toFixed(2)}%</div>
-              <div className="text-[9px] text-[#767676] font-medium mt-0.5">¥{fund.mktValue.toLocaleString()}</div>
+              <div className="text-[9px] text-[#767676] font-medium mt-0.5">HKD {fund.mktValue.toLocaleString()}</div>
             </div>
             <div className="w-[25%] text-right pr-1 font-bold text-[#1e1e1e]">
               {contributionValue}
@@ -150,9 +150,7 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
       subtitle:
         concentrationTab === 'Top Holdings'
           ? `${selectedConcentrationItem} is one of the core positions in these funds.`
-          : `These funds have relatively high exposure to this ${
-              concentrationTab === 'Sector' ? 'sector' : 'industry'
-            }.`,
+          : `These funds have relatively high exposure to this ${concentrationTab.toLowerCase()}.`,
     };
   };
 
@@ -168,7 +166,7 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
       <div className="flex p-1 bg-[#f4f5f6]">
         {[
           { id: 'Sector', label: 'Sector' },
-          { id: 'Industry', label: 'Industry' },
+          { id: 'Region', label: 'Region' },
           { id: 'Top Holdings', label: 'Top Holdings' }
         ].map((tab) => (
           <button

@@ -37,20 +37,20 @@ const PerformanceTab: React.FC<PerformanceTabProps> = ({ chartData, colors }) =>
       <div className="flex items-center text-[10px]">
         <div className="flex items-center">
           <span className="w-2 h-2 rounded-full bg-[#da0011] mr-1"></span>
-          <span className="text-gray-900 font-medium">Funds:</span>
+          <span className="text-gray-900 font-medium">Yours:</span>
           <span className="ml-1 text-[#da0011] font-bold">28.59%</span>
         </div>
 
         <div className="flex items-center">
-          <span className="w-2 h-2 rounded-full bg-[#5cb85c] mr-1"></span>
-          <span className="text-gray-900 font-medium">Drawdown:</span>
-          <span className="ml-1 text-gray-900 font-medium">16.70%</span>
+          <span className="w-2 h-2 rounded-full bg-[#31b0d5] mr-1"></span>
+          <span className="text-gray-900 font-medium">Benchmark:</span>
+          <span className="ml-1 text-gray-900 font-medium">25.83%</span>
         </div>
 
         <div className="flex items-center">
-          <span className="w-2 h-2 rounded-full bg-[#31b0d5] mr-1"></span>
-          <span className="text-gray-900 font-medium">SAA:</span>
-          <span className="ml-1 text-gray-900 font-medium">25.83%</span>
+          <span className="w-2 h-2 rounded-full bg-[#5cb85c] mr-1"></span>
+          <span className="text-gray-900 font-medium whitespace-nowrap">Max. Drawdown:</span>
+          <span className="ml-1 text-gray-900 font-medium">10.79%</span>
         </div>
       </div>
 
@@ -83,7 +83,7 @@ const PerformanceTab: React.FC<PerformanceTabProps> = ({ chartData, colors }) =>
           <div className="flex items-center py-1 border-b border-gray-50">
             <div className="w-[40%] text-[11px] font-bold text-[#1e1e1e]">Max Drawdown</div>
             <div className="w-[30%] text-right pr-4">
-              <div className="text-[11px] font-bold text-[#1e1e1e]">16.70%</div>
+              <div className="text-[11px] font-bold text-[#1e1e1e]">10.79%</div>
             </div>
             <div className="w-[30%] text-right">
               <div className="text-[11px] font-bold text-[#1e1e1e]">14.25%</div>

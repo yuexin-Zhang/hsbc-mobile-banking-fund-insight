@@ -113,7 +113,7 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
   ];
 
   const totalAssetValue = 9395746.24;
-  const detailTabs = ['Performance', 'Classes', 'Style', 'Manager', 'Concentration'];
+  const detailTabs = ['Performance', 'Asset Class', 'Style', 'Concentration'];
 
   const styleHoldings = [
     { name: 'BGF WLD MIN', id: 'IPFD3004', returnRate: '21.76%', holdingDays: '458 Days', threeMonthChange: '+8.45%', isPositive: true, style: 'Value', mktValue: 939574.62 },
@@ -176,42 +176,41 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
   ];
 
   const assetClassesData = [
-    { label: 'Domestic Equity', pct: 42.14, val: '3,959,446.47', color: '#31b0d5', currency: '¥' }, 
-    { label: 'Commodities & Others', pct: 35.42, val: '3,328,154.55', color: '#da0011', currency: '¥' }, 
-    { label: 'Overseas Market', pct: 15.15, val: '200,486.70', color: '#5cb85c', currency: '$' }, 
-    { label: 'Domestic Fixed Income', pct: 7.29, val: '684,689.66', color: '#777', currency: '¥' }, 
+    { label: 'Equity', pct: 57.29, val: '5,382,407.79', color: '#266076', currency: 'HKD' }, 
+    { label: 'Fixed Income', pct: 35.42, val: '3,328,154.55', color: '#4DA90F', currency: 'HKD' }, 
+    { label: 'Bonds', pct: 7.29, val: '684,689.66', color: '#C03954', currency: 'HKD' }, 
   ];
 
+  // Sector data (renamed from Industry)
   const concentrationSectorData = [
-    { label: 'Hong Kong Equities', pct: 28.0, val: '2,630,812.95', color: '#da0011', currency: '¥' },
-    { label: 'Cyclical', pct: 18.0, val: '1,691,234.32', color: '#f0ad4e', currency: '¥' },
-    { label: 'Overseas Markets', pct: 16.0, val: '1,503,319.40', color: '#31b0d5', currency: '¥' },
-    { label: 'Financial & Real Estate', pct: 14.0, val: '1,315,408.47', color: '#31708f', currency: '¥' },
-    { label: 'Consumer', pct: 12.0, val: '1,127,497.55', color: '#5cb85c', currency: '¥' },
-    { label: 'Technology', pct: 7.0, val: '657,702.24', color: '#f0ad4e', currency: '¥' },
-    { label: 'Manufacturing', pct: 5.0, val: '469,791.31', color: '#777', currency: '¥' },
+    { label: 'Internet & Technology', pct: 22.0, val: '2,067,025.17', color: '#f0ad4e', currency: 'HKD' },
+    { label: 'Power Equipment', pct: 18.0, val: '1,691,234.32', color: '#31b0d5', currency: 'HKD' },
+    { label: 'Transportation', pct: 14.0, val: '1,315,408.47', color: '#5cb85c', currency: 'HKD' },
+    { label: 'Banking', pct: 12.0, val: '1,127,497.55', color: '#31708f', currency: 'HKD' },
+    { label: 'Insurance', pct: 10.0, val: '939,574.62', color: '#da0011', currency: 'HKD' },
+    { label: 'Consumer Staples', pct: 12.0, val: '1,127,497.55', color: '#5cb85c', currency: 'HKD' },
+    { label: 'Others', pct: 12.0, val: '1,127,497.55', color: '#999', currency: 'HKD' },
   ];
 
-  const concentrationIndustryData = [
-    { label: 'Internet & Technology', pct: 22.0, val: '2,067,025.17', color: '#f0ad4e', currency: '¥' },
-    { label: 'Power Equipment', pct: 18.0, val: '1,691,234.32', color: '#31b0d5', currency: '¥' },
-    { label: 'Transportation', pct: 14.0, val: '1,315,408.47', color: '#5cb85c', currency: '¥' },
-    { label: 'Banking', pct: 12.0, val: '1,127,497.55', color: '#31708f', currency: '¥' },
-    { label: 'Insurance', pct: 10.0, val: '939,574.62', color: '#da0011', currency: '¥' },
-    { label: 'Consumer Staples', pct: 12.0, val: '1,127,497.55', color: '#5cb85c', currency: '¥' },
-    { label: 'Others', pct: 12.0, val: '1,127,497.55', color: '#999', currency: '¥' },
+  // Region data
+  const concentrationRegionData = [
+    { label: 'China', pct: 38.0, val: '3,570,378.37', color: '#da0011', currency: 'HKD' },
+    { label: 'United States', pct: 28.0, val: '2,630,812.95', color: '#31b0d5', currency: 'HKD' },
+    { label: 'Hong Kong', pct: 18.0, val: '1,691,234.32', color: '#f0ad4e', currency: 'HKD' },
+    { label: 'Europe', pct: 10.0, val: '939,574.62', color: '#5cb85c', currency: 'HKD' },
+    { label: 'Japan', pct: 6.0, val: '563,746.98', color: '#31708f', currency: 'HKD' },
   ];
 
   const concentrationTopHoldingsData = [
-    { label: 'Tencent Holdings', pct: 18.5, val: '1,738,237.04', color: '#da0011', currency: '¥', dailyChange: 0.17 },
-    { label: 'Alibaba Group', pct: 14.0, val: '1,315,408.47', color: '#31b0d5', currency: '¥', dailyChange: -0.23 },
-    { label: 'Meituan', pct: 12.5, val: '1,174,468.28', color: '#5cb85c', currency: '¥', dailyChange: 0.05 },
-    { label: 'CATL', pct: 11.0, val: '1,033,528.09', color: '#f0ad4e', currency: '¥', dailyChange: -0.42 },
-    { label: 'BYD Co.', pct: 9.5, val: '892,587.90', color: '#f0ad4e', currency: '¥', dailyChange: 0.31 },
-    { label: 'Ping An Insurance', pct: 8.0, val: '751,646.74', color: '#31708f', currency: '¥', dailyChange: -0.08 },
-    { label: 'HSBC Holdings', pct: 7.0, val: '657,702.24', color: '#5cb85c', currency: '¥', dailyChange: 0.12 },
-    { label: 'Apple Inc.', pct: 6.5, val: '616,730.49', color: '#da0011', currency: '¥', dailyChange: -0.15 },
-    { label: 'NVIDIA Corp.', pct: 13.0, val: '1,221,447.01', color: '#999', currency: '¥', dailyChange: 0.64 },
+    { label: 'Tencent Holdings', pct: 18.5, val: '1,738,237.04', color: '#da0011', currency: 'HKD', dailyChange: 0.17 },
+    { label: 'Alibaba Group', pct: 14.0, val: '1,315,408.47', color: '#31b0d5', currency: 'HKD', dailyChange: -0.23 },
+    { label: 'Meituan', pct: 12.5, val: '1,174,468.28', color: '#5cb85c', currency: 'HKD', dailyChange: 0.05 },
+    { label: 'CATL', pct: 11.0, val: '1,033,528.09', color: '#f0ad4e', currency: 'HKD', dailyChange: -0.42 },
+    { label: 'BYD Co.', pct: 9.5, val: '892,587.90', color: '#f0ad4e', currency: 'HKD', dailyChange: 0.31 },
+    { label: 'Ping An Insurance', pct: 8.0, val: '751,646.74', color: '#31708f', currency: 'HKD', dailyChange: -0.08 },
+    { label: 'HSBC Holdings', pct: 7.0, val: '657,702.24', color: '#5cb85c', currency: 'HKD', dailyChange: 0.12 },
+    { label: 'Apple Inc.', pct: 6.5, val: '616,730.49', color: '#da0011', currency: 'HKD', dailyChange: -0.15 },
+    { label: 'NVIDIA Corp.', pct: 13.0, val: '1,221,447.01', color: '#999', currency: 'HKD', dailyChange: 0.64 },
   ];
 
   const holdingsData = [
@@ -221,11 +220,11 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
       returnRate: '21.76%',
       holdingDays: '458 Days',
       threeMonthChange: '+8.45%',
-      assetClass: 'Overseas Market',
+      assetClass: 'Equity',
       mktValue: 939574.62,
       weight: '9.77%',
-      sectorWeight: { 'Hong Kong Equities': '6.20%', 'Overseas Markets': '2.00%', 'Consumer': '1.57%' },
-      industryWeight: { 'Internet & Technology': '6.20%', 'Consumer Staples': '2.00%', 'Others': '1.57%' },
+      sectorWeight: { 'Internet & Technology': '6.20%', 'Consumer Staples': '2.00%', 'Others': '1.57%' },
+      regionWeight: { 'China': '5.00%', 'Hong Kong': '3.20%', 'United States': '1.57%', 'Japan': '0.50%' },
       topStocks: [
         { name: 'Tencent Holdings', contribution: '5.40%' },
         { name: 'Alibaba Group', contribution: '2.10%' },
@@ -238,11 +237,11 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
       returnRate: '-0.86%',
       holdingDays: '124 Days',
       threeMonthChange: '-2.15%',
-      assetClass: 'Overseas Market',
+      assetClass: 'Equity',
       mktValue: 939574.62,
       weight: '10.02%',
-      sectorWeight: { 'Overseas Markets': '6.50%', 'Cyclical': '2.00%', 'Manufacturing': '1.52%' },
-      industryWeight: { 'Power Equipment': '6.50%', 'Transportation': '1.50%', 'Others': '2.02%' },
+      sectorWeight: { 'Power Equipment': '6.50%', 'Transportation': '1.50%', 'Others': '2.02%' },
+      regionWeight: { 'China': '6.00%', 'United States': '3.00%', 'Europe': '1.02%', 'Japan': '1.20%' },
       topStocks: [
         { name: 'CATL', contribution: '4.80%' },
         { name: 'BYD Co.', contribution: '2.10%' },
@@ -255,11 +254,11 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
       returnRate: '18.53%',
       holdingDays: '562 Days',
       threeMonthChange: '+12.30%',
-      assetClass: 'Commodities & Others',
+      assetClass: 'Fixed Income',
       mktValue: 1348936.56,
       weight: '23.17%',
-      sectorWeight: { 'Cyclical': '10.50%', 'Overseas Markets': '5.00%', 'Consumer': '3.67%', 'Others': '4.00%' },
-      industryWeight: { 'Power Equipment': '8.50%', 'Consumer Staples': '5.00%', 'Others': '9.67%' },
+      sectorWeight: { 'Power Equipment': '8.50%', 'Consumer Staples': '5.00%', 'Others': '9.67%' },
+      regionWeight: { 'China': '10.00%', 'Hong Kong': '8.00%', 'United States': '5.17%', 'Japan': '2.30%' },
       topStocks: [
         { name: 'Tencent Holdings', contribution: '6.80%' },
         { name: 'CATL', contribution: '4.10%' },
@@ -272,11 +271,11 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
       returnRate: '42.56%',
       holdingDays: '890 Days',
       threeMonthChange: '+5.12%',
-      assetClass: 'Domestic Equity',
+      assetClass: 'Equity',
       mktValue: 1137489.55,
       weight: '12.56%',
-      sectorWeight: { 'Hong Kong Equities': '7.00%', 'Financial & Real Estate': '3.00%', 'Consumer': '2.56%' },
-      industryWeight: { 'Banking': '4.50%', 'Insurance': '3.00%', 'Consumer Staples': '2.56%', 'Others': '2.50%' },
+      sectorWeight: { 'Banking': '4.50%', 'Insurance': '3.00%', 'Consumer Staples': '2.56%', 'Others': '2.50%' },
+      regionWeight: { 'Hong Kong': '6.00%', 'China': '4.00%', 'United States': '2.56%', 'Japan': '1.80%' },
       topStocks: [
         { name: 'Ping An Insurance', contribution: '4.20%' },
         { name: 'HSBC Holdings', contribution: '3.10%' },
@@ -289,11 +288,11 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
       returnRate: '11.10%',
       holdingDays: '215 Days',
       threeMonthChange: '+3.88%',
-      assetClass: 'Domestic Equity',
+      assetClass: 'Equity',
       mktValue: 1126489.55,
       weight: '11.33%',
-      sectorWeight: { 'Hong Kong Equities': '6.20%', 'Financial & Real Estate': '3.00%', 'Manufacturing': '2.13%' },
-      industryWeight: { 'Banking': '4.00%', 'Insurance': '3.00%', 'Others': '4.33%' },
+      sectorWeight: { 'Banking': '4.00%', 'Insurance': '3.00%', 'Others': '4.33%' },
+      regionWeight: { 'Hong Kong': '5.50%', 'China': '4.00%', 'Europe': '1.83%' },
       topStocks: [
         { name: 'Tencent Holdings', contribution: '4.10%' },
         { name: 'Ping An Insurance', contribution: '3.00%' },
@@ -306,11 +305,11 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
       returnRate: '0.20%',
       holdingDays: '15 Days',
       threeMonthChange: '-0.45%',
-      assetClass: 'Domestic Equity',
+      assetClass: 'Equity',
       mktValue: 1033532.09,
       weight: '12.56%',
-      sectorWeight: { 'Technology': '8.50%', 'Manufacturing': '2.00%', 'Cyclical': '2.06%' },
-      industryWeight: { 'Internet & Technology': '8.50%', 'Power Equipment': '2.00%', 'Others': '2.06%' },
+      sectorWeight: { 'Internet & Technology': '8.50%', 'Power Equipment': '2.00%', 'Others': '2.06%' },
+      regionWeight: { 'United States': '7.00%', 'China': '4.00%', 'Hong Kong': '1.56%', 'Japan': '0.80%' },
       topStocks: [
         { name: 'Alibaba Group', contribution: '4.60%' },
         { name: 'Meituan', contribution: '3.20%' },
@@ -323,11 +322,11 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
       returnRate: '4.41%',
       holdingDays: '180 Days',
       threeMonthChange: '+1.20%',
-      assetClass: 'Domestic Equity',
+      assetClass: 'Equity',
       mktValue: 859305.69,
       weight: '10.21%',
-      sectorWeight: { 'Overseas Markets': '4.00%', 'Cyclical': '3.00%', 'Hong Kong Equities': '3.21%' },
-      industryWeight: { 'Transportation': '4.00%', 'Internet & Technology': '3.00%', 'Others': '3.21%' },
+      sectorWeight: { 'Transportation': '4.00%', 'Internet & Technology': '3.00%', 'Others': '3.21%' },
+      regionWeight: { 'China': '5.00%', 'United States': '3.00%', 'Hong Kong': '2.21%' },
       topStocks: [
         { name: 'Meituan', contribution: '3.80%' },
         { name: 'BYD Co.', contribution: '2.20%' },
@@ -340,11 +339,11 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
       returnRate: '20.91%',
       holdingDays: '630 Days',
       threeMonthChange: '+7.15%',
-      assetClass: 'Commodities & Others',
+      assetClass: 'Fixed Income',
       mktValue: 459451.99,
       weight: '4.89%',
-      sectorWeight: { 'Financial & Real Estate': '2.50%', 'Consumer': '1.00%', 'Others': '1.39%' },
-      industryWeight: { 'Banking': '2.00%', 'Insurance': '1.50%', 'Others': '1.39%' },
+      sectorWeight: { 'Banking': '2.00%', 'Insurance': '1.50%', 'Others': '1.39%' },
+      regionWeight: { 'Hong Kong': '2.50%', 'China': '1.50%', 'Europe': '0.89%' },
       topStocks: [
         { name: 'Ping An Insurance', contribution: '2.10%' },
         { name: 'HSBC Holdings', contribution: '1.40%' },
@@ -357,11 +356,11 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
       returnRate: '-1.49%',
       holdingDays: '92 Days',
       threeMonthChange: '+0.55%',
-      assetClass: 'Domestic Fixed Income',
+      assetClass: 'Bonds',
       mktValue: 460391.57,
       weight: '10.90%',
-      sectorWeight: { 'Others': '4.00%', 'Hong Kong Equities': '3.00%', 'Overseas Markets': '3.90%' },
-      industryWeight: { 'Others': '4.00%', 'Banking': '3.00%', 'Transportation': '3.90%' },
+      sectorWeight: { 'Others': '4.00%', 'Banking': '3.00%', 'Transportation': '3.90%' },
+      regionWeight: { 'China': '5.00%', 'Hong Kong': '3.00%', 'United States': '2.90%' },
       topStocks: [
         { name: 'Tencent Holdings', contribution: '4.20%' },
         { name: 'Alibaba Group', contribution: '3.00%' },
@@ -395,9 +394,9 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
 
       const sections = [
         { ref: performanceRef, name: 'Performance' },
-        { ref: classesRef, name: 'Classes' },
+        { ref: classesRef, name: 'Asset Class' },
         { ref: styleRef, name: 'Style' },
-        { ref: managerRef, name: 'Manager' },
+        // { ref: managerRef, name: 'Manager' }, // Hidden but code retained
         { ref: concentrationRef, name: 'Concentration' }
       ];
 
@@ -431,15 +430,15 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
       case 'Performance':
         targetRef = performanceRef;
         break;
-      case 'Classes':
+      case 'Asset Class':
         targetRef = classesRef;
         break;
       case 'Style':
         targetRef = styleRef;
         break;
-      case 'Manager':
-        targetRef = managerRef;
-        break;
+      // case 'Manager': // Hidden but code retained
+      //   targetRef = managerRef;
+      //   break;
       case 'Concentration':
         targetRef = concentrationRef;
         break;
@@ -516,16 +515,17 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
             {/* AI Mode Toggle */}
             <button
               onClick={() => onToggleAIMode(!isAIGenerated)}
-              className={`relative inline-flex h-4 w-7 items-center transition-colors ${
-                isAIGenerated ? 'bg-[#da0011]' : 'bg-gray-300'
+              className={`flex items-center gap-1 px-1.5 py-0.5 rounded-full shadow-sm transition-all ${
+                isAIGenerated 
+                  ? 'bg-gradient-to-r from-purple-500 to-pink-500' 
+                  : 'bg-gray-300'
               }`}
               title="Toggle AI Generated Mode"
             >
-              <span
-                className={`inline-block h-2.5 w-2.5 transform bg-white transition-transform ${
-                  isAIGenerated ? 'translate-x-[16px]' : 'translate-x-[2px]'
-                }`}
-              />
+              <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              <span className="text-[8px] font-bold text-white">AI</span>
             </button>
             
             <button 
@@ -592,20 +592,20 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
               />
             </div>
 
-            {/* Manager Section */}
-            <div ref={managerRef} className="scroll-mt-[100px] mt-8 pt-4 border-t-[6px] border-[#f4f5f6]">
+            {/* Manager Section - Hidden but code retained */}
+            {/* <div ref={managerRef} className="scroll-mt-[100px] mt-8 pt-4 border-t-[6px] border-[#f4f5f6]">
               <ManagerTab 
                 managerHoldings={managerHoldings}
                 totalAssetValue={totalAssetValue}
                 isAIGenerated={isAIGenerated}
               />
-            </div>
+            </div> */}
 
             {/* Concentration Section */}
             <div ref={concentrationRef} className="scroll-mt-[100px] mt-8 pt-4 border-t-[6px] border-[#f4f5f6]">
               <ConcentrationTab 
                 concentrationSectorData={concentrationSectorData}
-                concentrationIndustryData={concentrationIndustryData}
+                concentrationRegionData={concentrationRegionData}
                 concentrationTopHoldingsData={concentrationTopHoldingsData}
                 holdingsData={holdingsData}
                 totalAssetValue={totalAssetValue}

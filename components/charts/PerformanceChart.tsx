@@ -133,14 +133,14 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ chartData, colors }
           className={`flex items-center gap-1.5 px-2 py-0.5 border text-[9px] font-bold transition-all ${visibleLines.fund ? 'bg-red-50 border-red-100 text-[#da0011]' : 'bg-gray-50 border-gray-200 text-gray-400 opacity-60'}`}
         >
           <div className={`w-1.5 h-0.5 ${visibleLines.fund ? 'bg-[#da0011]' : 'bg-gray-300'}`}></div>
-          Fund
+          Yours
         </button>
         <button 
           onClick={() => toggleLine('saa')}
           className={`flex items-center gap-1.5 px-2 py-0.5 border text-[9px] font-bold transition-all ${visibleLines.saa ? 'bg-blue-50 border-blue-200 text-[#31b0d5]' : 'bg-gray-50 border-gray-200 text-gray-400 opacity-60'}`}
         >
           <div className={`w-1.5 h-0.5 ${visibleLines.saa ? 'bg-[#31b0d5]' : 'bg-gray-300'}`}></div>
-          SAA
+          Benchmark
         </button>
       </div>
 
@@ -170,11 +170,11 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ chartData, colors }
             <line x1="0" y1="100" x2="100" y2="100" stroke={colors.axis} strokeWidth="0.5" />
                           
             {visibleLines.fund && (
-              <path d={getSmoothPathForFiltered(filteredData, 'fund')} fill="none" stroke={colors.lightRed} strokeWidth="1.2" strokeLinecap="round" />
+              <path d={getSmoothPathForFiltered(filteredData, 'fund')} fill="none" stroke="#da0011" strokeWidth="1.2" strokeLinecap="round" />
             )}
                           
             {visibleLines.saa && (
-              <path d={getSmoothPathForFiltered(filteredData, 'saa')} fill="none" stroke="#31b0d5" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="3 2" />
+              <path d={getSmoothPathForFiltered(filteredData, 'saa')} fill="none" stroke="#5eb3d6" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="3 2" />
             )}
           
             {/* Drawdown area */}
@@ -182,15 +182,27 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ chartData, colors }
               let peakIndex = 0;
               let troughIndex = 0;
               let maxDrawdown = 0;
+              let runningPeakIndex = 0;
+              let runningPeakValue = filteredData[0]?.fund || 0;
               
+              // Calculate max drawdown using simple difference (peak - trough)
               for (let i = 0; i < filteredData.length; i++) {
-                for (let j = i + 1; j < filteredData.length; j++) {
-                  const drawdown = ((filteredData[i].fund - filteredData[j].fund) / filteredData[i].fund) * 100;
-                  if (drawdown > maxDrawdown) {
-                    maxDrawdown = drawdown;
-                    peakIndex = i;
-                    troughIndex = j;
-                  }
+                const currentValue = filteredData[i].fund;
+                
+                // Update running peak if current value is higher
+                if (currentValue > runningPeakValue) {
+                  runningPeakValue = currentValue;
+                  runningPeakIndex = i;
+                }
+                
+                // Calculate drawdown as simple difference (peak - trough)
+                const drawdown = runningPeakValue - currentValue;
+                
+                // Update max drawdown if current drawdown is larger
+                if (drawdown > maxDrawdown) {
+                  maxDrawdown = drawdown;
+                  peakIndex = runningPeakIndex;
+                  troughIndex = i;
                 }
               }
               
@@ -251,8 +263,8 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ chartData, colors }
             <div className="absolute z-20 bg-[#1e1e1e]/90 shadow-2xl rounded-[2px] p-1.5 text-white pointer-events-none transform -translate-x-1/2 -translate-y-full mb-2" style={{ left: `${getXForFiltered(hoverData.index)}%`, top: `${getYForFiltered(filteredData[hoverData.index]?.fund || 0)}%` }}>
               <div className="text-[7px] opacity-60 text-center leading-none mb-1">{filteredData[hoverData.index]?.date}</div>
               <div className="space-y-0.5">
-                {visibleLines.fund && <div className="flex justify-between items-center gap-2 text-[8px]"><span className="opacity-70">Fund:</span><span className="font-bold text-red-200">{filteredData[hoverData.index]?.fund.toFixed(2)}%</span></div>}
-                {visibleLines.saa && <div className="flex justify-between items-center gap-2 text-[8px]"><span className="opacity-70">SAA:</span><span className="font-bold text-blue-300">{filteredData[hoverData.index]?.saa.toFixed(2)}%</span></div>}
+                {visibleLines.fund && <div className="flex justify-between items-center gap-2 text-[8px]"><span className="opacity-70">Yours:</span><span className="font-bold text-red-200">{filteredData[hoverData.index]?.fund.toFixed(2)}%</span></div>}
+                {visibleLines.saa && <div className="flex justify-between items-center gap-2 text-[8px]"><span className="opacity-70">Benchmark:</span><span className="font-bold text-blue-300">{filteredData[hoverData.index]?.saa.toFixed(2)}%</span></div>}
                 {hoverData.index > 0 && filteredData[hoverData.index]?.fund < filteredData[hoverData.index - 1]?.fund && (
                   <div className="flex justify-between items-center gap-2 text-[8px] border-t border-white/20 pt-0.5 mt-0.5">
                     <span className="opacity-70">Drawdown:</span>

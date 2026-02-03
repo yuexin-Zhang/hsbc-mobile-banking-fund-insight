@@ -78,7 +78,7 @@ const AllocationSection: React.FC<AllocationSectionProps> = ({
                     <span style={{ color: item.color }}>{item.pct}%</span>
                   </div>
                   {showVal && item.val && (
-                    <div className="text-[9px] text-[#767676] font-medium mt-0.5">{item.currency || 'CNY'} {item.val}</div>
+                    <div className="text-[9px] text-[#767676] font-medium mt-0.5">{item.currency || 'HKD'} {item.val}</div>
                   )}
                 </div>
               </div>

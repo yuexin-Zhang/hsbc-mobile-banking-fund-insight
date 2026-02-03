@@ -9,9 +9,11 @@ import BottomNav from './components/BottomNav';
 import FundInsightOverview from './components/FundInsightOverview';
 import PortfolioSimulation from './components/PortfolioSimulation';
 import MyHoldings from './components/MyHoldings';
+import WealthOverview from './components/WealthOverview';
+import PortfolioOverviewPage from './components/PortfolioOverviewPage';
 
 const App: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState<'home' | 'overview' | 'details' | 'simulation' | 'holdings'>('home');
+  const [currentPage, setCurrentPage] = useState<'home' | 'overview' | 'details' | 'simulation' | 'holdings' | 'wealthOverview' | 'portfolioOverview'>('wealthOverview');
   const [isAIGenerated, setIsAIGenerated] = useState(false);
 
   const navigateToOverview = () => setCurrentPage('overview');
@@ -19,13 +21,15 @@ const App: React.FC = () => {
   const navigateToSimulation = () => setCurrentPage('simulation');
   const navigateToHoldings = () => setCurrentPage('holdings');
   const navigateToHome = () => setCurrentPage('home');
+  const navigateToWealthOverview = () => setCurrentPage('wealthOverview');
+  const navigateToPortfolioOverview = () => setCurrentPage('portfolioOverview');
 
   return (
     <div className="flex justify-center items-center w-full">
       <PhoneFrame>
         {currentPage === 'home' && (
           <div className="flex flex-col h-full bg-[#f5f5f5] overflow-y-auto no-scrollbar">
-            <WealthHeader onWealthAssetsClick={navigateToHoldings} />
+            <WealthHeader onWealthAssetsClick={navigateToWealthOverview} />
             <NavGrid onInsightClick={navigateToOverview} />
             <div className="px-4 py-4 space-y-4">
               <ContactSection />
@@ -38,7 +42,7 @@ const App: React.FC = () => {
         
         {currentPage === 'overview' && (
           <FundInsightOverview 
-            onBack={navigateToHome} 
+            onBack={navigateToWealthOverview} 
             onGoToDetails={navigateToDetails} 
             onGoToSimulation={navigateToSimulation}
             isAIGenerated={isAIGenerated}
@@ -56,6 +60,20 @@ const App: React.FC = () => {
           <MyHoldings 
             onBack={navigateToHome}
             onGoToFundInsight={navigateToOverview}
+          />
+        )}
+
+        {currentPage === 'wealthOverview' && (
+          <WealthOverview 
+            onBack={navigateToHome}
+            onGoToPortfolioOverview={navigateToPortfolioOverview}
+          />
+        )}
+
+        {currentPage === 'portfolioOverview' && (
+          <PortfolioOverviewPage 
+            onBack={navigateToWealthOverview}
+            onGoToUnitTrusts={navigateToOverview}
           />
         )}
       </PhoneFrame>

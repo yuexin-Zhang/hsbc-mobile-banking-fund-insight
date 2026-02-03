@@ -136,7 +136,7 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue, is
         <div className="space-y-1.5">
           {/* Performance */}
           <div className="flex items-start gap-2">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
               <div className="w-1 h-1 rounded-full bg-[#767676] flex-shrink-0"></div>
               <div className="w-[70px] flex-shrink-0">
                 <span className="text-[12px] text-[#767676] font-medium">Performance</span>
@@ -165,7 +165,7 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue, is
           </div>
           {/* Asset Classes */}
           <div className="flex items-start gap-2">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
               <div className="w-1 h-1 rounded-full bg-[#767676] flex-shrink-0"></div>
               <div className="w-[70px] flex-shrink-0">
                 <span className="text-[12px] text-[#767676] font-medium">Classes</span>
@@ -191,7 +191,7 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue, is
 
           {/* underlying assets */}
           <div className="flex items-start gap-2">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
               <div className="w-1 h-1 rounded-full bg-[#767676] flex-shrink-0"></div>
               <div className="w-[70px] flex-shrink-0">
                 <span className="text-[12px] text-[#767676] font-medium">Underlying</span>

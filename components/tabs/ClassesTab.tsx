@@ -45,7 +45,7 @@ const ClassesTab: React.FC<ClassesTabProps> = ({ assetClassesData, holdingsData,
         data={assetClassesData} 
         showVal={true} 
         useTreemap={false} 
-        insight="Your portfolio is mainly in Domestic Equity (42.14%). Consider increasing exposure to Overseas Markets for better global diversification."
+        insight="Your portfolio is mainly in Equity (57.29%). Consider balancing with more Fixed Income and Bonds for better diversification."
         onItemClick={(label) => setSelectedAssetClass(label === selectedAssetClass ? null : label)}
         selectedItem={selectedAssetClass}
         hideTitle={true}
@@ -79,7 +79,7 @@ const ClassesTab: React.FC<ClassesTabProps> = ({ assetClassesData, holdingsData,
                   <div key={idx} className="flex items-center text-[11px] px-1 group active:bg-gray-50 transition-colors py-1 border-b border-gray-50 last:border-0 pb-3">
                     <div className="w-[45%] flex flex-col">
                       <span className="font-bold text-[#1e1e1e] line-clamp-1">{fund.name}</span>
-                      <span className="text-[9px] text-[#767676] mt-0.5 font-medium">CNY {fund.mktValue.toLocaleString()}</span>
+                      <span className="text-[9px] text-[#767676] mt-0.5 font-medium">HKD {fund.mktValue.toLocaleString()}</span>
                     </div>
                     <div className="w-[30%] text-center">
                       <div className={`text-[11px] font-bold ${isRatePositive ? 'text-[#da0011]' : 'text-[#3c763d]'}`}>

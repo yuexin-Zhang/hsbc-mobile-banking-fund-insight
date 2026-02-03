@@ -88,7 +88,7 @@ const StyleTab: React.FC<StyleTabProps> = ({ styleHoldings, styleTrustHoldings, 
           <div key={idx} className="flex items-center py-1 border-b border-gray-50 last:border-0 pb-3">
             <div className="w-[45%] text-[11px] font-bold text-[#1e1e1e] leading-tight pr-2">
               {item.name}
-              <div className="text-[9px] text-[#767676] font-medium mt-0.5">CNY {item.mktValue.toLocaleString()}</div>
+              <div className="text-[9px] text-[#767676] font-medium mt-0.5">HKD {item.mktValue.toLocaleString()}</div>
             </div>
             <div className="w-[30%] text-center">
               <div className={`text-[11px] font-bold ${isRatePositive ? 'text-[#da0011]' : 'text-[#3c763d]'}`}>
@@ -117,7 +117,7 @@ const StyleTab: React.FC<StyleTabProps> = ({ styleHoldings, styleTrustHoldings, 
             <div key={`trust-${idx}`} className="flex items-center py-1 border-b border-gray-50 last:border-0 pb-3">
               <div className="w-[45%] text-[11px] font-bold text-[#1e1e1e] leading-tight pr-2">
                 {item.name}
-                <div className="text-[9px] text-[#767676] font-medium mt-0.5">CNY {item.mktValue.toLocaleString()}</div>
+                <div className="text-[9px] text-[#767676] font-medium mt-0.5">HKD {item.mktValue.toLocaleString()}</div>
               </div>
               <div className="w-[30%] text-center">
                 <div className={`text-[11px] font-bold ${isRatePositive ? 'text-[#da0011]' : 'text-[#3c763d]'}`}>
