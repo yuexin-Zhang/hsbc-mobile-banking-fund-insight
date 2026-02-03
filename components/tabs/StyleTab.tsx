@@ -8,15 +8,17 @@ interface StyleHolding {
   threeMonthChange: string;
   isPositive: boolean;
   style: string;
+  mktValue: number;
 }
 
 interface StyleTabProps {
   styleHoldings: StyleHolding[];
   styleTrustHoldings: StyleHolding[];
   totalAssetValue: number;
+  isAIGenerated: boolean;
 }
 
-const StyleTab: React.FC<StyleTabProps> = ({ styleHoldings, styleTrustHoldings, totalAssetValue }) => {
+const StyleTab: React.FC<StyleTabProps> = ({ styleHoldings, styleTrustHoldings, totalAssetValue, isAIGenerated }) => {
   const [holdingStyle, setHoldingStyle] = useState<'Value' | 'Balanced' | 'Growth'>('Balanced');
 
   return (
@@ -27,17 +29,23 @@ const StyleTab: React.FC<StyleTabProps> = ({ styleHoldings, styleTrustHoldings, 
         <h2 className="text-[15px] font-bold text-[#1e1e1e] leading-tight">Fund Style</h2>
       </div>
 
-      {/* Insight Box */}
-      <div className="flex items-center gap-2 p-3 bg-blue-50/50 border border-blue-100 rounded-[3px]">
-        <div className="p-0.5 bg-blue-500 rounded-full flex-shrink-0">
-          <svg className="w-2 h-2 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+      {/* Strategic Insight Box */}
+      {isAIGenerated && (
+        <div className="p-3 bg-gray-50/50 border-l-2 border-[#da0011] rounded-r relative overflow-hidden">
+          {/* AI Tag */}
+          <div className="absolute bottom-1.5 right-1.5 z-10">
+            <div className="flex items-center gap-1 px-1.5 py-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full shadow-sm">
+              <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              <span className="text-[8px] font-bold text-white">AI</span>
+            </div>
+          </div>
+          <p className="text-[10px] text-[#767676] leading-snug relative z-10">
+            Maintain <span className="font-bold">70% Balanced</span> core while increasing Growth for long-term upside.
+          </p>
         </div>
-        <p className="text-[10px] text-blue-800 font-medium">
-          Maintain <span className="font-bold">70% Balanced</span> core while increasing Growth for long-term upside.
-        </p>
-      </div>
+      )}
 
       {/* Style Toggle Buttons */}
       <div className="flex gap-2.5 bg-[#f4f5f6] p-1 rounded-full">
@@ -63,9 +71,9 @@ const StyleTab: React.FC<StyleTabProps> = ({ styleHoldings, styleTrustHoldings, 
 
       {/* Fund List Header */}
       <div className="flex text-[9px] font-bold text-[#767676] uppercase tracking-tighter pb-2 border-b border-gray-100 mt-4">
-        <div className="w-[45%]">Holding</div>
-        <div className="w-[30%] text-center">Holding Return Rate</div>
-        <div className="w-[25%] text-right pr-1">3M Change</div>
+        <div className="w-[45%]">Product name/amount</div>
+        <div className="w-[30%] text-center">Holding period return</div>
+        <div className="w-[25%] text-right pr-1">3-month gain/loss</div>
       </div>
 
       {/* Main Style Holdings */}
@@ -80,7 +88,7 @@ const StyleTab: React.FC<StyleTabProps> = ({ styleHoldings, styleTrustHoldings, 
           <div key={idx} className="flex items-center py-1 border-b border-gray-50 last:border-0 pb-3">
             <div className="w-[45%] text-[11px] font-bold text-[#1e1e1e] leading-tight pr-2">
               {item.name}
-              <div className="text-[9px] text-[#767676] font-medium mt-0.5">{item.id}</div>
+              <div className="text-[9px] text-[#767676] font-medium mt-0.5">CNY {item.mktValue.toLocaleString()}</div>
             </div>
             <div className="w-[30%] text-center">
               <div className={`text-[11px] font-bold ${isRatePositive ? 'text-[#da0011]' : 'text-[#008c4a]'}`}>
@@ -109,7 +117,7 @@ const StyleTab: React.FC<StyleTabProps> = ({ styleHoldings, styleTrustHoldings, 
             <div key={`trust-${idx}`} className="flex items-center py-1 border-b border-gray-50 last:border-0 pb-3">
               <div className="w-[45%] text-[11px] font-bold text-[#1e1e1e] leading-tight pr-2">
                 {item.name}
-                <div className="text-[9px] text-[#767676] font-medium mt-0.5">{item.id}</div>
+                <div className="text-[9px] text-[#767676] font-medium mt-0.5">CNY {item.mktValue.toLocaleString()}</div>
               </div>
               <div className="w-[30%] text-center">
                 <div className={`text-[11px] font-bold ${isRatePositive ? 'text-[#da0011]' : 'text-[#008c4a]'}`}>
@@ -126,16 +134,6 @@ const StyleTab: React.FC<StyleTabProps> = ({ styleHoldings, styleTrustHoldings, 
           );})}
         </div>
       )}
-      
-      <div className="pt-6 border-t border-[#f4f5f6] space-y-2">
-        <div className="flex justify-between items-center text-[10px] text-[#1e1e1e]">
-          <span className="font-bold">Total asset value:</span>
-          <span className="font-bold">CNY {totalAssetValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
-        </div>
-        <div className="pt-4 text-right">
-          <p className="text-[8px] text-[#767676] italic">Exchange rate: As of 30 December 2025 12:45</p>
-        </div>
-      </div>
     </div>
   );
 };

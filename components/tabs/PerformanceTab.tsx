@@ -26,7 +26,7 @@ const PerformanceTab: React.FC<PerformanceTabProps> = ({ chartData, colors }) =>
   const [isEarningsExpanded, setIsEarningsExpanded] = useState(true);
 
   return (
-    <div className="animate-fade-in space-y-5">
+    <div className="animate-fade-in space-y-4">
       {/* Section Title */}
       <div className="flex items-start gap-2 mb-4">
         <div className="w-[3px] h-[18px] bg-[#da0011] rounded-full mt-0.5"></div>
@@ -34,7 +34,7 @@ const PerformanceTab: React.FC<PerformanceTabProps> = ({ chartData, colors }) =>
       </div>
 
       {/* Metrics with dots */}
-      <div className="flex items-center text-[10px] gap-2">
+      <div className="flex items-center text-[10px]">
         <div className="flex items-center">
           <span className="w-2 h-2 rounded-full bg-red-600 mr-1"></span>
           <span className="text-gray-900 font-medium">Funds:</span>

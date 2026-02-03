@@ -2,9 +2,10 @@ import React from 'react';
 
 interface PieChartProps {
   data: Array<{ pct: number; color: string; label: string }>;
+  onItemClick?: (label: string) => void;
 }
 
-const PieChart: React.FC<PieChartProps> = ({ data }) => {
+const PieChart: React.FC<PieChartProps> = ({ data, onItemClick }) => {
   const radius = 40;
   const circumference = 2 * Math.PI * radius;
   let offset = 0;
@@ -26,6 +27,8 @@ const PieChart: React.FC<PieChartProps> = ({ data }) => {
             strokeWidth="20"
             strokeDasharray={`${strokeDash} ${circumference}`}
             strokeDashoffset={-currentOffset}
+            className={onItemClick ? "cursor-pointer hover:opacity-80 transition-opacity" : ""}
+            onClick={() => onItemClick?.(item.label)}
           />
         );
       })}

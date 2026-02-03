@@ -23,9 +23,10 @@ interface AllocationData {
 interface ClassesTabProps {
   assetClassesData: AllocationData[];
   holdingsData: HoldingData[];
+  isAIGenerated: boolean;
 }
 
-const ClassesTab: React.FC<ClassesTabProps> = ({ assetClassesData, holdingsData }) => {
+const ClassesTab: React.FC<ClassesTabProps> = ({ assetClassesData, holdingsData, isAIGenerated }) => {
   const [selectedAssetClass, setSelectedAssetClass] = useState<string | null>(() => {
     const maxItem = [...assetClassesData].sort((a, b) => b.pct - a.pct)[0];
     return maxItem ? maxItem.label : null;
@@ -43,11 +44,12 @@ const ClassesTab: React.FC<ClassesTabProps> = ({ assetClassesData, holdingsData 
         title="Asset Classes" 
         data={assetClassesData} 
         showVal={true} 
-        useTreemap={true} 
+        useTreemap={false} 
         insight="Your portfolio is mainly in Domestic Equity (42.14%). Consider increasing exposure to Overseas Markets for better global diversification."
         onItemClick={(label) => setSelectedAssetClass(label === selectedAssetClass ? null : label)}
         selectedItem={selectedAssetClass}
         hideTitle={true}
+        isAIGenerated={isAIGenerated}
       />
 
       {selectedAssetClass && (
@@ -61,9 +63,9 @@ const ClassesTab: React.FC<ClassesTabProps> = ({ assetClassesData, holdingsData 
           </div>
           
           <div className="flex text-[9px] font-bold text-[#767676] mb-4 uppercase tracking-tighter px-1 border-b border-gray-100 pb-2">
-            <div className="w-[45%]">Holding</div>
-            <div className="w-[30%] text-center">Holding Return Rate</div>
-            <div className="w-[25%] text-right pr-1">3M Change</div>
+            <div className="w-[45%]">Product name/amount</div>
+            <div className="w-[30%] text-center">Holding period return</div>
+            <div className="w-[25%] text-right pr-1">3-month gain/loss</div>
           </div>
           
           <div className="space-y-4">
@@ -77,7 +79,7 @@ const ClassesTab: React.FC<ClassesTabProps> = ({ assetClassesData, holdingsData 
                   <div key={idx} className="flex items-center text-[11px] px-1 group active:bg-gray-50 transition-colors py-1 border-b border-gray-50 last:border-0 pb-3">
                     <div className="w-[45%] flex flex-col">
                       <span className="font-bold text-[#1e1e1e] line-clamp-1">{fund.name}</span>
-                      <span className="text-[9px] text-[#767676] mt-0.5 font-medium">{fund.code}</span>
+                      <span className="text-[9px] text-[#767676] mt-0.5 font-medium">CNY {fund.mktValue.toLocaleString()}</span>
                     </div>
                     <div className="w-[30%] text-center">
                       <div className={`text-[11px] font-bold ${isRatePositive ? 'text-[#da0011]' : 'text-[#008c4a]'}`}>

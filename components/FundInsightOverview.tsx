@@ -8,6 +8,7 @@ import StyleTab from './tabs/StyleTab';
 import PerformanceTab from './tabs/PerformanceTab';
 import ClassesTab from './tabs/ClassesTab';
 import ConcentrationTab from './tabs/ConcentrationTab';
+import ManagerTab from './tabs/ManagerTab';
 import FloatingAIButton from './FloatingAIButton';
 
 ChartJS.register(Title, Tooltip, Legend, CategoryScale, LinearScale, TreemapController, TreemapElement);
@@ -16,9 +17,11 @@ interface FundInsightOverviewProps {
   onBack: () => void;
   onGoToDetails: () => void;
   onGoToSimulation: () => void;
+  isAIGenerated: boolean;
+  onToggleAIMode: (value: boolean) => void;
 }
 
-const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoToDetails, onGoToSimulation }) => {
+const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoToDetails, onGoToSimulation, isAIGenerated, onToggleAIMode }) => {
   const [showToast, setShowToast] = useState(false);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const [activeDetailTab, setActiveDetailTab] = useState('Performance');
@@ -27,6 +30,7 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
   // Refs for tab sections
   const performanceRef = useRef<HTMLDivElement>(null);
   const styleRef = useRef<HTMLDivElement>(null);
+  const managerRef = useRef<HTMLDivElement>(null);
   const classesRef = useRef<HTMLDivElement>(null);
   const concentrationRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -109,21 +113,66 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
   ];
 
   const totalAssetValue = 9395746.24;
-  const detailTabs = ['Performance', 'Classes', 'Style', 'Concentration'];
+  const detailTabs = ['Performance', 'Classes', 'Style', 'Manager', 'Concentration'];
 
   const styleHoldings = [
-    { name: 'BGF WLD MIN', id: 'IPFD3004', returnRate: '21.76%', holdingDays: '458 Days', threeMonthChange: '+8.45%', isPositive: true, style: 'Value' },
-    { name: 'BGF ENERGY', id: 'IPFD3145', returnRate: '-0.86%', holdingDays: '124 Days', threeMonthChange: '-2.15%', isPositive: false, style: 'Growth' },
-    { name: 'BGF GOLD', id: 'IPFD3131', returnRate: '18.53%', holdingDays: '562 Days', threeMonthChange: '+12.30%', isPositive: true, style: 'Balanced' },
-    { name: 'BLK Sys GE High Inc', id: 'IPFD3116', returnRate: '42.56%', holdingDays: '890 Days', threeMonthChange: '+5.12%', isPositive: true, style: 'Value' },
-    { name: 'BLK Sys GE High Inc', id: 'IPFD2116', returnRate: '11.10%', holdingDays: '215 Days', threeMonthChange: '+3.88%', isPositive: true, style: 'Balanced' },
-    { name: 'BIK World Tech', id: 'IPFD2254', returnRate: '0.20%', holdingDays: '15 Days', threeMonthChange: '-0.45%', isPositive: true, style: 'Growth' },
-    { name: 'JPM GEHI USD', id: 'IPFD3540', returnRate: '4.41%', holdingDays: '180 Days', threeMonthChange: '+1.20%', isPositive: true, style: 'Growth' },
+    { name: 'BGF WLD MIN', id: 'IPFD3004', returnRate: '21.76%', holdingDays: '458 Days', threeMonthChange: '+8.45%', isPositive: true, style: 'Value', mktValue: 939574.62 },
+    { name: 'BGF ENERGY', id: 'IPFD3145', returnRate: '-0.86%', holdingDays: '124 Days', threeMonthChange: '-2.15%', isPositive: false, style: 'Growth', mktValue: 939574.62 },
+    { name: 'BGF GOLD', id: 'IPFD3131', returnRate: '18.53%', holdingDays: '562 Days', threeMonthChange: '+12.30%', isPositive: true, style: 'Balanced', mktValue: 1348936.56 },
+    { name: 'BLK Sys GE High Inc', id: 'IPFD3116', returnRate: '42.56%', holdingDays: '890 Days', threeMonthChange: '+5.12%', isPositive: true, style: 'Value', mktValue: 1137489.55 },
+    { name: 'BLK Sys GE High Inc', id: 'IPFD2116', returnRate: '11.10%', holdingDays: '215 Days', threeMonthChange: '+3.88%', isPositive: true, style: 'Balanced', mktValue: 1126489.55 },
+    { name: 'BIK World Tech', id: 'IPFD2254', returnRate: '0.20%', holdingDays: '15 Days', threeMonthChange: '-0.45%', isPositive: true, style: 'Growth', mktValue: 1033532.09 },
+    { name: 'JPM GEHI USD', id: 'IPFD3540', returnRate: '4.41%', holdingDays: '180 Days', threeMonthChange: '+1.20%', isPositive: true, style: 'Growth', mktValue: 859305.69 },
   ];
 
   const styleTrustHoldings = [
-    { name: 'CR Trust FirstEagle No.1', id: 'T1C477', returnRate: '20.91%', holdingDays: '630 Days', threeMonthChange: '+7.15%', isPositive: true, style: 'Balanced' },
-    { name: 'CR Trust FirstEagle No.8', id: 'T1E648', returnRate: '-1.49%', holdingDays: '92 Days', threeMonthChange: '+0.55%', isPositive: false, style: 'Balanced' },
+    { name: 'CR Trust FirstEagle No.1', id: 'T1C477', returnRate: '20.91%', holdingDays: '630 Days', threeMonthChange: '+7.15%', isPositive: true, style: 'Balanced', mktValue: 459451.99 },
+    { name: 'CR Trust FirstEagle No.8', id: 'T1E648', returnRate: '-1.49%', holdingDays: '92 Days', threeMonthChange: '+0.55%', isPositive: false, style: 'Balanced', mktValue: 460391.57 },
+  ];
+
+  const managerHoldings = [
+    { 
+      name: 'Hua Chengwei', 
+      company: 'HSBC Asset Management',
+      allocation: 20.67,
+      amount: 1941981.65,
+      tenure: '7 years 242 days',
+      return: '300.09%',
+      fundCount: 8,
+      totalAUM: '14.13 billion',
+      performanceRating: 93.5,
+      riskRating: 70.2,
+      strengthTags: ['Value Investing', 'Risk Control', 'Stock Selection', 'Market Timing', 'Consistency'],
+      description: '8.7 years of experience, managing 8 funds with total assets of 14.13 billion. Tenure return of 300.09%. Strong in value investing and risk management with excellent stock selection ability and market timing skills. High consistency in performance delivery.'
+    },
+    { 
+      name: 'Liu Leiping', 
+      company: 'HSBC Asset Management',
+      allocation: 15.61,
+      amount: 1466974.80,
+      tenure: '6 years 158 days',
+      return: '245.82%',
+      fundCount: 5,
+      totalAUM: '9.87 billion',
+      performanceRating: 89.3,
+      riskRating: 65.8,
+      strengthTags: ['Growth Investing', 'Technology Focus', 'Portfolio Construction', 'Emerging Markets'],
+      description: '6+ years of investment experience specializing in growth and technology sectors. Manages 5 funds with assets totaling 9.87 billion. Demonstrates strong capability in identifying emerging market opportunities and constructing balanced portfolios.'
+    },
+    { 
+      name: 'Zhou Haitao', 
+      company: 'HSBC Asset Management',
+      allocation: 15.61,
+      amount: 1466974.80,
+      tenure: '7 years 242 days',
+      return: '300.09%',
+      fundCount: 6,
+      totalAUM: '14.13 billion',
+      performanceRating: 94.19,
+      riskRating: 83.9,
+      strengthTags: ['Balanced Approach', 'Long-term Value', 'Asset Allocation', 'Risk-Adjusted Returns'],
+      description: '8.7 years managing funds with exceptional track record. Oversees 6 funds with 14.13 billion in AUM and impressive 300.09% tenure return. Expert in balanced investment approach with focus on long-term value creation and optimal asset allocation. Excellent risk-adjusted returns with consistency score of 93.5.'
+    },
   ];
 
   const assetClassesData = [
@@ -134,42 +183,191 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
   ];
 
   const concentrationSectorData = [
-    { label: 'Cycle', pct: 58.33, val: '5,480,538.78', color: '#da0011', currency: '¥' },
-    { label: 'Manufacturing', pct: 10.64, val: '999,707.40', color: '#0ea5e9', currency: '¥' },
-    { label: 'Utilities', pct: 10.21, val: '959,305.69', color: '#10b981', currency: '¥' },
-    { label: 'Others', pct: 20.82, val: '1,956,165.06', color: '#64748b', currency: '¥' },
+    { label: 'Hong Kong Equities', pct: 28.0, val: '2,630,812.95', color: '#da0011', currency: '¥' },
+    { label: 'Cyclical', pct: 18.0, val: '1,691,234.32', color: '#f97316', currency: '¥' },
+    { label: 'Overseas Markets', pct: 16.0, val: '1,503,319.40', color: '#0ea5e9', currency: '¥' },
+    { label: 'Financial & Real Estate', pct: 14.0, val: '1,315,408.47', color: '#6366f1', currency: '¥' },
+    { label: 'Consumer', pct: 12.0, val: '1,127,497.55', color: '#10b981', currency: '¥' },
+    { label: 'Technology', pct: 7.0, val: '657,702.24', color: '#f59e0b', currency: '¥' },
+    { label: 'Manufacturing', pct: 5.0, val: '469,791.31', color: '#64748b', currency: '¥' },
   ];
 
   const concentrationIndustryData = [
-    { label: 'Financials', pct: 31.92, val: '2,999,122.20', color: '#da0011', currency: '¥' },
-    { label: 'Materials', pct: 21.91, val: '2,058,637.31', color: '#0ea5e9', currency: '¥' },
-    { label: 'Technology', pct: 10.64, val: '999,707.40', color: '#f59e0b', currency: '¥' },
-    { label: 'Healthcare', pct: 10.21, val: '959,305.69', color: '#10b981', currency: '¥' },
-    { label: 'Energy', pct: 7.57, val: '711,257.99', color: '#8b5cf6', currency: '¥' },
-    { label: 'Consumer', pct: 7.57, val: '711,257.99', color: '#ec4899', currency: '¥' },
-    { label: 'Others', pct: 10.18, val: '956,457.66', color: '#94a3b8', currency: '¥' },
+    { label: 'Internet & Technology', pct: 22.0, val: '2,067,025.17', color: '#f97316', currency: '¥' },
+    { label: 'Power Equipment', pct: 18.0, val: '1,691,234.32', color: '#0ea5e9', currency: '¥' },
+    { label: 'Transportation', pct: 14.0, val: '1,315,408.47', color: '#10b981', currency: '¥' },
+    { label: 'Banking', pct: 12.0, val: '1,127,497.55', color: '#6366f1', currency: '¥' },
+    { label: 'Insurance', pct: 10.0, val: '939,574.62', color: '#ec4899', currency: '¥' },
+    { label: 'Consumer Staples', pct: 12.0, val: '1,127,497.55', color: '#22c55e', currency: '¥' },
+    { label: 'Others', pct: 12.0, val: '1,127,497.55', color: '#94a3b8', currency: '¥' },
   ];
 
   const concentrationTopHoldingsData = [
-    { label: 'Tencent', pct: 4.82, val: '452,875.00', color: '#da0011', currency: '¥' },
-    { label: 'Alibaba', pct: 3.94, val: '370,192.00', color: '#0ea5e9', currency: '¥' },
-    { label: 'TSMC', pct: 3.67, val: '344,824.00', color: '#f59e0b', currency: '¥' },
-    { label: 'Meituan', pct: 2.88, val: '270,597.00', color: '#10b981', currency: '¥' },
-    { label: 'Ping An', pct: 2.54, val: '238,652.00', color: '#8b5cf6', currency: '¥' },
-    { label: 'BYD', pct: 2.31, val: '217,042.00', color: '#ec4899', currency: '¥' },
-    { label: 'Others', pct: 79.84, val: '7,501,564.24', color: '#94a3b8', currency: '¥' },
+    { label: 'Tencent Holdings', pct: 18.5, val: '1,738,237.04', color: '#da0011', currency: '¥', dailyChange: 0.17 },
+    { label: 'Alibaba Group', pct: 14.0, val: '1,315,408.47', color: '#0ea5e9', currency: '¥', dailyChange: -0.23 },
+    { label: 'Meituan', pct: 12.5, val: '1,174,468.28', color: '#22c55e', currency: '¥', dailyChange: 0.05 },
+    { label: 'CATL', pct: 11.0, val: '1,033,528.09', color: '#f97316', currency: '¥', dailyChange: -0.42 },
+    { label: 'BYD Co.', pct: 9.5, val: '892,587.90', color: '#f59e0b', currency: '¥', dailyChange: 0.31 },
+    { label: 'Ping An Insurance', pct: 8.0, val: '751,646.74', color: '#6366f1', currency: '¥', dailyChange: -0.08 },
+    { label: 'HSBC Holdings', pct: 7.0, val: '657,702.24', color: '#8b5cf6', currency: '¥', dailyChange: 0.12 },
+    { label: 'Apple Inc.', pct: 6.5, val: '616,730.49', color: '#ec4899', currency: '¥', dailyChange: -0.15 },
+    { label: 'NVIDIA Corp.', pct: 13.0, val: '1,221,447.01', color: '#94a3b8', currency: '¥', dailyChange: 0.64 },
   ];
 
   const holdingsData = [
-    { name: 'BGF WLD MIN', code: 'IPFD3004', returnRate: '21.76%', holdingDays: '458 Days', threeMonthChange: '+8.45%', assetClass: 'Overseas Market', mktValue: 939574.62, weight: '9.77%', sectorWeight: { 'Cycle': '7.57%', 'Others': '2.43%' }, industryWeight: { 'Consumer': '7.57%', 'Financials': '0.50%', 'Others': '1.93%' }, topStocks: [{ name: 'Alibaba', contribution: '2.00%' }, { name: 'Meituan', contribution: '1.88%' }] },
-    { name: 'BGF ENERGY', code: 'IPFD3145', returnRate: '-0.86%', holdingDays: '124 Days', threeMonthChange: '-2.15%', assetClass: 'Overseas Market', mktValue: 939574.62, weight: '10.02%', sectorWeight: { 'Cycle': '7.57%', 'Others': '2.43%' }, industryWeight: { 'Energy': '7.57%', 'Financials': '0.35%', 'Others': '2.08%' }, topStocks: [{ name: 'BYD', contribution: '1.31%' }] },
-    { name: 'BGF GOLD', code: 'IPFD3131', returnRate: '18.53%', holdingDays: '562 Days', threeMonthChange: '+12.30%', assetClass: 'Commodities & Others', mktValue: 1348936.56, weight: '23.17%', sectorWeight: { 'Cycle': '21.91%', 'Others': '3.09%' }, industryWeight: { 'Materials': '21.91%', 'Others': '3.09%' }, topStocks: [{ name: 'TSMC', contribution: '1.67%' }] },
-    { name: 'BLK Sys GE High Inc', code: 'IPFD3116', returnRate: '42.56%', holdingDays: '890 Days', threeMonthChange: '+5.12%', assetClass: 'Domestic Equity', mktValue: 1137489.55, weight: '12.56%', sectorWeight: { 'Cycle': '10.64%', 'Others': '1.36%' }, industryWeight: { 'Financials': '10.64%', 'Others': '1.36%' }, topStocks: [{ name: 'Ping An', contribution: '2.54%' }, { name: 'Tencent', contribution: '1.50%' }] },
-    { name: 'BLK Sys GE High Inc', code: 'IPFD2116', returnRate: '11.10%', holdingDays: '215 Days', threeMonthChange: '+3.88%', assetClass: 'Domestic Equity', mktValue: 1126489.55, weight: '11.33%', sectorWeight: { 'Cycle': '10.64%', 'Others': '1.36%' }, industryWeight: { 'Financials': '10.64%', 'Others': '1.36%' }, topStocks: [{ name: 'Tencent', contribution: '1.50%' }] },
-    { name: 'BIK World Tech', code: 'IPFD2254', returnRate: '0.20%', holdingDays: '15 Days', threeMonthChange: '-0.45%', assetClass: 'Domestic Equity', mktValue: 1033532.09, weight: '12.56%', sectorWeight: { 'Manufacturing': '10.64%', 'Others': '0.36%' }, industryWeight: { 'Technology': '10.64%', 'Others': '0.36%' }, topStocks: [{ name: 'TSMC', contribution: '2.00%' }, { name: 'Alibaba', contribution: '1.94%' }] },
-    { name: 'JPM GEHI USD', code: 'IPFD3540', returnRate: '4.41%', holdingDays: '180 Days', threeMonthChange: '+1.20%', assetClass: 'Domestic Equity', mktValue: 859305.69, weight: '10.21%', sectorWeight: { 'Utilities': '10.21%' }, industryWeight: { 'Healthcare': '10.21%' }, topStocks: [{ name: 'BYD', contribution: '1.00%' }] },
-    { name: 'CR Trust FirstEagle No.1', code: 'T1C477', returnRate: '20.91%', holdingDays: '630 Days', threeMonthChange: '+7.15%', assetClass: 'Commodities & Others', mktValue: 459451.99, weight: '4.89%', sectorWeight: { 'Others': '4.89%' }, industryWeight: { 'Financials': '4.89%' }, topStocks: [{ name: 'Tencent', contribution: '1.82%' }, { name: 'Meituan', contribution: '1.00%' }] },
-    { name: 'CR Trust FirstEagle No.8', code: 'T1E648', returnRate: '-1.49%', holdingDays: '92 Days', threeMonthChange: '+0.55%', assetClass: 'Domestic Fixed Income', mktValue: 460391.57, weight: '10.90%', sectorWeight: { 'Others': '4.90%' }, industryWeight: { 'Others': '4.90%' }, topStocks: [] },
+    {
+      name: 'BGF WLD MIN',
+      code: 'IPFD3004',
+      returnRate: '21.76%',
+      holdingDays: '458 Days',
+      threeMonthChange: '+8.45%',
+      assetClass: 'Overseas Market',
+      mktValue: 939574.62,
+      weight: '9.77%',
+      sectorWeight: { 'Hong Kong Equities': '6.20%', 'Overseas Markets': '2.00%', 'Consumer': '1.57%' },
+      industryWeight: { 'Internet & Technology': '6.20%', 'Consumer Staples': '2.00%', 'Others': '1.57%' },
+      topStocks: [
+        { name: 'Tencent Holdings', contribution: '5.40%' },
+        { name: 'Alibaba Group', contribution: '2.10%' },
+        { name: 'Meituan', contribution: '1.20%' },
+      ],
+    },
+    {
+      name: 'BGF ENERGY',
+      code: 'IPFD3145',
+      returnRate: '-0.86%',
+      holdingDays: '124 Days',
+      threeMonthChange: '-2.15%',
+      assetClass: 'Overseas Market',
+      mktValue: 939574.62,
+      weight: '10.02%',
+      sectorWeight: { 'Overseas Markets': '6.50%', 'Cyclical': '2.00%', 'Manufacturing': '1.52%' },
+      industryWeight: { 'Power Equipment': '6.50%', 'Transportation': '1.50%', 'Others': '2.02%' },
+      topStocks: [
+        { name: 'CATL', contribution: '4.80%' },
+        { name: 'BYD Co.', contribution: '2.10%' },
+        { name: 'NVIDIA Corp.', contribution: '1.40%' },
+      ],
+    },
+    {
+      name: 'BGF GOLD',
+      code: 'IPFD3131',
+      returnRate: '18.53%',
+      holdingDays: '562 Days',
+      threeMonthChange: '+12.30%',
+      assetClass: 'Commodities & Others',
+      mktValue: 1348936.56,
+      weight: '23.17%',
+      sectorWeight: { 'Cyclical': '10.50%', 'Overseas Markets': '5.00%', 'Consumer': '3.67%', 'Others': '4.00%' },
+      industryWeight: { 'Power Equipment': '8.50%', 'Consumer Staples': '5.00%', 'Others': '9.67%' },
+      topStocks: [
+        { name: 'Tencent Holdings', contribution: '6.80%' },
+        { name: 'CATL', contribution: '4.10%' },
+        { name: 'NVIDIA Corp.', contribution: '3.20%' },
+      ],
+    },
+    {
+      name: 'BLK Sys GE High Inc',
+      code: 'IPFD3116',
+      returnRate: '42.56%',
+      holdingDays: '890 Days',
+      threeMonthChange: '+5.12%',
+      assetClass: 'Domestic Equity',
+      mktValue: 1137489.55,
+      weight: '12.56%',
+      sectorWeight: { 'Hong Kong Equities': '7.00%', 'Financial & Real Estate': '3.00%', 'Consumer': '2.56%' },
+      industryWeight: { 'Banking': '4.50%', 'Insurance': '3.00%', 'Consumer Staples': '2.56%', 'Others': '2.50%' },
+      topStocks: [
+        { name: 'Ping An Insurance', contribution: '4.20%' },
+        { name: 'HSBC Holdings', contribution: '3.10%' },
+        { name: 'Apple Inc.', contribution: '2.00%' },
+      ],
+    },
+    {
+      name: 'BLK Sys GE High Inc',
+      code: 'IPFD2116',
+      returnRate: '11.10%',
+      holdingDays: '215 Days',
+      threeMonthChange: '+3.88%',
+      assetClass: 'Domestic Equity',
+      mktValue: 1126489.55,
+      weight: '11.33%',
+      sectorWeight: { 'Hong Kong Equities': '6.20%', 'Financial & Real Estate': '3.00%', 'Manufacturing': '2.13%' },
+      industryWeight: { 'Banking': '4.00%', 'Insurance': '3.00%', 'Others': '4.33%' },
+      topStocks: [
+        { name: 'Tencent Holdings', contribution: '4.10%' },
+        { name: 'Ping An Insurance', contribution: '3.00%' },
+        { name: 'HSBC Holdings', contribution: '2.20%' },
+      ],
+    },
+    {
+      name: 'BIK World Tech',
+      code: 'IPFD2254',
+      returnRate: '0.20%',
+      holdingDays: '15 Days',
+      threeMonthChange: '-0.45%',
+      assetClass: 'Domestic Equity',
+      mktValue: 1033532.09,
+      weight: '12.56%',
+      sectorWeight: { 'Technology': '8.50%', 'Manufacturing': '2.00%', 'Cyclical': '2.06%' },
+      industryWeight: { 'Internet & Technology': '8.50%', 'Power Equipment': '2.00%', 'Others': '2.06%' },
+      topStocks: [
+        { name: 'Alibaba Group', contribution: '4.60%' },
+        { name: 'Meituan', contribution: '3.20%' },
+        { name: 'CATL', contribution: '2.40%' },
+      ],
+    },
+    {
+      name: 'JPM GEHI USD',
+      code: 'IPFD3540',
+      returnRate: '4.41%',
+      holdingDays: '180 Days',
+      threeMonthChange: '+1.20%',
+      assetClass: 'Domestic Equity',
+      mktValue: 859305.69,
+      weight: '10.21%',
+      sectorWeight: { 'Overseas Markets': '4.00%', 'Cyclical': '3.00%', 'Hong Kong Equities': '3.21%' },
+      industryWeight: { 'Transportation': '4.00%', 'Internet & Technology': '3.00%', 'Others': '3.21%' },
+      topStocks: [
+        { name: 'Meituan', contribution: '3.80%' },
+        { name: 'BYD Co.', contribution: '2.20%' },
+        { name: 'Apple Inc.', contribution: '1.40%' },
+      ],
+    },
+    {
+      name: 'CR Trust FirstEagle No.1',
+      code: 'T1C477',
+      returnRate: '20.91%',
+      holdingDays: '630 Days',
+      threeMonthChange: '+7.15%',
+      assetClass: 'Commodities & Others',
+      mktValue: 459451.99,
+      weight: '4.89%',
+      sectorWeight: { 'Financial & Real Estate': '2.50%', 'Consumer': '1.00%', 'Others': '1.39%' },
+      industryWeight: { 'Banking': '2.00%', 'Insurance': '1.50%', 'Others': '1.39%' },
+      topStocks: [
+        { name: 'Ping An Insurance', contribution: '2.10%' },
+        { name: 'HSBC Holdings', contribution: '1.40%' },
+        { name: 'NVIDIA Corp.', contribution: '0.80%' },
+      ],
+    },
+    {
+      name: 'CR Trust FirstEagle No.8',
+      code: 'T1E648',
+      returnRate: '-1.49%',
+      holdingDays: '92 Days',
+      threeMonthChange: '+0.55%',
+      assetClass: 'Domestic Fixed Income',
+      mktValue: 460391.57,
+      weight: '10.90%',
+      sectorWeight: { 'Others': '4.00%', 'Hong Kong Equities': '3.00%', 'Overseas Markets': '3.90%' },
+      industryWeight: { 'Others': '4.00%', 'Banking': '3.00%', 'Transportation': '3.90%' },
+      topStocks: [
+        { name: 'Tencent Holdings', contribution: '4.20%' },
+        { name: 'Alibaba Group', contribution: '3.00%' },
+        { name: 'NVIDIA Corp.', contribution: '2.10%' },
+      ],
+    },
   ];
 
   const handleExport = () => {
@@ -199,6 +397,7 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
         { ref: performanceRef, name: 'Performance' },
         { ref: classesRef, name: 'Classes' },
         { ref: styleRef, name: 'Style' },
+        { ref: managerRef, name: 'Manager' },
         { ref: concentrationRef, name: 'Concentration' }
       ];
 
@@ -237,6 +436,9 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
         break;
       case 'Style':
         targetRef = styleRef;
+        break;
+      case 'Manager':
+        targetRef = managerRef;
         break;
       case 'Concentration':
         targetRef = concentrationRef;
@@ -310,21 +512,39 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
             <h1 className="text-[17px] font-semibold text-gray-900 whitespace-nowrap">Fund Holding Analysis</h1>
           </div>
           
-          <button 
-            onClick={handleExport}
-            className="w-9 h-9 flex items-center justify-center active:bg-gray-100 rounded-full transition-colors"
-            title="Export Report"
-          >
-            <svg className="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-            </svg>
-          </button>
+          <div className="flex items-center gap-2">
+            {/* AI Mode Toggle */}
+            <button
+              onClick={() => onToggleAIMode(!isAIGenerated)}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                isAIGenerated ? 'bg-[#da0011]' : 'bg-gray-300'
+              }`}
+              title="Toggle AI Generated Mode"
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  isAIGenerated ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+            
+            <button 
+              onClick={handleExport}
+              className="w-9 h-9 flex items-center justify-center active:bg-gray-100 rounded-full transition-colors"
+              title="Export Report"
+            >
+              <svg className="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 
       <div className="space-y-2 pb-10">
         <HoldingsOverview
           totalAssetValue={totalAssetValue}
+          isAIGenerated={isAIGenerated}
         ></HoldingsOverview>
 
         {/* Tab Selection for Style, Classes, Concentration */}
@@ -358,6 +578,7 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
               <ClassesTab 
                 assetClassesData={assetClassesData}
                 holdingsData={holdingsData}
+                isAIGenerated={isAIGenerated}
               />
             </div>
 
@@ -367,6 +588,16 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
                 styleHoldings={styleHoldings}
                 styleTrustHoldings={styleTrustHoldings}
                 totalAssetValue={totalAssetValue}
+                isAIGenerated={isAIGenerated}
+              />
+            </div>
+
+            {/* Manager Section */}
+            <div ref={managerRef} className="scroll-mt-[100px] mt-8 pt-4 border-t-[6px] border-[#f4f5f6]">
+              <ManagerTab 
+                managerHoldings={managerHoldings}
+                totalAssetValue={totalAssetValue}
+                isAIGenerated={isAIGenerated}
               />
             </div>
 
@@ -378,6 +609,7 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
                 concentrationTopHoldingsData={concentrationTopHoldingsData}
                 holdingsData={holdingsData}
                 totalAssetValue={totalAssetValue}
+                isAIGenerated={isAIGenerated}
               />
             </div>
           </div>

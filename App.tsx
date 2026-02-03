@@ -12,6 +12,7 @@ import MyHoldings from './components/MyHoldings';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<'home' | 'overview' | 'details' | 'simulation' | 'holdings'>('home');
+  const [isAIGenerated, setIsAIGenerated] = useState(false);
 
   const navigateToOverview = () => setCurrentPage('overview');
   const navigateToDetails = () => setCurrentPage('details');
@@ -40,6 +41,8 @@ const App: React.FC = () => {
             onBack={navigateToHome} 
             onGoToDetails={navigateToDetails} 
             onGoToSimulation={navigateToSimulation}
+            isAIGenerated={isAIGenerated}
+            onToggleAIMode={setIsAIGenerated}
           />
         )}
 

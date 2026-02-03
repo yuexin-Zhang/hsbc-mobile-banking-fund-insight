@@ -6,6 +6,7 @@ interface AllocationData {
   pct: number;
   val: string;
   color: string;
+  dailyChange?: number;
   currency?: string;
 }
 
@@ -24,6 +25,7 @@ interface ConcentrationTabProps {
   concentrationTopHoldingsData: AllocationData[];
   holdingsData: HoldingData[];
   totalAssetValue: number;
+  isAIGenerated: boolean;
 }
 
 const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
@@ -31,7 +33,8 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
   concentrationIndustryData,
   concentrationTopHoldingsData,
   holdingsData,
-  totalAssetValue
+  totalAssetValue,
+  isAIGenerated
 }) => {
   const [concentrationTab, setConcentrationTab] = useState('Sector');
   const [selectedConcentrationItem, setSelectedConcentrationItem] = useState<string | null>(() => {
@@ -46,9 +49,13 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
   };
 
   const getInsight = () => {
-    if (concentrationTab === 'Sector') return "Your portfolio is heavily biased towards Cyclical sectors (58.33%), which may increase volatility during economic shifts.";
-    if (concentrationTab === 'Industry') return "Financials and Materials dominate your industry exposure. Consider diversifying into defensive sectors like Utilities.";
-    return "Your top 6 stocks represent 20.16% of total assets. Monitor these closely for idiosyncratic risk.";
+    if (concentrationTab === 'Sector') {
+      return 'Your portfolio has high exposure to Hong Kong equities, cyclical and overseas sectors, resulting in a more growth-oriented and volatile risk profile.';
+    }
+    if (concentrationTab === 'Industry') {
+      return 'Power equipment, transportation and internet & technology industries are key drivers of your portfolio; consider monitoring policy changes and sector cycles closely.';
+    }
+    return 'Top positions are concentrated in leaders such as Tencent Holdings, Alibaba Group and Apple Inc., so the portfolio still relies on a small group of large names even though single-stock weights are not extreme.';
   };
 
   const handleTabChange = (tabId: string) => {
@@ -79,7 +86,7 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
               <div className="font-bold text-[#1e1e1e]">{((fund.mktValue / totalAssetValue) * 100).toFixed(2)}%</div>
               <div className="text-[9px] text-[#767676] font-medium mt-0.5">¥{fund.mktValue.toLocaleString()}</div>
             </div>
-            <div className="w-[25%] text-right pr-1 font-bold" style={{ color: themeColor }}>
+            <div className="w-[25%] text-right pr-1 font-bold text-[#1e1e1e]">
               {(fund.sectorWeight as any)[selectedConcentrationItem!]}
             </div>
           </div>
@@ -100,7 +107,7 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
               <div className="font-bold text-[#1e1e1e]">{((fund.mktValue / totalAssetValue) * 100).toFixed(2)}%</div>
               <div className="text-[9px] text-[#767676] font-medium mt-0.5">¥{fund.mktValue.toLocaleString()}</div>
             </div>
-            <div className="w-[25%] text-right pr-1 font-bold" style={{ color: themeColor }}>
+            <div className="w-[25%] text-right pr-1 font-bold text-[#1e1e1e]">
               {(fund.industryWeight as any)[selectedConcentrationItem!]}
             </div>
           </div>
@@ -109,35 +116,15 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
 
     // Top Holdings
     return holdingsData
-      .filter(f => {
-        if (selectedConcentrationItem === 'Others') {
-          const totalWeight = (f.mktValue / totalAssetValue) * 100;
-          const topStocksWeight = f.topStocks.reduce((sum, s) => sum + parseFloat(s.contribution), 0);
-          return totalWeight > topStocksWeight;
-        }
-        return f.topStocks.some(s => s.name === selectedConcentrationItem);
-      })
+      .filter(f => f.topStocks.some(s => s.name === selectedConcentrationItem))
       .sort((a, b) => {
-        const getContrib = (fund: HoldingData) => {
-          if (selectedConcentrationItem === 'Others') {
-            const totalWeight = (fund.mktValue / totalAssetValue) * 100;
-            const topStocksWeight = fund.topStocks.reduce((sum, s) => sum + parseFloat(s.contribution), 0);
-            return totalWeight - topStocksWeight;
-          }
-          return parseFloat(fund.topStocks.find(s => s.name === selectedConcentrationItem)?.contribution || '0');
-        };
+        const getContrib = (fund: HoldingData) =>
+          parseFloat(fund.topStocks.find(s => s.name === selectedConcentrationItem)?.contribution || '0');
         return getContrib(b) - getContrib(a);
       })
       .map((fund, idx) => {
-        let concentrationValue = '';
-        
-        if (selectedConcentrationItem === 'Others') {
-          const totalWeight = (fund.mktValue / totalAssetValue) * 100;
-          const topStocksWeight = fund.topStocks.reduce((sum, s) => sum + parseFloat(s.contribution), 0);
-          concentrationValue = (totalWeight - topStocksWeight).toFixed(2) + '%';
-        } else {
-          concentrationValue = fund.topStocks.find(s => s.name === selectedConcentrationItem)?.contribution || '0%';
-        }
+        const contributionValue =
+          fund.topStocks.find(s => s.name === selectedConcentrationItem)?.contribution || '0%';
 
         return (
           <div key={idx} className="flex items-center text-[11px] px-1 py-1 border-b border-gray-50 last:border-0 pb-3">
@@ -149,8 +136,8 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
               <div className="font-bold text-[#1e1e1e]">{((fund.mktValue / totalAssetValue) * 100).toFixed(2)}%</div>
               <div className="text-[9px] text-[#767676] font-medium mt-0.5">¥{fund.mktValue.toLocaleString()}</div>
             </div>
-            <div className="w-[25%] text-right pr-1 font-bold" style={{ color: themeColor }}>
-              {concentrationValue}
+            <div className="w-[25%] text-right pr-1 font-bold text-[#1e1e1e]">
+              {contributionValue}
             </div>
           </div>
         );
@@ -158,28 +145,27 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
   };
 
   const getDescription = () => {
-    if (selectedConcentrationItem === 'Others') {
-      return {
-        title: 'Other Assets Breakdown',
-        subtitle: "These funds contain secondary positions and cash not listed in the top holdings."
-      };
-    }
     return {
       title: `${selectedConcentrationItem} is heavily held by the following funds:`,
-      subtitle: `High concentration indicates ${concentrationTab === 'Top Holdings' ? selectedConcentrationItem + ' is a core position for these funds' : 'this fund allocates a significant portion of its equity to this ' + concentrationTab.toLowerCase()}.`
+      subtitle:
+        concentrationTab === 'Top Holdings'
+          ? `${selectedConcentrationItem} is one of the core positions in these funds.`
+          : `These funds have relatively high exposure to this ${
+              concentrationTab === 'Sector' ? 'sector' : 'industry'
+            }.`,
     };
   };
 
   return (
-    <div className="animate-fade-in space-y-6">
+    <div className="animate-fade-in space-y-4">
       {/* Section Title */}
-      <div className="flex items-start gap-2 mb-4">
+      <div className="flex items-start gap-2 mb-2">
         <div className="w-[3px] h-[18px] bg-[#da0011] rounded-full mt-0.5"></div>
         <h2 className="text-[15px] font-bold text-[#1e1e1e] leading-tight">Portfolio Concentration</h2>
       </div>
 
       {/* Concentration Toggle Buttons */}
-      <div className="flex gap-2 p-1 bg-[#f4f5f6] rounded-[4px]">
+      <div className="flex p-1 bg-[#f4f5f6] rounded-[4px]">
         {[
           { id: 'Sector', label: 'Sector' },
           { id: 'Industry', label: 'Industry' },
@@ -199,7 +185,7 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
         ))}
       </div>
 
-      <div className="space-y-6 animate-fade-in">
+      <div className="space-y-2 animate-fade-in">
         <AllocationSection 
           title={`${concentrationTab} Concentration`}
           data={[...getCurrentData()].sort((a, b) => b.pct - a.pct)} 
@@ -209,6 +195,8 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
           onItemClick={(label) => setSelectedConcentrationItem(label === selectedConcentrationItem ? null : label)}
           selectedItem={selectedConcentrationItem}
           hideTitle={true}
+          isAIGenerated={isAIGenerated}
+          hideList={true}
         />
 
         {selectedConcentrationItem && (
@@ -216,7 +204,7 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
             <div className="flex flex-start gap-2 mb-4 px-1">
               <div 
                 className="w-1 h-4 mt-0.5" 
-                style={{ backgroundColor: getCurrentData().find(d => d.label === selectedConcentrationItem)?.color || '#da0011' }}
+                style={{ backgroundColor: '#da0011' }}
               ></div>
               <div className="flex flex-col">
                 <h4 className="text-[11px] font-bold text-[#1e1e1e] uppercase tracking-tight">
@@ -229,7 +217,7 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
             </div>
             
             <div className="flex text-[9px] font-bold text-[#767676] mb-4 uppercase tracking-tighter px-1 border-b border-gray-100 pb-2">
-              <div className="w-[40%]">Holdings</div>
+              <div className="w-[40%]">Product name</div>
               <div className="w-[35%] text-center">Weight / Amount</div>
               <div className="w-[25%] text-right pr-1">Concentration</div>
             </div>

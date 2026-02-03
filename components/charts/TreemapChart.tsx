@@ -6,15 +6,17 @@ interface TreemapData {
   pct: number;
   val: string;
   color: string;
+  dailyChange?: number;
   currency?: string;
 }
 
 interface TreemapChartProps {
   data: TreemapData[];
   onItemClick?: (label: string) => void;
+  selectedLabel?: string | null;
 }
 
-const TreemapChart: React.FC<TreemapChartProps> = ({ data, onItemClick }) => {
+const TreemapChart: React.FC<TreemapChartProps> = ({ data, onItemClick, selectedLabel }) => {
   const chartData = {
     datasets: [
       {
@@ -22,26 +24,60 @@ const TreemapChart: React.FC<TreemapChartProps> = ({ data, onItemClick }) => {
         key: 'pct',
         spacing: 1,
         borderWidth: 1,
-        borderColor: '#ffffff',
+        borderColor: (ctx: any) => {
+          const item = ctx.raw?._data || ctx.raw;
+          const daily = typeof item?.dailyChange === 'number' ? item.dailyChange : null;
+          const isSelected = selectedLabel && item?.label === selectedLabel;
+
+          if (daily !== null) {
+            if (!isSelected) return '#e5e7eb';
+            if (daily > 0) return '#da0011';
+            if (daily < 0) return '#16a34a';
+            return '#9ca3af';
+          }
+
+          return isSelected ? '#da0011' : '#e5e7eb';
+        },
         borderRadius: 4,
         backgroundColor: (ctx: any) => {
           const item = ctx.raw?._data || ctx.raw;
-          return item?.color || '#da0011';
+          const daily = typeof item?.dailyChange === 'number' ? item.dailyChange : null;
+          const isSelected = selectedLabel && item?.label === selectedLabel;
+
+          if (daily !== null) {
+            if (daily > 0) return '#fee2e2';
+            if (daily < 0) return '#dcfce7';
+            return '#f3f4f6';
+          }
+
+          if (isSelected) {
+            return '#fee2e2';
+          }
+          return '#f3f4f6';
         },
         labels: {
           display: true,
           formatter: (ctx: any) => {
             const item = ctx.raw?._data || ctx.raw;
-            return [`${item?.label || ''}`, `${item?.pct ? item.pct + '%' : ''}`];
+            const daily = typeof item?.dailyChange === 'number' ? item.dailyChange : null;
+            const base = [`${item?.label || ''}`, `${item?.pct ? item.pct + '%' : ''}`];
+
+            if (daily === null) return base;
+
+            const abs = Math.abs(daily).toFixed(2);
+            const sign = daily > 0 ? '+' : daily < 0 ? '-' : '';
+            const dailyLine = `Daily change ${sign}${abs}%`;
+            return [...base, dailyLine];
           },
           halign: 'right',
           valign: 'bottom',
           color: (ctx: any) => {
             const item = ctx.raw?._data || ctx.raw;
-            const color = item?.color || '';
-            const darkTextColors = ['#ebeef0', '#fee2e2', '#fca5a5', '#9ca3af', '#cbd5e1', '#e2e8f0', '#f1f5f9', '#38bdf8', '#34d399', '#fbbf24'];
-            if (darkTextColors.includes(color)) return '#1e1e1e';
-            return '#ffffff';
+            const daily = typeof item?.dailyChange === 'number' ? item.dailyChange : null;
+            if (daily === null) return '#1e1e1e';
+            if (daily > 0) return '#b91c1c';
+            if (daily < 0) return '#15803d';
+            return '#111827';
           },
           font: {
             size: 11,

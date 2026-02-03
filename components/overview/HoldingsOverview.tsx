@@ -2,9 +2,10 @@ import React from 'react';
 
 interface HoldingsOverviewProps {
   totalAssetValue: number;
+  isAIGenerated: boolean;
 }
 
-const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue }) => {
+const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue, isAIGenerated }) => {
   const weekDays = [
     { day: 'Mon', value: '+0.24%', isPositive: true },
     { day: 'Tue', value: '-0.22%', isPositive: false },
@@ -102,8 +103,20 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue }) 
       </div>
 
       {/* Holdings Overview Section */}
-      <div className="bg-white rounded-[3px] border border-[#ebeef0] shadow-sm overflow-hidden">
-        <div className="px-3 py-2">
+      <div className="bg-white rounded-[3px] border border-[#ebeef0] shadow-sm overflow-hidden relative">
+        {/* AI Tag */}
+        {isAIGenerated && (
+          <div className="absolute bottom-2 right-2 z-10">
+            <div className="flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full shadow-md">
+              <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              <span className="text-[9px] font-bold text-white">AI</span>
+            </div>
+          </div>
+        )}
+        
+        <div className="px-3 py-2 relative z-20">
         <div className="flex items-center justify-between mb-1">
           <div className="flex items-center gap-2">
             <div className="w-1 h-5 bg-[#da0011] rounded-sm"></div>
@@ -120,47 +133,87 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue }) 
           </div>
         </div>
 
-        <div className="space-y-1">
+        <div className="space-y-1.5">
           {/* Performance */}
-          <div className="flex items-start">
-            <div className="w-[85px] flex-shrink-0">
-              <div className="relative inline-block">
+          <div className="flex items-start gap-2">
+            <div className="flex items-center gap-2">
+              <div className="w-1 h-1 rounded-full bg-[#767676] flex-shrink-0"></div>
+              <div className="w-[70px] flex-shrink-0">
                 <span className="text-[12px] text-[#767676] font-medium">Performance</span>
-                <div className="absolute left-0 bottom-0 w-full h-[4px] bg-[#fef3c7]"></div>
               </div>
             </div>
-            <div className="flex-1 text-[12px] mt-[4px]">
-              <span>YTD return of all funds (excluding monetary funds) is </span>
-              <span className="font-bold text-[#da0011] whitespace-nowrap">12.00%</span>
-              <span>, max drawdown is </span>
-              <span className="font-bold text-[#1e1e1e] whitespace-nowrap">1.17%</span>
+            <div className="flex-1 text-[12px] mt-[5px]">
+              {isAIGenerated ? (
+                // AI Mode: Concise insight
+                <>
+                  <span>Strong YTD returns of </span>
+                  <span className="font-bold text-[#da0011] whitespace-nowrap">12.00%</span>
+                  <span> with low </span>
+                  <span className="font-bold text-[#10b981] whitespace-nowrap">1.17%</span>
+                  <span> drawdown</span>
+                </>
+              ) : (
+                // Non-AI Mode: Direct data
+                <>
+                  <span>YTD return </span>
+                  <span className="font-bold text-[#da0011] whitespace-nowrap">12.00%</span>
+                  <span>, max drawdown </span>
+                  <span className="font-bold text-[#1e1e1e] whitespace-nowrap">1.17%</span>
+                </>
+              )}
             </div>
           </div>
           {/* Asset Classes */}
-          <div className="flex items-start">
-            <div className="w-[85px] flex-shrink-0">
-              <div className="relative inline-block">
+          <div className="flex items-start gap-2">
+            <div className="flex items-center gap-2">
+              <div className="w-1 h-1 rounded-full bg-[#767676] flex-shrink-0"></div>
+              <div className="w-[70px] flex-shrink-0">
                 <span className="text-[12px] text-[#767676] font-medium">Classes</span>
-                <div className="absolute left-0 bottom-0 w-full h-[4px] bg-[#fef3c7]"></div>
               </div>
             </div>
-            <div className="flex-1 text-[12px] mt-[4px]">
-              <span>Domestic equity funds account for the highest proportion at </span>
-              <span className="font-bold text-[#da0011]">80%</span>
+            <div className="flex-1 text-[12px] mt-[5px]">
+              {isAIGenerated ? (
+                // AI Mode: Strategic insight
+                <>
+                  <span>Growth-focused with </span>
+                  <span className="font-bold text-[#da0011]">80%</span>
+                  <span> in domestic equity</span>
+                </>
+              ) : (
+                // Non-AI Mode: Simple fact
+                <>
+                  <span>Domestic equity funds </span>
+                  <span className="font-bold text-[#da0011]">80%</span>
+                </>
+              )}
             </div>
           </div>
 
           {/* underlying assets */}
-          <div className="flex items-start">
-            <div className="w-[85px] flex-shrink-0">
-              <div className="relative inline-block">
+          <div className="flex items-start gap-2">
+            <div className="flex items-center gap-2">
+              <div className="w-1 h-1 rounded-full bg-[#767676] flex-shrink-0"></div>
+              <div className="w-[70px] flex-shrink-0">
                 <span className="text-[12px] text-[#767676] font-medium">Underlying</span>
-                <div className="absolute left-0 bottom-[0px] w-full h-[4px] bg-[#fef3c7]"></div>
               </div>
             </div>
-            <div className="flex-1 text-[12px] mt-[4px]">
-              <span>Sector distribution is highly concentrated, with cyclical at </span>
-              <span className="font-bold text-[#f97316]">63%</span>
+            <div className="flex-1 text-[12px] mt-[5px]">
+              {isAIGenerated ? (
+                // AI Mode: Sector summary
+                <>
+                  <span>HK equities </span>
+                  <span className="font-bold text-[#da0011]">28.0%</span>
+                  <span>, cyclical </span>
+                  <span className="font-bold text-[#f97316]">18.0%</span>
+                </>
+              ) : (
+                // Non-AI Mode: Concentration risk
+                <>
+                  <span>NVIDIA </span>
+                  <span className="font-bold text-[#f97316]">79.84%</span>
+                  <span>. Diversify to reduce risk</span>
+                </>
+              )}
             </div>
           </div>
 
