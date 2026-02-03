@@ -24,8 +24,8 @@ const StyleTab: React.FC<StyleTabProps> = ({ styleHoldings, styleTrustHoldings, 
   return (
     <div className="animate-fade-in space-y-5">
       {/* Section Title */}
-      <div className="flex items-start gap-2 mb-4">
-        <div className="w-[3px] h-[18px] bg-[#da0011] rounded-full mt-0.5"></div>
+      <div className="flex items-start gap-1 mb-4">
+        <div className="w-[3px] h-[18px] bg-[#da0011] mt-0.5"></div>
         <h2 className="text-[15px] font-bold text-[#1e1e1e] leading-tight">Fund Style</h2>
       </div>
 
@@ -48,7 +48,7 @@ const StyleTab: React.FC<StyleTabProps> = ({ styleHoldings, styleTrustHoldings, 
       )}
 
       {/* Style Toggle Buttons */}
-      <div className="flex gap-2.5 bg-[#f4f5f6] p-1 rounded-full">
+      <div className="flex gap-2.5 bg-[#f4f5f6] p-1">
         {[
           { id: 'Value', label: 'Value', pct: '15%' },
           { id: 'Balanced', label: 'Balanced', pct: '70%' },
@@ -57,7 +57,7 @@ const StyleTab: React.FC<StyleTabProps> = ({ styleHoldings, styleTrustHoldings, 
           <button
             key={tab.id}
             onClick={() => setHoldingStyle(tab.id as any)}
-            className={`flex-1 py-2 rounded-full flex flex-col items-center transition-all ${
+            className={`flex-1 py-2 flex flex-col items-center transition-all ${
               holdingStyle === tab.id 
               ? 'bg-white text-[#da0011] shadow-sm' 
               : 'text-[#767676] hover:text-[#da0011]/60'
@@ -91,13 +91,13 @@ const StyleTab: React.FC<StyleTabProps> = ({ styleHoldings, styleTrustHoldings, 
               <div className="text-[9px] text-[#767676] font-medium mt-0.5">CNY {item.mktValue.toLocaleString()}</div>
             </div>
             <div className="w-[30%] text-center">
-              <div className={`text-[11px] font-bold ${isRatePositive ? 'text-[#da0011]' : 'text-[#008c4a]'}`}>
+              <div className={`text-[11px] font-bold ${isRatePositive ? 'text-[#da0011]' : 'text-[#3c763d]'}`}>
                 {item.returnRate}
               </div>
               <div className="text-[9px] text-[#767676] font-medium mt-0.5">{item.holdingDays}</div>
             </div>
             <div className="w-[25%] text-right pr-1">
-              <div className={`text-[11px] font-bold ${is3MPositive ? 'text-[#da0011]' : 'text-[#008c4a]'}`}>
+              <div className={`text-[11px] font-bold ${is3MPositive ? 'text-[#da0011]' : 'text-[#3c763d]'}`}>
                 {item.threeMonthChange}
               </div>
             </div>
@@ -120,13 +120,13 @@ const StyleTab: React.FC<StyleTabProps> = ({ styleHoldings, styleTrustHoldings, 
                 <div className="text-[9px] text-[#767676] font-medium mt-0.5">CNY {item.mktValue.toLocaleString()}</div>
               </div>
               <div className="w-[30%] text-center">
-                <div className={`text-[11px] font-bold ${isRatePositive ? 'text-[#da0011]' : 'text-[#008c4a]'}`}>
+                <div className={`text-[11px] font-bold ${isRatePositive ? 'text-[#da0011]' : 'text-[#3c763d]'}`}>
                   {item.returnRate}
                 </div>
                 <div className="text-[9px] text-[#767676] font-medium mt-0.5">{item.holdingDays}</div>
               </div>
               <div className="w-[25%] text-right pr-1">
-                <div className={`text-[11px] font-bold ${is3MPositive ? 'text-[#da0011]' : 'text-[#008c4a]'}`}>
+                <div className={`text-[11px] font-bold ${is3MPositive ? 'text-[#da0011]' : 'text-[#3c763d]'}`}>
                   {item.threeMonthChange}
                 </div>
               </div>

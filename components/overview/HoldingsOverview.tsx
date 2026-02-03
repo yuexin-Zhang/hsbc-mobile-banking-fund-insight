@@ -22,7 +22,7 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue, is
       <div className="bg-white rounded-[3px] border border-[#ebeef0] shadow-sm overflow-hidden px-3 py-2">
         <div className="flex items-center justify-between">
           <div className="text-[13px] font-bold">My total assets</div>
-          <div className="flex items-center gap-0.5 text-[#9ca3af] cursor-pointer">
+          <div className="flex items-center gap-0.5 text-[#999] cursor-pointer">
             <span className="text-[12px] font-medium">Earnings Analysis</span>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -37,14 +37,14 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue, is
           
           {/* Three Metrics Row */}
           <div className="flex items-start gap-4 text-[12px]">
-            <div className="flex flex-col gap-0.5 pr-4 border-r border-[#e5e7eb]">
+            <div className="flex flex-col gap-0.5 pr-4 border-r border-[#e5e5e5]">
               <span className="text-[#767676] whitespace-nowrap">Yesterday's Return</span>
               <div className="flex items-center gap-1">
                 <span className="text-[#da0011] font-bold">+0.09</span>
                 <span className="text-[#da0011]">▲</span>
               </div>
             </div>
-            <div className="flex flex-col gap-0.5 pr-4 border-r border-[#e5e7eb]">
+            <div className="flex flex-col gap-0.5 pr-4 border-r border-[#e5e5e5]">
               <span className="text-[#767676] whitespace-nowrap">Annual Return</span>
               <span className="text-[#da0011] font-bold">+1.72</span>
             </div>
@@ -56,7 +56,7 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue, is
         </div>
 
         {/* Divider */}
-        <div className="border-t border-[#f3f4f6] my-2"></div>
+        <div className="border-t border-[#f3f3f3] my-2"></div>
 
         {/* Weekly Return Message */}
         <div className="mb-2">
@@ -64,7 +64,7 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue, is
             <div className="flex items-center gap-2">
               <div className="text-[13px] font-bold text-[#1e1e1e]">Revenue Analysis</div>
             </div>
-            <div className="flex items-center gap-0.5 text-[#9ca3af] cursor-pointer">
+            <div className="flex items-center gap-0.5 text-[#999] cursor-pointer">
               <span className="text-[11px] font-medium">View Analysis</span>
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -72,7 +72,7 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue, is
             </div>
           </div>
           <span className="text-[10px] text-[#1e1e1e]">Last week's return has been realized, weekly return </span>
-          <span className="text-[12px] text-[#10b981] font-bold">-0.17%</span>
+          <span className="text-[12px] text-[#5cb85c] font-bold">-0.17%</span>
         </div>
 
         {/* Weekly Calendar */}
@@ -80,12 +80,12 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue, is
           {weekDays.map((day, index) => (
             <div key={index} className="flex-1 min-w-0">
               <div 
-                className={`w-full py-1.5 px-0.5 rounded text-[10px] font-medium text-center ${
+                className={`w-full py-1.5 px-0.5 text-[10px] font-medium text-center ${
                   day.isPositive === true 
-                    ? 'bg-[#fef2f2]' 
+                    ? 'bg-[#f2dede]' 
                     : day.isPositive === false 
-                      ? 'bg-[#dcfce7]'
-                      : 'bg-[#f9fafb]'
+                      ? 'bg-[#dff0d8]'
+                      : 'bg-[#f5f5f5]'
                 }`}
               >
                 <div className="text-[#1e1e1e] mb-0.5 leading-tight">{day.day}</div>
@@ -93,8 +93,8 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue, is
                   day.isPositive === true 
                     ? 'text-[#da0011]' 
                     : day.isPositive === false 
-                      ? 'text-[#10b981]'
-                      : 'text-[#9ca3af]'
+                      ? 'text-[#5cb85c]'
+                      : 'text-[#999]'
                 }`}>{day.value}</div>
               </div>
             </div>
@@ -118,11 +118,11 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue, is
         
         <div className="px-3 py-2 relative z-20">
         <div className="flex items-center justify-between mb-1">
-          <div className="flex items-center gap-2">
-            <div className="w-1 h-5 bg-[#da0011] rounded-sm"></div>
+          <div className="flex items-center gap-1">
+            <div className="w-1 h-5 bg-[#da0011]"></div>
             <h3 className="text-[15px] font-bold text-[#1e1e1e]">Holdings Summary</h3>
           </div>
-          <div className="flex items-center gap-1 text-[#9ca3af] cursor-pointer hover:text-[#767676] transition-colors">
+          <div className="flex items-center gap-1 text-[#999] cursor-pointer hover:text-[#767676] transition-colors">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
               <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
             </svg>
@@ -149,7 +149,7 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue, is
                   <span>Strong YTD returns of </span>
                   <span className="font-bold text-[#da0011] whitespace-nowrap">12.00%</span>
                   <span> with low </span>
-                  <span className="font-bold text-[#10b981] whitespace-nowrap">1.17%</span>
+                  <span className="font-bold text-[#5cb85c] whitespace-nowrap">1.17%</span>
                   <span> drawdown</span>
                 </>
               ) : (
@@ -204,13 +204,13 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue, is
                   <span>HK equities </span>
                   <span className="font-bold text-[#da0011]">28.0%</span>
                   <span>, cyclical </span>
-                  <span className="font-bold text-[#f97316]">18.0%</span>
+                  <span className="font-bold text-[#f0ad4e]">18.0%</span>
                 </>
               ) : (
                 // Non-AI Mode: Concentration risk
                 <>
                   <span>NVIDIA </span>
-                  <span className="font-bold text-[#f97316]">79.84%</span>
+                  <span className="font-bold text-[#f0ad4e]">79.84%</span>
                   <span>. Diversify to reduce risk</span>
                 </>
               )}
@@ -223,7 +223,7 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue, is
             <div className="flex-1 flex items-center">
               <span className="text-[12px] font-bold text-[#da0011]">70%</span>
               <span className="text-[12px] ml-[2px]">Balanced Style</span>
-              <span className="text-[10px] font-medium text-[#da0011] border border-[#da0011] px-0.5 rounded-sm ml-[4px] bg-[#FFF1F0]">Concentrated</span>
+              <span className="text-[10px] font-medium text-[#da0011] border border-[#da0011] px-0.5 rounded-sm ml-[4px] bg-[#f2dede]">Concentrated</span>
             </div>
           </div> */}
 

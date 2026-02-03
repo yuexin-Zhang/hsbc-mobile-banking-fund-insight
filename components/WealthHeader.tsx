@@ -7,7 +7,7 @@ interface WealthHeaderProps {
 
 const WealthHeader: React.FC<WealthHeaderProps> = ({ onWealthAssetsClick }) => {
   return (
-    <div className="bg-[#DB0011] text-white pt-12 pb-3 px-4 shadow-sm shrink-0">
+    <div className="bg-[#da0011] text-white pt-12 pb-3 px-4 shadow-sm shrink-0">
       {/* Top Search & Icons */}
       <div className="flex items-center justify-between mb-4">
         <div className="relative flex-1 mr-3">

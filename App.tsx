@@ -24,7 +24,7 @@ const App: React.FC = () => {
     <div className="flex justify-center items-center w-full">
       <PhoneFrame>
         {currentPage === 'home' && (
-          <div className="flex flex-col h-full bg-[#F5F5F5] overflow-y-auto no-scrollbar">
+          <div className="flex flex-col h-full bg-[#f5f5f5] overflow-y-auto no-scrollbar">
             <WealthHeader onWealthAssetsClick={navigateToHoldings} />
             <NavGrid onInsightClick={navigateToOverview} />
             <div className="px-4 py-4 space-y-4">

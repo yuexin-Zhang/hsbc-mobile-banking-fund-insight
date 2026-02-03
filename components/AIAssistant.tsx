@@ -90,7 +90,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose }) => {
         >
           {/* AI Avatar & Status */}
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-[#da0011] to-[#ff4757] rounded-full flex items-center justify-center shadow-lg">
+            <div className="w-12 h-12 bg-gradient-to-br from-[#da0011] to-[#ba000e] rounded-full flex items-center justify-center shadow-lg">
               <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
               </svg>
@@ -201,7 +201,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose }) => {
                 </div>
                 <div className="flex items-center justify-center">
                   <div className={`flex items-center justify-center px-2 h-7 rounded-full ${fund.isUp ? 'bg-red-50' : 'bg-emerald-50'}`}>
-                    <span className={`text-[10px] font-bold ${fund.isUp ? 'text-[#da0011]' : 'text-emerald-600'}`}>
+                    <span className={`text-[10px] font-bold ${fund.isUp ? 'text-[#da0011]' : 'text-[#5cb85c]'}`}>
                       {fund.change}
                     </span>
                   </div>
@@ -221,7 +221,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose }) => {
               </svg>
               <div className="text-gray-900 text-xs leading-relaxed">
                 <span className="font-bold text-amber-700">Portfolio Alert:</span> Your China Trust holdings 
-                (CR Trust FirstEagle No.8) show a slight decline of <span className="font-medium text-[#008c4a]">-1.49%</span>. 
+                (CR Trust FirstEagle No.8) show a slight decline of <span className="font-medium text-[#3c763d]">-1.49%</span>. 
                 Consider reviewing your fixed income allocation as market conditions evolve.
               </div>
             </div>

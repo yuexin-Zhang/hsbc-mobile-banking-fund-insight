@@ -35,8 +35,8 @@ const ClassesTab: React.FC<ClassesTabProps> = ({ assetClassesData, holdingsData,
   return (
     <div className="animate-fade-in">
       {/* Section Title */}
-      <div className="flex items-start gap-2 mb-4">
-        <div className="w-[3px] h-[18px] bg-[#da0011] rounded-full mt-0.5"></div>
+      <div className="flex items-start gap-1 mb-4">
+        <div className="w-[3px] h-[18px] bg-[#da0011] mt-0.5"></div>
         <h2 className="text-[15px] font-bold text-[#1e1e1e] leading-tight">Asset Classes</h2>
       </div>
 
@@ -82,13 +82,13 @@ const ClassesTab: React.FC<ClassesTabProps> = ({ assetClassesData, holdingsData,
                       <span className="text-[9px] text-[#767676] mt-0.5 font-medium">CNY {fund.mktValue.toLocaleString()}</span>
                     </div>
                     <div className="w-[30%] text-center">
-                      <div className={`text-[11px] font-bold ${isRatePositive ? 'text-[#da0011]' : 'text-[#008c4a]'}`}>
+                      <div className={`text-[11px] font-bold ${isRatePositive ? 'text-[#da0011]' : 'text-[#3c763d]'}`}>
                         {fund.returnRate}
                       </div>
                       <div className="text-[9px] text-[#767676] font-medium mt-0.5">{fund.holdingDays}</div>
                     </div>
                     <div className="w-[25%] text-right pr-1 font-bold">
-                      <span className={is3MPositive ? 'text-[#da0011]' : 'text-[#008c4a]'}>
+                      <span className={is3MPositive ? 'text-[#da0011]' : 'text-[#3c763d]'}>
                         {fund.threeMonthChange}
                       </span>
                     </div>

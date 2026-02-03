@@ -10,7 +10,7 @@ const MyHoldings: React.FC<MyHoldingsProps> = ({ onBack, onGoToFundInsight }) =>
   const [activeTab, setActiveTab] = useState<'insurance' | 'funds'>('insurance');
 
   return (
-    <div className="flex flex-col h-full bg-[#f8f8f8]">
+    <div className="flex flex-col h-full bg-[#f5f5f5]">
       {/* Header */}
       <div className="bg-white pt-12 pb-4 px-4 border-b border-gray-200 shrink-0">
         <div className="flex items-center justify-between">
@@ -44,10 +44,10 @@ const MyHoldings: React.FC<MyHoldingsProps> = ({ onBack, onGoToFundInsight }) =>
 
         {/* Transactions in Progress */}
         <div className="px-4 py-2">
-          <div className="w-full flex items-center justify-between px-2 py-2 active:opacity-70 transition-opacity cursor-pointer bg-[#f3f3f3] border border-[#d0d0d0]" style={{ borderRadius: '0 !important' }}>
+          <div className="w-full flex items-center justify-between px-2 py-2 active:opacity-70 transition-opacity cursor-pointer bg-[#f3f3f3] border border-[#d9d9d9]" style={{ borderRadius: '0 !important' }}>
             <span className="text-[15px] text-gray-900">3 transaction(s) in progress</span>
             <div className="flex items-center gap-1">
-              <div className="w-5 h-5 bg-[#dc0010] rounded-full flex items-center justify-center">
+              <div className="w-5 h-5 bg-[#da0011] rounded-full flex items-center justify-center">
                 <span className="text-white text-[13px]">3</span>
               </div>
               <svg className="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
@@ -62,25 +62,25 @@ const MyHoldings: React.FC<MyHoldingsProps> = ({ onBack, onGoToFundInsight }) =>
           <div className="flex items-start justify-between">
             <span className="text-[12px] text-gray-900">Unrealized gain/loss (rate)</span>
             <div className="text-right">
-              <div className="text-[12px] font-medium text-[#00a0b0]">-2,871.48 CNY <span className="text-[12px]">(-57.43%)</span></div>
+              <div className="text-[12px] font-medium text-[#31b0d5]">-2,871.48 CNY <span className="text-[12px]">(-57.43%)</span></div>
             </div>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-[12px] text-gray-900">Cash income</span>
-            <span className="text-[12px] font-medium text-[#dc0010]">1.69 CNY</span>
+            <span className="text-[12px] font-medium text-[#da0011]">1.69 CNY</span>
           </div>
           <div className="flex items-start justify-between">
             <span className="text-[12px] text-gray-900">Total return (rate)</span>
             <div className="text-right">
-              <div className="text-[12px] font-medium text-[#00a0b0]">-2,869.79 CNY</div>
-              <div className="text-[12px] text-[#00a0b0]">(-57.40%)</div>
+              <div className="text-[12px] font-medium text-[#31b0d5]">-2,869.79 CNY</div>
+              <div className="text-[12px] text-[#31b0d5]">(-57.40%)</div>
             </div>
           </div>
         </div>
 
         {/* Info Notice */}
         <div className="my-4 flex gap-3 px-4">
-          <div className="w-4 h-4 bg-[#4a7c8c] rounded-full flex items-center justify-center flex-shrink-0">
+          <div className="w-4 h-4 bg-[#31708f] rounded-full flex items-center justify-center flex-shrink-0">
             <span className="text-white text-[10px] font-bold">i</span>
           </div>
           <p className="text-[13px] text-gray-900 leading-[1.5]">
@@ -127,7 +127,7 @@ const MyHoldings: React.FC<MyHoldingsProps> = ({ onBack, onGoToFundInsight }) =>
             onClick={() => setActiveTab('insurance')}
             className={`px-4 py-3.5 text-[14px] font-medium border-b-[3px] -mb-[3px] transition-colors ${
               activeTab === 'insurance'
-                ? 'text-gray-900 border-[#dc0010]'
+                ? 'text-gray-900 border-[#da0011]'
                 : 'text-gray-500 border-transparent'
             }`}
           >
@@ -137,7 +137,7 @@ const MyHoldings: React.FC<MyHoldingsProps> = ({ onBack, onGoToFundInsight }) =>
             onClick={() => setActiveTab('funds')}
             className={`px-6 py-3.5 text-[14px] font-medium border-b-[3px] -mb-[3px] transition-colors ${
               activeTab === 'funds'
-                ? 'text-gray-900 border-[#dc0010]'
+                ? 'text-gray-900 border-[#da0011]'
                 : 'text-gray-500 border-transparent'
             }`}
           >
@@ -167,15 +167,15 @@ const MyHoldings: React.FC<MyHoldingsProps> = ({ onBack, onGoToFundInsight }) =>
               
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-[13px] text-[#888888]">Cash value</span>
+                  <span className="text-[13px] text-[#777]">Cash value</span>
                   <span className="text-[14px] text-gray-900">0.00 CNY</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[13px] text-[#888888]">Next premium<br></br>deduction date</span>
+                  <span className="text-[13px] text-[#777]">Next premium<br></br>deduction date</span>
                   <span className="text-[14px] text-gray-900">14 Sep 2025</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[13px] text-[#888888]">Premium amount</span>
+                  <span className="text-[13px] text-[#777]">Premium amount</span>
                   <span className="text-[14px] text-gray-900">7,920.00 CNY</span>
                 </div>
               </div>

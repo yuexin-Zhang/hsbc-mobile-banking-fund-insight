@@ -21,7 +21,7 @@ const ContactSection: React.FC = () => {
             <div className="text-xs text-gray-500">24/7 Service</div>
           </div>
         </div>
-        <button className="text-[#DB0011] font-medium text-sm">Call Us</button>
+        <button className="text-[#da0011] font-medium text-sm">Call Us</button>
       </div>
 
       <div className="mx-4 h-px bg-gray-100"></div>

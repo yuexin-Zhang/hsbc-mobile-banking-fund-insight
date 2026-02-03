@@ -28,27 +28,27 @@ const PerformanceTab: React.FC<PerformanceTabProps> = ({ chartData, colors }) =>
   return (
     <div className="animate-fade-in space-y-4">
       {/* Section Title */}
-      <div className="flex items-start gap-2 mb-4">
-        <div className="w-[3px] h-[18px] bg-[#da0011] rounded-full mt-0.5"></div>
+      <div className="flex items-start gap-1 mb-4">
+        <div className="w-[3px] h-[18px] bg-[#da0011] mt-0.5"></div>
         <h2 className="text-[15px] font-bold text-[#1e1e1e] leading-tight">Holdings Performance</h2>
       </div>
 
       {/* Metrics with dots */}
       <div className="flex items-center text-[10px]">
         <div className="flex items-center">
-          <span className="w-2 h-2 rounded-full bg-red-600 mr-1"></span>
+          <span className="w-2 h-2 rounded-full bg-[#da0011] mr-1"></span>
           <span className="text-gray-900 font-medium">Funds:</span>
-          <span className="ml-1 text-red-600 font-bold">28.59%</span>
+          <span className="ml-1 text-[#da0011] font-bold">28.59%</span>
         </div>
 
         <div className="flex items-center">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 mr-1"></span>
+          <span className="w-2 h-2 rounded-full bg-[#5cb85c] mr-1"></span>
           <span className="text-gray-900 font-medium">Drawdown:</span>
           <span className="ml-1 text-gray-900 font-medium">16.70%</span>
         </div>
 
         <div className="flex items-center">
-          <span className="w-2 h-2 rounded-full bg-blue-500 mr-1"></span>
+          <span className="w-2 h-2 rounded-full bg-[#31b0d5] mr-1"></span>
           <span className="text-gray-900 font-medium">SAA:</span>
           <span className="ml-1 text-gray-900 font-medium">25.83%</span>
         </div>
@@ -108,9 +108,9 @@ const PerformanceTab: React.FC<PerformanceTabProps> = ({ chartData, colors }) =>
         {/* Section Title with Expand/Collapse */}
         <button 
           onClick={() => setIsEarningsExpanded(!isEarningsExpanded)}
-          className="flex items-center gap-2 w-full text-left group"
+          className="flex items-center gap-1 w-full text-left group"
         >
-          <div className="w-[3px] h-[14px] bg-[#da0011] rounded-full"></div>
+          <div className="w-[3px] h-[14px] bg-[#da0011]"></div>
           <h3 className="text-[12px] font-bold text-[#1e1e1e] flex-1">Detailed Earnings Data</h3>
           <svg 
             className={`w-4 h-4 text-[#767676] transition-transform duration-200 flex-shrink-0 ${isEarningsExpanded ? 'rotate-180' : ''}`}
@@ -164,7 +164,7 @@ const PerformanceTab: React.FC<PerformanceTabProps> = ({ chartData, colors }) =>
                 <div className="text-[11px] font-bold text-[#da0011]">+12.68%</div>
               </div>
               <div className="w-[25%] text-right">
-                <div className="text-[11px] font-bold text-[#008c4a]">-2.15%</div>
+                <div className="text-[11px] font-bold text-[#3c763d]">-2.15%</div>
               </div>
               <div className="w-[25%] text-right">
                 <div className="text-[11px] font-bold">

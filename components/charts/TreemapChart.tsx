@@ -30,30 +30,30 @@ const TreemapChart: React.FC<TreemapChartProps> = ({ data, onItemClick, selected
           const isSelected = selectedLabel && item?.label === selectedLabel;
 
           if (daily !== null) {
-            if (!isSelected) return '#e5e7eb';
+            if (!isSelected) return '#e5e5e5';
             if (daily > 0) return '#da0011';
-            if (daily < 0) return '#16a34a';
-            return '#9ca3af';
+            if (daily < 0) return '#5cb85c';
+            return '#999';
           }
 
-          return isSelected ? '#da0011' : '#e5e7eb';
+          return isSelected ? '#da0011' : '#e5e5e5';
         },
-        borderRadius: 4,
+        borderRadius: 0,
         backgroundColor: (ctx: any) => {
           const item = ctx.raw?._data || ctx.raw;
           const daily = typeof item?.dailyChange === 'number' ? item.dailyChange : null;
           const isSelected = selectedLabel && item?.label === selectedLabel;
 
           if (daily !== null) {
-            if (daily > 0) return '#fee2e2';
-            if (daily < 0) return '#dcfce7';
-            return '#f3f4f6';
+            if (daily > 0) return '#f2dede';
+            if (daily < 0) return '#dff0d8';
+            return '#f3f3f3';
           }
 
           if (isSelected) {
-            return '#fee2e2';
+            return '#f2dede';
           }
-          return '#f3f4f6';
+          return '#f3f3f3';
         },
         labels: {
           display: true,
@@ -75,9 +75,9 @@ const TreemapChart: React.FC<TreemapChartProps> = ({ data, onItemClick, selected
             const item = ctx.raw?._data || ctx.raw;
             const daily = typeof item?.dailyChange === 'number' ? item.dailyChange : null;
             if (daily === null) return '#1e1e1e';
-            if (daily > 0) return '#b91c1c';
-            if (daily < 0) return '#15803d';
-            return '#111827';
+            if (daily > 0) return '#a94442';
+            if (daily < 0) return '#3c763d';
+            return '#1e1e1e';
           },
           font: {
             size: 11,

@@ -130,16 +130,16 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ chartData, colors }
       <div className="flex flex-wrap gap-2 mb-3">
         <button 
           onClick={() => toggleLine('fund')}
-          className={`flex items-center gap-1.5 px-2 py-0.5 rounded-[2px] border text-[9px] font-bold transition-all ${visibleLines.fund ? 'bg-red-50 border-red-100 text-[#fca5a5]' : 'bg-gray-50 border-gray-200 text-gray-400 opacity-60'}`}
+          className={`flex items-center gap-1.5 px-2 py-0.5 border text-[9px] font-bold transition-all ${visibleLines.fund ? 'bg-red-50 border-red-100 text-[#da0011]' : 'bg-gray-50 border-gray-200 text-gray-400 opacity-60'}`}
         >
-          <div className={`w-1.5 h-0.5 ${visibleLines.fund ? 'bg-[#fca5a5]' : 'bg-gray-300'}`}></div>
+          <div className={`w-1.5 h-0.5 ${visibleLines.fund ? 'bg-[#da0011]' : 'bg-gray-300'}`}></div>
           Fund
         </button>
         <button 
           onClick={() => toggleLine('saa')}
-          className={`flex items-center gap-1.5 px-2 py-0.5 rounded-[2px] border text-[9px] font-bold transition-all ${visibleLines.saa ? 'bg-blue-50 border-blue-200 text-blue-600' : 'bg-gray-50 border-gray-200 text-gray-400 opacity-60'}`}
+          className={`flex items-center gap-1.5 px-2 py-0.5 border text-[9px] font-bold transition-all ${visibleLines.saa ? 'bg-blue-50 border-blue-200 text-[#31b0d5]' : 'bg-gray-50 border-gray-200 text-gray-400 opacity-60'}`}
         >
-          <div className={`w-1.5 h-0.5 ${visibleLines.saa ? 'bg-blue-500' : 'bg-gray-300'}`}></div>
+          <div className={`w-1.5 h-0.5 ${visibleLines.saa ? 'bg-[#31b0d5]' : 'bg-gray-300'}`}></div>
           SAA
         </button>
       </div>
@@ -174,7 +174,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ chartData, colors }
             )}
                           
             {visibleLines.saa && (
-              <path d={getSmoothPathForFiltered(filteredData, 'saa')} fill="none" stroke="#3b82f6" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="3 2" />
+              <path d={getSmoothPathForFiltered(filteredData, 'saa')} fill="none" stroke="#31b0d5" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="3 2" />
             )}
           
             {/* Drawdown area */}
@@ -204,9 +204,9 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ chartData, colors }
                   <>
                     <path 
                       d={`M ${peakX},${peakY} L ${troughX},${troughY} L ${troughX},${peakY} Z`}
-                      fill="#34d399" 
+                      fill="#5cb85c" 
                       fillOpacity="0.15" 
-                      stroke="#34d399" 
+                      stroke="#5cb85c" 
                       strokeWidth="0.8" 
                       strokeDasharray="3 2" 
                     />
@@ -215,7 +215,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ chartData, colors }
                       y1={peakY} 
                       x2={peakX} 
                       y2="100" 
-                      stroke="#34d399" 
+                      stroke="#5cb85c" 
                       strokeWidth="0.5" 
                       strokeDasharray="2 2" 
                       opacity="0.6"
@@ -225,7 +225,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ chartData, colors }
                       y1={troughY} 
                       x2={troughX} 
                       y2="100" 
-                      stroke="#34d399" 
+                      stroke="#5cb85c" 
                       strokeWidth="0.5" 
                       strokeDasharray="2 2" 
                       opacity="0.6"
@@ -271,7 +271,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ chartData, colors }
           <button
             key={range}
             onClick={() => setDateRange(range)}
-            className={`px-3 py-1.5 rounded-[2px] text-[9px] font-bold transition-all border ${
+            className={`px-3 py-1.5 text-[9px] font-bold transition-all border ${
               dateRange === range
                 ? 'bg-[#da0011] text-white border-[#da0011]'
                 : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'

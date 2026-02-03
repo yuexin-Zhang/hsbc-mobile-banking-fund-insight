@@ -159,13 +159,13 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
   return (
     <div className="animate-fade-in space-y-4">
       {/* Section Title */}
-      <div className="flex items-start gap-2 mb-2">
-        <div className="w-[3px] h-[18px] bg-[#da0011] rounded-full mt-0.5"></div>
+      <div className="flex items-start gap-1 mb-2">
+        <div className="w-[3px] h-[18px] bg-[#da0011] mt-0.5"></div>
         <h2 className="text-[15px] font-bold text-[#1e1e1e] leading-tight">Portfolio Concentration</h2>
       </div>
 
       {/* Concentration Toggle Buttons */}
-      <div className="flex p-1 bg-[#f4f5f6] rounded-[4px]">
+      <div className="flex p-1 bg-[#f4f5f6]">
         {[
           { id: 'Sector', label: 'Sector' },
           { id: 'Industry', label: 'Industry' },
@@ -174,7 +174,7 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
           <button
             key={tab.id}
             onClick={() => handleTabChange(tab.id)}
-            className={`flex-1 py-2 text-[11px] font-bold rounded-[3px] transition-all ${
+            className={`flex-1 py-2 text-[11px] font-bold transition-all ${
               concentrationTab === tab.id 
               ? 'bg-white text-[#da0011] shadow-sm' 
               : 'text-[#767676]'

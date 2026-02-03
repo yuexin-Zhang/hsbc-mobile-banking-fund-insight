@@ -8,10 +8,10 @@ interface NavItemProps {
 }
 
 const NavItem: React.FC<NavItemProps> = ({ icon, label, active = false }) => (
-  <div className={`flex flex-col items-center justify-center space-y-1 py-1 cursor-pointer flex-1 transition-colors ${active ? 'text-[#DB0011]' : 'text-gray-500'}`}>
+  <div className={`flex flex-col items-center justify-center space-y-1 py-1 cursor-pointer flex-1 transition-colors ${active ? 'text-[#da0011]' : 'text-gray-500'}`}>
     <div className="relative">
       {icon}
-      {label === "Me" && <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#DB0011] rounded-full border-2 border-white"></div>}
+      {label === "Me" && <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#da0011] rounded-full border-2 border-white"></div>}
     </div>
     <span className="text-[10px] font-medium">{label}</span>
   </div>

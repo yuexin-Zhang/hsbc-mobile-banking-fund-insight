@@ -53,8 +53,8 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
 
   const colors = {
     red: '#da0011',
-    lightRed: '#fca5a5',
-    grey: '#9ca3af',
+    lightRed: '#f2dede',
+    grey: '#999',
     dark: '#1e1e1e',
     greyBg: '#f4f5f6',
     border: '#ebeef0',
@@ -176,42 +176,42 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
   ];
 
   const assetClassesData = [
-    { label: 'Domestic Equity', pct: 42.14, val: '3,959,446.47', color: '#0ea5e9', currency: '¥' }, 
+    { label: 'Domestic Equity', pct: 42.14, val: '3,959,446.47', color: '#31b0d5', currency: '¥' }, 
     { label: 'Commodities & Others', pct: 35.42, val: '3,328,154.55', color: '#da0011', currency: '¥' }, 
-    { label: 'Overseas Market', pct: 15.15, val: '200,486.70', color: '#10b981', currency: '$' }, 
-    { label: 'Domestic Fixed Income', pct: 7.29, val: '684,689.66', color: '#64748b', currency: '¥' }, 
+    { label: 'Overseas Market', pct: 15.15, val: '200,486.70', color: '#5cb85c', currency: '$' }, 
+    { label: 'Domestic Fixed Income', pct: 7.29, val: '684,689.66', color: '#777', currency: '¥' }, 
   ];
 
   const concentrationSectorData = [
     { label: 'Hong Kong Equities', pct: 28.0, val: '2,630,812.95', color: '#da0011', currency: '¥' },
-    { label: 'Cyclical', pct: 18.0, val: '1,691,234.32', color: '#f97316', currency: '¥' },
-    { label: 'Overseas Markets', pct: 16.0, val: '1,503,319.40', color: '#0ea5e9', currency: '¥' },
-    { label: 'Financial & Real Estate', pct: 14.0, val: '1,315,408.47', color: '#6366f1', currency: '¥' },
-    { label: 'Consumer', pct: 12.0, val: '1,127,497.55', color: '#10b981', currency: '¥' },
-    { label: 'Technology', pct: 7.0, val: '657,702.24', color: '#f59e0b', currency: '¥' },
-    { label: 'Manufacturing', pct: 5.0, val: '469,791.31', color: '#64748b', currency: '¥' },
+    { label: 'Cyclical', pct: 18.0, val: '1,691,234.32', color: '#f0ad4e', currency: '¥' },
+    { label: 'Overseas Markets', pct: 16.0, val: '1,503,319.40', color: '#31b0d5', currency: '¥' },
+    { label: 'Financial & Real Estate', pct: 14.0, val: '1,315,408.47', color: '#31708f', currency: '¥' },
+    { label: 'Consumer', pct: 12.0, val: '1,127,497.55', color: '#5cb85c', currency: '¥' },
+    { label: 'Technology', pct: 7.0, val: '657,702.24', color: '#f0ad4e', currency: '¥' },
+    { label: 'Manufacturing', pct: 5.0, val: '469,791.31', color: '#777', currency: '¥' },
   ];
 
   const concentrationIndustryData = [
-    { label: 'Internet & Technology', pct: 22.0, val: '2,067,025.17', color: '#f97316', currency: '¥' },
-    { label: 'Power Equipment', pct: 18.0, val: '1,691,234.32', color: '#0ea5e9', currency: '¥' },
-    { label: 'Transportation', pct: 14.0, val: '1,315,408.47', color: '#10b981', currency: '¥' },
-    { label: 'Banking', pct: 12.0, val: '1,127,497.55', color: '#6366f1', currency: '¥' },
-    { label: 'Insurance', pct: 10.0, val: '939,574.62', color: '#ec4899', currency: '¥' },
-    { label: 'Consumer Staples', pct: 12.0, val: '1,127,497.55', color: '#22c55e', currency: '¥' },
-    { label: 'Others', pct: 12.0, val: '1,127,497.55', color: '#94a3b8', currency: '¥' },
+    { label: 'Internet & Technology', pct: 22.0, val: '2,067,025.17', color: '#f0ad4e', currency: '¥' },
+    { label: 'Power Equipment', pct: 18.0, val: '1,691,234.32', color: '#31b0d5', currency: '¥' },
+    { label: 'Transportation', pct: 14.0, val: '1,315,408.47', color: '#5cb85c', currency: '¥' },
+    { label: 'Banking', pct: 12.0, val: '1,127,497.55', color: '#31708f', currency: '¥' },
+    { label: 'Insurance', pct: 10.0, val: '939,574.62', color: '#da0011', currency: '¥' },
+    { label: 'Consumer Staples', pct: 12.0, val: '1,127,497.55', color: '#5cb85c', currency: '¥' },
+    { label: 'Others', pct: 12.0, val: '1,127,497.55', color: '#999', currency: '¥' },
   ];
 
   const concentrationTopHoldingsData = [
     { label: 'Tencent Holdings', pct: 18.5, val: '1,738,237.04', color: '#da0011', currency: '¥', dailyChange: 0.17 },
-    { label: 'Alibaba Group', pct: 14.0, val: '1,315,408.47', color: '#0ea5e9', currency: '¥', dailyChange: -0.23 },
-    { label: 'Meituan', pct: 12.5, val: '1,174,468.28', color: '#22c55e', currency: '¥', dailyChange: 0.05 },
-    { label: 'CATL', pct: 11.0, val: '1,033,528.09', color: '#f97316', currency: '¥', dailyChange: -0.42 },
-    { label: 'BYD Co.', pct: 9.5, val: '892,587.90', color: '#f59e0b', currency: '¥', dailyChange: 0.31 },
-    { label: 'Ping An Insurance', pct: 8.0, val: '751,646.74', color: '#6366f1', currency: '¥', dailyChange: -0.08 },
-    { label: 'HSBC Holdings', pct: 7.0, val: '657,702.24', color: '#8b5cf6', currency: '¥', dailyChange: 0.12 },
-    { label: 'Apple Inc.', pct: 6.5, val: '616,730.49', color: '#ec4899', currency: '¥', dailyChange: -0.15 },
-    { label: 'NVIDIA Corp.', pct: 13.0, val: '1,221,447.01', color: '#94a3b8', currency: '¥', dailyChange: 0.64 },
+    { label: 'Alibaba Group', pct: 14.0, val: '1,315,408.47', color: '#31b0d5', currency: '¥', dailyChange: -0.23 },
+    { label: 'Meituan', pct: 12.5, val: '1,174,468.28', color: '#5cb85c', currency: '¥', dailyChange: 0.05 },
+    { label: 'CATL', pct: 11.0, val: '1,033,528.09', color: '#f0ad4e', currency: '¥', dailyChange: -0.42 },
+    { label: 'BYD Co.', pct: 9.5, val: '892,587.90', color: '#f0ad4e', currency: '¥', dailyChange: 0.31 },
+    { label: 'Ping An Insurance', pct: 8.0, val: '751,646.74', color: '#31708f', currency: '¥', dailyChange: -0.08 },
+    { label: 'HSBC Holdings', pct: 7.0, val: '657,702.24', color: '#5cb85c', currency: '¥', dailyChange: 0.12 },
+    { label: 'Apple Inc.', pct: 6.5, val: '616,730.49', color: '#da0011', currency: '¥', dailyChange: -0.15 },
+    { label: 'NVIDIA Corp.', pct: 13.0, val: '1,221,447.01', color: '#999', currency: '¥', dailyChange: 0.64 },
   ];
 
   const holdingsData = [
@@ -501,11 +501,11 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
       </div>
 
       {/* Header */}
-      <div className="bg-white px-3 border-b border-gray-200 sticky top-[30px] z-50">
+      <div className="bg-white py-2 px-3 border-b border-gray-200 sticky top-[30px] z-50">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <button onClick={onBack} className="w-9 h-9 -ml-2 flex items-center justify-center active:bg-gray-100 rounded-full transition-colors">
-              <svg className="w-7 h-7 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+            <button onClick={onBack} className="w-7 h-7 -ml-2 flex items-center justify-center active:bg-gray-100 rounded-full transition-colors">
+              <svg className="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
             </button>
@@ -516,24 +516,24 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
             {/* AI Mode Toggle */}
             <button
               onClick={() => onToggleAIMode(!isAIGenerated)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+              className={`relative inline-flex h-4 w-7 items-center transition-colors ${
                 isAIGenerated ? 'bg-[#da0011]' : 'bg-gray-300'
               }`}
               title="Toggle AI Generated Mode"
             >
               <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  isAIGenerated ? 'translate-x-6' : 'translate-x-1'
+                className={`inline-block h-2.5 w-2.5 transform bg-white transition-transform ${
+                  isAIGenerated ? 'translate-x-[16px]' : 'translate-x-[2px]'
                 }`}
               />
             </button>
             
             <button 
               onClick={handleExport}
-              className="w-9 h-9 flex items-center justify-center active:bg-gray-100 rounded-full transition-colors"
+              className="w-7 h-7 flex items-center justify-center active:bg-gray-100 rounded-full transition-colors"
               title="Export Report"
             >
-              <svg className="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+              <svg className="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
               </svg>
             </button>

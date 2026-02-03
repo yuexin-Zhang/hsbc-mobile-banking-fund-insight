@@ -200,7 +200,7 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
       <div className="absolute bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
         <button 
           onClick={handleConfirmSelection}
-          className={`w-full py-3.5 rounded-[2px] text-[13px] font-bold uppercase tracking-widest transition-all ${selectedFundIds.length > 0 ? 'bg-[#da0011] text-white active:bg-[#b0000e]' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
+          className={`w-full py-3.5 rounded-[2px] text-[13px] font-bold uppercase tracking-widest transition-all ${selectedFundIds.length > 0 ? 'bg-[#da0011] text-white active:bg-[#ba000e]' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
         >
           Confirm Selection ({selectedFundIds.length})
         </button>
@@ -465,19 +465,19 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
             {/* Chart Legend */}
             <div className="flex items-center gap-4 mb-4">
               <div className="flex items-center gap-1.5">
-                <div className="w-3 h-0.5 bg-[#ff8c42] rounded-full"></div>
+                <div className="w-3 h-0.5 bg-[#f0ad4e] rounded-full"></div>
                 <span className="text-[10px] text-[#1e1e1e] font-bold">Portfolio</span>
                 <span className="text-[11px] text-[#da0011] font-bold ml-1">+{cumulativeReturn}%</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <div className="w-3 h-0.5 bg-[#b0b0b0] rounded-full"></div>
+                <div className="w-3 h-0.5 bg-[#999] rounded-full"></div>
                 <span className="text-[10px] text-[#767676] font-bold">SAA</span>
                 <span className="text-[11px] text-[#da0011] font-bold ml-1">+{benchmarkCumulativeReturn}%</span>
               </div>
             </div>
 
             {/* SVG Line Chart */}
-            <div className="relative bg-[#fafafa] rounded-[2px] p-4 border border-gray-50">
+            <div className="relative bg-[#f5f5f5] rounded-[2px] p-4 border border-gray-50">
               {/* Y-axis labels */}
               <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-between py-4 text-[9px] text-[#767676] font-medium pointer-events-none">
                 <span>+{((maxValue - 100) / 100 * 100).toFixed(0)}%</span>
@@ -509,7 +509,7 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
                   <path 
                     d={benchmarkPath}
                     fill="none"
-                    stroke="#b0b0b0"
+                    stroke="#999"
                     strokeWidth="1.5"
                     strokeLinejoin="round"
                     strokeLinecap="round"
@@ -519,7 +519,7 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
                   <path 
                     d={portfolioPath}
                     fill="none"
-                    stroke="#ff8c42"
+                    stroke="#f0ad4e"
                     strokeWidth="1.2"
                     strokeLinejoin="round"
                     strokeLinecap="round"
@@ -559,7 +559,7 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
             </div>
 
             {/* Column Headers */}
-            <div className="flex items-center justify-between px-5 py-2 bg-[#fafafa] border-b border-gray-100">
+            <div className="flex items-center justify-between px-5 py-2 bg-[#f5f5f5] border-b border-gray-100">
               <span className="text-[9px] text-[#767676] font-bold uppercase tracking-widest">Return Metrics</span>
               <div className="flex items-center gap-0">
                 <span className="text-[9px] text-[#767676] font-bold uppercase tracking-widest w-24 text-right">Portfolio</span>
@@ -679,19 +679,19 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
                 {/* Chart Legend */}
                 <div className="flex items-center gap-4 mb-4">
                   <div className="flex items-center gap-1.5">
-                    <div className="w-3 h-0.5 bg-[#ff8c42] rounded-full"></div>
+                    <div className="w-3 h-0.5 bg-[#f0ad4e] rounded-full"></div>
                     <span className="text-[10px] text-[#1e1e1e] font-bold">Portfolio</span>
-                    <span className="text-[11px] text-[#22c55e] font-bold ml-1">{periodMetrics.portfolioDrawdown.toFixed(2)}%</span>
+                    <span className="text-[11px] text-[#5cb85c] font-bold ml-1">{periodMetrics.portfolioDrawdown.toFixed(2)}%</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <div className="w-3 h-0.5 bg-[#b0b0b0] rounded-full"></div>
+                    <div className="w-3 h-0.5 bg-[#999] rounded-full"></div>
                     <span className="text-[10px] text-[#767676] font-bold">SAA</span>
-                    <span className="text-[11px] text-[#22c55e] font-bold ml-1">{periodMetrics.benchmarkDrawdown.toFixed(2)}%</span>
+                    <span className="text-[11px] text-[#5cb85c] font-bold ml-1">{periodMetrics.benchmarkDrawdown.toFixed(2)}%</span>
                   </div>
                 </div>
 
                 {/* SVG Drawdown Chart */}
-                <div className="relative bg-[#fafafa] rounded-[2px] p-4 border border-gray-50">
+                <div className="relative bg-[#f5f5f5] rounded-[2px] p-4 border border-gray-50">
                   <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-between py-4 text-[9px] text-[#767676] font-medium pointer-events-none">
                     {yAxisLabels.map((label, idx) => (
                       <span key={idx}>{label.toFixed(2)}%</span>
@@ -723,7 +723,7 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
                       <path 
                         d={generateDrawdownPath(benchmarkDrawdowns, dynamicMaxScale)}
                         fill="none"
-                        stroke="#b0b0b0"
+                        stroke="#999"
                         strokeWidth="0.8"
                         strokeLinejoin="round"
                         strokeLinecap="round"
@@ -733,7 +733,7 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
                       <path 
                         d={generateDrawdownPath(portfolioDrawdowns, dynamicMaxScale)}
                         fill="none"
-                        stroke="#ff8c42"
+                        stroke="#f0ad4e"
                         strokeWidth="1"
                         strokeLinejoin="round"
                         strokeLinecap="round"
@@ -769,7 +769,7 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
                   <h3 className="text-[11px] font-bold text-[#1e1e1e] uppercase tracking-tighter">Risk Indicators</h3>
                 </div>
 
-                <div className="flex items-center justify-between px-5 py-2 bg-[#fafafa] border-b border-gray-100">
+                <div className="flex items-center justify-between px-5 py-2 bg-[#f5f5f5] border-b border-gray-100">
                   <span className="text-[9px] text-[#767676] font-bold uppercase tracking-widest">Risk Metrics</span>
                   <div className="flex items-center gap-12">
                     <span className="text-[9px] text-[#767676] font-bold uppercase tracking-widest w-20 text-right">Portfolio</span>
@@ -889,7 +889,7 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
                   <h3 className="text-[11px] font-bold text-[#1e1e1e] uppercase tracking-tighter">Holdings Analysis</h3>
                 </div>
 
-                <div className="flex items-center justify-between px-5 py-2 bg-[#fafafa] border-b border-gray-100">
+                <div className="flex items-center justify-between px-5 py-2 bg-[#f5f5f5] border-b border-gray-100">
                   <span className="text-[9px] text-[#767676] font-bold uppercase tracking-widest">Fund Name</span>
                   <div className="flex items-center gap-8">
                     <span className="text-[9px] text-[#767676] font-bold uppercase tracking-widest">Allocation</span>
@@ -917,7 +917,7 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
                           </div>
                           <div className="flex items-center gap-8">
                             <span className="text-[13px] text-[#1e1e1e] font-bold">{allocations[id].toFixed(2)}%</span>
-                            <span className={`text-[13px] font-bold w-20 text-right ${isNegative ? 'text-[#22c55e]' : 'text-[#da0011]'}`}>
+                            <span className={`text-[13px] font-bold w-20 text-right ${isNegative ? 'text-[#5cb85c]' : 'text-[#da0011]'}`}>
                               {fundReturn}
                             </span>
                           </div>
@@ -947,7 +947,7 @@ const PortfolioSimulation: React.FC<PortfolioSimulationProps> = ({ onBack }) => 
           onMouseMove={handleMouseMove}
           style={{ 
             backgroundColor: 'white',
-            borderBottom: '1px solid #e5e7eb',
+            borderBottom: '1px solid #e5e5e5',
             overflowX: 'scroll',
             overflowY: 'hidden',
             WebkitOverflowScrolling: 'touch',

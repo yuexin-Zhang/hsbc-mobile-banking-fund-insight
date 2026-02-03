@@ -31,8 +31,8 @@ const ManagerTab: React.FC<ManagerTabProps> = ({ managerHoldings, totalAssetValu
   return (
     <div className="animate-fade-in space-y-5">
       {/* Section Title */}
-      <div className="flex items-start gap-2 mb-4">
-        <div className="w-[3px] h-[18px] bg-[#da0011] rounded-full mt-0.5"></div>
+      <div className="flex items-start gap-1 mb-4">
+        <div className="w-[3px] h-[18px] bg-[#da0011] mt-0.5"></div>
         <h2 className="text-[15px] font-bold text-[#1e1e1e] leading-tight">Fund Manager</h2>
       </div>
 
@@ -164,7 +164,7 @@ const ManagerTab: React.FC<ManagerTabProps> = ({ managerHoldings, totalAssetValu
                                 key={level}
                                 d={pathData}
                                 fill="none"
-                                stroke="#e5e7eb"
+                                stroke="#e5e5e5"
                                 strokeWidth="0.5"
                               />
                             );

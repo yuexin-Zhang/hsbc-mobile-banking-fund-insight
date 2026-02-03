@@ -64,7 +64,7 @@ const AllocationSection: React.FC<AllocationSectionProps> = ({
           {data.map((item, idx) => (
               <div 
                 key={idx} 
-                className={`flex gap-2 p-2 rounded-md transition-all cursor-pointer border ${selectedItem === item.label ? 'shadow-sm' : 'border-transparent hover:bg-gray-50'}`}
+                className={`flex gap-2 p-2 transition-all cursor-pointer border ${selectedItem === item.label ? 'shadow-sm' : 'border-transparent hover:bg-gray-50'}`}
                 style={selectedItem === item.label ? { 
                   backgroundColor: `${item.color}10`,
                   borderColor: `${item.color}40`

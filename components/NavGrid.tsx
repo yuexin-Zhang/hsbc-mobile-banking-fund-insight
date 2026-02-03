@@ -15,7 +15,7 @@ const NavItem: React.FC<NavItemProps> = ({ icon, label, onClick }) => (
     <div className="w-10 h-10 flex items-center justify-center mb-1.5">
       {icon}
     </div>
-    <span className="text-[11px] leading-snug text-gray-800 font-normal px-1" style={{fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans SC", sans-serif'}}>
+    <span className="text-[11px] leading-snug text-gray-800 font-normal px-1">
       {label}
     </span>
   </div>
