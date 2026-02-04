@@ -118,88 +118,83 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue, is
         </div>
 
         <div className="space-y-2.5">
-          {/* Performance */}
-          <div className="group cursor-pointer transition-all duration-300 hover:scale-[1.02]">
-            <div className="bg-gradient-to-r from-[#e8f4f8] to-[#f0f8fc] px-4 py-3 rounded-full border border-[#c5e3f0] shadow-sm hover:shadow-md transition-all duration-300">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-[#31b0d5] flex-shrink-0 animate-pulse"></div>
-                <div className="flex-1 text-[12px] leading-relaxed">
-                  {isAIGenerated ? (
-                    // AI Mode: Concise insight
-                    <>
-                      <span className="text-[#31708f] font-semibold">Performance: </span>
-                      <span className="text-[#1e1e1e]">Strong YTD returns of </span>
-                      <span className="font-bold text-[#da0011]">12.00%</span>
-                      <span className="text-[#1e1e1e]"> with low </span>
-                      <span className="font-bold text-[#5cb85c]">1.17%</span>
-                      <span className="text-[#1e1e1e]"> drawdown</span>
-                    </>
-                  ) : (
-                    // Non-AI Mode: Direct data
-                    <>
-                      <span className="text-[#31708f] font-semibold">Performance: </span>
-                      <span className="text-[#1e1e1e]">YTD return </span>
-                      <span className="font-bold text-[#da0011]">12.00%</span>
-                      <span className="text-[#1e1e1e]">, max drawdown </span>
-                      <span className="font-bold text-[#1e1e1e]">1.17%</span>
-                    </>
-                  )}
+          {/* Combined Card */}
+          <div className="group cursor-pointer transition-all duration-300 hover:scale-[1.01]">
+            <div className="bg-gradient-to-br from-[#e8f4f8] via-[#fef5f4] to-[#f0f8fc] px-4 py-3 rounded-[20px] border border-[#d5e5ec] shadow-sm hover:shadow-md transition-all duration-300">
+              <div className="space-y-2">
+                {/* Performance */}
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-[#31b0d5] flex-shrink-0 animate-pulse"></div>
+                  <div className="flex-1 text-[12px] leading-snug">
+                    {isAIGenerated ? (
+                      // AI Mode: Concise insight
+                      <>
+                        <span className="text-[#31708f] font-semibold">Performance: </span>
+                        <span className="text-[#1e1e1e]">Strong YTD returns of </span>
+                        <span className="font-bold text-[#da0011]">12.00%</span>
+                        <span className="text-[#1e1e1e]"> with low </span>
+                        <span className="font-bold text-[#5cb85c]">1.17%</span>
+                        <span className="text-[#1e1e1e]"> drawdown</span>
+                      </>
+                    ) : (
+                      // Non-AI Mode: Direct data
+                      <>
+                        <span className="text-[#31708f] font-semibold">Performance: </span>
+                        <span className="text-[#1e1e1e]">YTD return </span>
+                        <span className="font-bold text-[#da0011]">12.00%</span>
+                        <span className="text-[#1e1e1e]">, max drawdown </span>
+                        <span className="font-bold text-[#1e1e1e]">1.17%</span>
+                      </>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Asset Classes */}
-          <div className="group cursor-pointer transition-all duration-300 hover:scale-[1.02]">
-            <div className="bg-gradient-to-r from-[#fdecea] to-[#fef5f4] px-4 py-3 rounded-full border border-[#f5cac8] shadow-sm hover:shadow-md transition-all duration-300">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-[#da0011] flex-shrink-0 animate-pulse"></div>
-                <div className="flex-1 text-[12px] leading-relaxed">
-                  {isAIGenerated ? (
-                    // AI Mode: Strategic insight
-                    <>
-                      <span className="text-[#a94442] font-semibold">Classes: </span>
-                      <span className="text-[#1e1e1e]">Growth-focused with </span>
-                      <span className="font-bold text-[#da0011]">80%</span>
-                      <span className="text-[#1e1e1e]"> in domestic equity</span>
-                    </>
-                  ) : (
-                    // Non-AI Mode: Simple fact
-                    <>
-                      <span className="text-[#a94442] font-semibold">Classes: </span>
-                      <span className="text-[#1e1e1e]">Domestic equity funds </span>
-                      <span className="font-bold text-[#da0011]">80%</span>
-                    </>
-                  )}
+                
+                {/* Asset Classes */}
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-[#31b0d5] flex-shrink-0 animate-pulse"></div>
+                  <div className="flex-1 text-[12px] leading-snug">
+                    {isAIGenerated ? (
+                      // AI Mode: Strategic insight
+                      <>
+                        <span className="text-[#31708f] font-semibold">Classes: </span>
+                        <span className="text-[#1e1e1e]">Growth-focused with </span>
+                        <span className="font-bold text-[#da0011]">80%</span>
+                        <span className="text-[#1e1e1e]"> in domestic equity</span>
+                      </>
+                    ) : (
+                      // Non-AI Mode: Simple fact
+                      <>
+                        <span className="text-[#31708f] font-semibold">Classes: </span>
+                        <span className="text-[#1e1e1e]">Domestic equity funds </span>
+                        <span className="font-bold text-[#da0011]">80%</span>
+                      </>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </div>
-          </div>
 
-          {/* underlying assets */}
-          <div className="group cursor-pointer transition-all duration-300 hover:scale-[1.02]">
-            <div className="bg-gradient-to-r from-[#e8f4f8] to-[#f0f8fc] px-4 py-3 rounded-full border border-[#c5e3f0] shadow-sm hover:shadow-md transition-all duration-300">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-[#31b0d5] flex-shrink-0 animate-pulse"></div>
-                <div className="flex-1 text-[12px] leading-relaxed">
-                  {isAIGenerated ? (
-                    // AI Mode: Sector summary
-                    <>
-                      <span className="text-[#31708f] font-semibold">Underlying: </span>
-                      <span className="text-[#1e1e1e]">HK equities </span>
-                      <span className="font-bold text-[#da0011]">28.0%</span>
-                      <span className="text-[#1e1e1e]">, cyclical </span>
-                      <span className="font-bold text-[#f0ad4e]">18.0%</span>
-                    </>
-                  ) : (
-                    // Non-AI Mode: Concentration risk
-                    <>
-                      <span className="text-[#31708f] font-semibold">Underlying: </span>
-                      <span className="text-[#1e1e1e]">NVIDIA </span>
-                      <span className="font-bold text-[#da0011]">79.84%</span>
-                      <span className="text-[#1e1e1e]">. Diversify to reduce risk</span>
-                    </>
-                  )}
+                {/* underlying assets */}
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-[#31b0d5] flex-shrink-0 animate-pulse"></div>
+                  <div className="flex-1 text-[12px] leading-snug">
+                    {isAIGenerated ? (
+                      // AI Mode: Sector summary
+                      <>
+                        <span className="text-[#31708f] font-semibold">Underlying: </span>
+                        <span className="text-[#1e1e1e]">HK equities </span>
+                        <span className="font-bold text-[#da0011]">28.0%</span>
+                        <span className="text-[#1e1e1e]">, cyclical </span>
+                        <span className="font-bold text-[#f0ad4e]">18.0%</span>
+                      </>
+                    ) : (
+                      // Non-AI Mode: Concentration risk
+                      <>
+                        <span className="text-[#31708f] font-semibold">Underlying: </span>
+                        <span className="text-[#1e1e1e]">NVIDIA </span>
+                        <span className="font-bold text-[#da0011]">79.84%</span>
+                        <span className="text-[#1e1e1e]">. Diversify to reduce risk</span>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
