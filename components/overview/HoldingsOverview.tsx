@@ -17,18 +17,20 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue, is
   return (
     <div className="space-y-2">
       {/* Revenue Analysis Section */}
-      <div className="bg-white rounded-[3px] border border-[#ebeef0] shadow-sm overflow-hidden px-3 py-2">
+      <div className="bg-white rounded-[3px] border border-[#ebeef0] shadow-sm overflow-hidden px-3 py-2 relative">
         <div className="flex items-center justify-between">
           <div className="text-[13px] font-bold">My total assets</div>
-          <div className="flex items-center gap-0.5 text-[#f0ad4e] cursor-pointer hover:text-[#e09d3d] transition-colors">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
-            </svg>
-            <span className="text-[12px] font-medium">Rebalancing tips</span>
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
+          {isAIGenerated && (
+            <button className="absolute top-2 right-0 flex items-center gap-0.5 bg-[#f0ad4e] px-0.5 py-1 rounded-l-full active:opacity-80 transition-opacity">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+              </svg>
+              <span className="text-[11px] font-semibold text-white">Rebalancing tips</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 5l7 7-7 7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          )}
         </div>
 
         {/* Assets and Returns Summary */}
@@ -97,10 +99,10 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue, is
         </div>
       </div>
 
-      {/* Holdings Overview Section */}
-      <div className="rounded-[3px] border border-[#ebeef0] shadow-sm overflow-hidden relative bg-white">
-        {/* AI Tag */}
-        {isAIGenerated && (
+      {/* Holdings Overview Section - Only show in AI mode */}
+      {isAIGenerated && (
+        <div className="rounded-[3px] border border-[#ebeef0] shadow-sm overflow-hidden relative bg-white">
+          {/* AI Tag */}
           <div className="absolute top-2 right-2 z-10">
             <div className="flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full shadow-md">
               <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -109,119 +111,83 @@ const HoldingsOverview: React.FC<HoldingsOverviewProps> = ({ totalAssetValue, is
               <span className="text-[9px] font-bold text-white">AI</span>
             </div>
           </div>
-        )}
-        
-        <div className="px-3 py-3 relative z-20">
-        <div className="flex items-center gap-1 mb-3">
-          <div className="w-1 h-5 bg-[#da0011]"></div>
-          <h3 className="text-[15px] font-bold text-[#1e1e1e]">Holdings Summary</h3>
-        </div>
+          
+          <div className="px-3 py-3 relative z-20">
+          <div className="flex items-center gap-1 mb-3">
+            <div className="w-1 h-5 bg-[#da0011]"></div>
+            <h3 className="text-[15px] font-bold text-[#1e1e1e]">Holdings Summary</h3>
+          </div>
 
-        <div className="space-y-2.5">
-          {/* Combined Card */}
-          <div className="group cursor-pointer transition-all duration-300 hover:scale-[1.01]">
-            <div className="bg-gradient-to-br from-[#e8f4f8] via-[#fef5f4] to-[#f0f8fc] px-4 py-3 rounded-[20px] border border-[#d5e5ec] shadow-sm hover:shadow-md transition-all duration-300">
-              <div className="space-y-2">
-                {/* Performance */}
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-[#31b0d5] flex-shrink-0 animate-pulse"></div>
-                  <div className="flex-1 text-[12px] leading-snug">
-                    {isAIGenerated ? (
-                      // AI Mode: Concise insight
-                      <>
-                        <span className="text-[#31708f] font-semibold">Performance: </span>
-                        <span className="text-[#1e1e1e]">Strong YTD returns of </span>
-                        <span className="font-bold text-[#da0011]">12.00%</span>
-                        <span className="text-[#1e1e1e]"> with low </span>
-                        <span className="font-bold text-[#5cb85c]">1.17%</span>
-                        <span className="text-[#1e1e1e]"> drawdown</span>
-                      </>
-                    ) : (
-                      // Non-AI Mode: Direct data
-                      <>
-                        <span className="text-[#31708f] font-semibold">Performance: </span>
-                        <span className="text-[#1e1e1e]">YTD return </span>
-                        <span className="font-bold text-[#da0011]">12.00%</span>
-                        <span className="text-[#1e1e1e]">, max drawdown </span>
-                        <span className="font-bold text-[#1e1e1e]">1.17%</span>
-                      </>
-                    )}
+          <div className="space-y-2.5">
+            {/* Combined Card */}
+            <div className="group cursor-pointer transition-all duration-300 hover:scale-[1.01]">
+              <div className="bg-gradient-to-br from-[#e8f4f8] via-[#fef5f4] to-[#f0f8fc] px-4 py-3 rounded-[20px] border border-[#d5e5ec] shadow-sm hover:shadow-md transition-all duration-300">
+                <div className="space-y-2">
+                  {/* Performance */}
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-[#31b0d5] flex-shrink-0 animate-pulse"></div>
+                    <div className="flex-1 text-[12px] leading-snug">
+                      {/* AI Mode: Concise insight */}
+                      <span className="text-[#31708f] font-semibold">Performance: </span>
+                      <span className="text-[#1e1e1e]">Strong YTD returns of </span>
+                      <span className="font-bold text-[#da0011]">12.00%</span>
+                      <span className="text-[#1e1e1e]"> with low </span>
+                      <span className="font-bold text-[#5cb85c]">1.17%</span>
+                      <span className="text-[#1e1e1e]"> drawdown</span>
+                    </div>
                   </div>
-                </div>
-                
-                {/* Asset Classes */}
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-[#31b0d5] flex-shrink-0 animate-pulse"></div>
-                  <div className="flex-1 text-[12px] leading-snug">
-                    {isAIGenerated ? (
-                      // AI Mode: Strategic insight
-                      <>
-                        <span className="text-[#31708f] font-semibold">Classes: </span>
-                        <span className="text-[#1e1e1e]">Growth-focused with </span>
-                        <span className="font-bold text-[#da0011]">80%</span>
-                        <span className="text-[#1e1e1e]"> in domestic equity</span>
-                      </>
-                    ) : (
-                      // Non-AI Mode: Simple fact
-                      <>
-                        <span className="text-[#31708f] font-semibold">Classes: </span>
-                        <span className="text-[#1e1e1e]">Domestic equity funds </span>
-                        <span className="font-bold text-[#da0011]">80%</span>
-                      </>
-                    )}
+                  
+                  {/* Asset Classes */}
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-[#31b0d5] flex-shrink-0 animate-pulse"></div>
+                    <div className="flex-1 text-[12px] leading-snug">
+                      {/* AI Mode: Strategic insight */}
+                      <span className="text-[#31708f] font-semibold">Classes: </span>
+                      <span className="text-[#1e1e1e]">Growth-focused with </span>
+                      <span className="font-bold text-[#da0011]">80%</span>
+                      <span className="text-[#1e1e1e]"> in domestic equity</span>
+                    </div>
                   </div>
-                </div>
 
-                {/* underlying assets */}
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-[#31b0d5] flex-shrink-0 animate-pulse"></div>
-                  <div className="flex-1 text-[12px] leading-snug">
-                    {isAIGenerated ? (
-                      // AI Mode: Sector summary
-                      <>
-                        <span className="text-[#31708f] font-semibold">Underlying: </span>
-                        <span className="text-[#1e1e1e]">HK equities </span>
-                        <span className="font-bold text-[#da0011]">28.0%</span>
-                        <span className="text-[#1e1e1e]">, cyclical </span>
-                        <span className="font-bold text-[#f0ad4e]">18.0%</span>
-                      </>
-                    ) : (
-                      // Non-AI Mode: Concentration risk
-                      <>
-                        <span className="text-[#31708f] font-semibold">Underlying: </span>
-                        <span className="text-[#1e1e1e]">NVIDIA </span>
-                        <span className="font-bold text-[#da0011]">79.84%</span>
-                        <span className="text-[#1e1e1e]">. Diversify to reduce risk</span>
-                      </>
-                    )}
+                  {/* underlying assets */}
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-[#31b0d5] flex-shrink-0 animate-pulse"></div>
+                    <div className="flex-1 text-[12px] leading-snug">
+                      {/* AI Mode: Sector summary */}
+                      <span className="text-[#31708f] font-semibold">Underlying: </span>
+                      <span className="text-[#1e1e1e]">HK equities </span>
+                      <span className="font-bold text-[#da0011]">28.0%</span>
+                      <span className="text-[#1e1e1e]">, cyclical </span>
+                      <span className="font-bold text-[#da0011]">18.0%</span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
+
+            {/* Style */}
+            {/* <div className="flex items-start">
+              <span className="text-[12px] text-[#767676] font-medium w-[85px] flex-shrink-0">Style</span>
+              <div className="flex-1 flex items-center">
+                <span className="text-[12px] font-bold text-[#da0011]">70%</span>
+                <span className="text-[12px] ml-[2px]">Balanced Style</span>
+                <span className="text-[10px] font-medium text-[#da0011] border border-[#da0011] px-0.5 rounded-sm ml-[4px] bg-[#f2dede]">Concentrated</span>
+              </div>
+            </div> */}
+
+            {/* Manager */}
+            {/* <div className="flex items-start">
+              <span className="text-[12px] text-[#767676] font-medium w-[85px] flex-shrink-0">Manager</span>
+              <div className="flex-1">
+                <span className="text-[12px]">Balanced Manager Distribution</span>
+              </div>
+            </div> */}
+
+            
           </div>
-
-          {/* Style */}
-          {/* <div className="flex items-start">
-            <span className="text-[12px] text-[#767676] font-medium w-[85px] flex-shrink-0">Style</span>
-            <div className="flex-1 flex items-center">
-              <span className="text-[12px] font-bold text-[#da0011]">70%</span>
-              <span className="text-[12px] ml-[2px]">Balanced Style</span>
-              <span className="text-[10px] font-medium text-[#da0011] border border-[#da0011] px-0.5 rounded-sm ml-[4px] bg-[#f2dede]">Concentrated</span>
-            </div>
-          </div> */}
-
-          {/* Manager */}
-          {/* <div className="flex items-start">
-            <span className="text-[12px] text-[#767676] font-medium w-[85px] flex-shrink-0">Manager</span>
-            <div className="flex-1">
-              <span className="text-[12px]">Balanced Manager Distribution</span>
-            </div>
-          </div> */}
-
-          
+          </div>
         </div>
-        </div>
-      </div>
+      )}
     </div>
   );
 };
