@@ -93,7 +93,7 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
       title: 'Performance Analysis',
       description: (
         <>
-          Your portfolio is <span className="font-bold">outperforming the market by 8.3%</span> this month. The <span className="font-bold">HSBC Global Equity Fund</span> led gains with a <span className="font-bold">12.5% return</span>, contributing <span className="font-bold">HKD 145,000</span> in unrealized gains.
+          Your portfolio is <span className="font-bold">outperforming the market by 8.3%</span> this month. <br></br>The <span className="font-bold">HSBC Global Equity Fund</span> led gains with a <span className="font-bold">12.5% return</span>, contributing <span className="font-bold">HKD 145,000</span> in unrealized gains.
         </>
       ),
       additionalAction: 'CIO House View'
@@ -108,7 +108,7 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
       title: 'Top Movers Impact',
       description: (
         <>
-          The <span className="font-bold">HSBC Global Equity Fund</span> experienced a <span className="font-bold">5% decline</span> yesterday, reducing portfolio value by <span className="font-bold">HKD 77,271</span>. Our AI analysis suggests recovery expected in <span className="font-bold">Q2 2026</span>.
+          The <span className="font-bold">HSBC Global Equity Fund</span> experienced a <span className="font-bold">5% decline</span> yesterday, reducing portfolio value by <span className="font-bold">HKD 77,271</span>. <br></br>Our AI analysis suggests recovery expected in <span className="font-bold">Q2 2026</span>.
         </>
       ),
       action: 'View details'
@@ -1073,7 +1073,11 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
       <FloatingAIButton onClick={() => setShowAIAssistant(true)} />
       
       {/* AI Assistant Modal */}
-      <AIAssistant isOpen={showAIAssistant} onClose={() => setShowAIAssistant(false)} />
+      <AIAssistant 
+        isOpen={showAIAssistant} 
+        onClose={() => setShowAIAssistant(false)}
+        mode="analysis"
+      />
       
       {/* Stock Detail Overlay */}
       {showStockDetail && (

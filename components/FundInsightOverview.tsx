@@ -617,7 +617,13 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
       </div>
 
       {/* AI Assistant Modal - Outside scrollable area */}
-      {showAIAssistant && <AIAssistant isOpen={showAIAssistant} onClose={() => setShowAIAssistant(false)} />}
+      {showAIAssistant && (
+        <AIAssistant 
+          isOpen={showAIAssistant} 
+          onClose={() => setShowAIAssistant(false)}
+          mode="analysis"
+        />
+      )}
     </div>
   );
 };

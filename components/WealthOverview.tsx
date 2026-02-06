@@ -210,7 +210,15 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
                             <span className="text-[#31708f] font-semibold">Performance: </span>
                             <span className="text-[#1e1e1e]">Outperforming market by </span>
                             <span className="font-bold text-[#da0011]">8.3%</span>
-                            <span className="text-[#1e1e1e]"> this month</span>
+                            <span className="text-[#1e1e1e]"> this month </span>
+                            <button className="text-[11px] text-[#da0011] font-semibold inline-flex items-center gap-0.5">
+                              <span className="underline inline-flex items-center gap-0.5">
+                                <span>CIO House View</span>
+                                <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                                </svg>
+                              </span>
+                            </button>
                           </div>
                         </div>
                       </div>
