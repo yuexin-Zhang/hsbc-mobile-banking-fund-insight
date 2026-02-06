@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useMobileDetect } from '../hooks/useMobileDetect';
 import FloatingAIButton from './FloatingAIButton';
 import AIAssistant from './AIAssistant';
 import HoldingsPerformanceChart from './charts/HoldingsPerformanceChart';
@@ -18,6 +19,7 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const [isCarouselPaused, setIsCarouselPaused] = useState(false);
   const [showStockDetail, setShowStockDetail] = useState(false);
+  const isMobile = useMobileDetect();
   
   // Refs for analysis sections
   const unitTrustRef = useRef<HTMLDivElement>(null);
@@ -296,7 +298,8 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
 
   return (
     <div className="flex flex-col h-full bg-[#f4f5f6] font-sans relative">
-      {/* Mobile Status Bar */}
+      {/* Mobile Status Bar - Hidden on mobile */}
+      {!isMobile && (
       <div className="bg-white pt-2 pb-1 px-4 sticky top-0 z-50">
         <div className="flex items-center justify-between text-[15px] font-semibold text-gray-900">
           <span>{currentTime || '9:41'}</span>
@@ -316,9 +319,10 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
           </div>
         </div>
       </div>
+      )}
 
       {/* Header */}
-      <div className="bg-white py-2 px-3 border-b border-gray-200 sticky top-[30px] z-50">
+      <div className={`bg-white py-2 px-3 border-b border-gray-200 sticky z-50 ${isMobile ? 'top-0' : 'top-[30px]'}`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button 

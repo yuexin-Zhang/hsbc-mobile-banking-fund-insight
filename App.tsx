@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useMobileDetect } from './hooks/useMobileDetect';
 import PhoneFrame from './components/PhoneFrame';
 import WealthHeader from './components/WealthHeader';
 import NavGrid from './components/NavGrid';
@@ -15,6 +16,7 @@ import PortfolioOverviewPage from './components/PortfolioOverviewPage';
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<'home' | 'overview' | 'details' | 'simulation' | 'holdings' | 'wealthOverview' | 'portfolioOverview'>('wealthOverview');
   const [isAIGenerated, setIsAIGenerated] = useState(false);
+  const isMobile = useMobileDetect();
 
   const navigateToOverview = () => setCurrentPage('overview');
   const navigateToDetails = () => setCurrentPage('details');
@@ -28,7 +30,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex justify-center items-center w-full">
+    <div className={`w-full ${isMobile ? 'h-screen' : 'flex justify-center items-center'}`}>
       <PhoneFrame>
         {currentPage === 'home' && (
           <div className="flex flex-col h-full bg-[#f5f5f5] overflow-y-auto no-scrollbar">

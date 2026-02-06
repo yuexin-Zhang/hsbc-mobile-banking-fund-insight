@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import AIAssistant from './AIAssistant';
+import { useMobileDetect } from '../hooks/useMobileDetect';
 
 interface WealthOverviewProps {
   onBack: () => void;
@@ -10,6 +11,7 @@ interface WealthOverviewProps {
 const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolioOverview }) => {
   const [currentTime, setCurrentTime] = useState('');
   const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
+  const isMobile = useMobileDetect();
 
   // Update current time
   useEffect(() => {
@@ -41,7 +43,8 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
       <div className="flex flex-col h-full bg-[#f5f5f5] font-sans">
       {/* Combined Status Bar and Navigation */}
       <div className="bg-white shrink-0">
-        {/* Status Bar */}
+        {/* Status Bar - Hidden on mobile */}
+        {!isMobile && (
         <div className="pt-2 pb-1 px-4">
           <div className="flex items-center justify-between text-[15px] font-semibold text-gray-900">
             <span>{currentTime || '9:41'}</span>
@@ -61,6 +64,7 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
             </div>
           </div>
         </div>
+        )}
 
         {/* Navigation Tabs */}
         <div className="border-b border-gray-200">

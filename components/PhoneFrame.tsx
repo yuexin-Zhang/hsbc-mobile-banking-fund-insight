@@ -1,11 +1,27 @@
 
 import React from 'react';
+import { useMobileDetect } from '../hooks/useMobileDetect';
 
 interface PhoneFrameProps {
   children: React.ReactNode;
 }
 
 const PhoneFrame: React.FC<PhoneFrameProps> = ({ children }) => {
+  const isMobile = useMobileDetect();
+
+  // If mobile, render without frame
+  if (isMobile) {
+    return (
+      <div className="relative w-full h-screen bg-white overflow-hidden">
+        {/* Content */}
+        <div className="h-full w-full bg-white relative">
+          {children}
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop view with phone frame
   return (
     <div className="relative mx-auto border-gray-800 bg-gray-800 border-[12px] rounded-[3rem] h-[92vh] max-h-[850px] w-[375px] shadow-2xl overflow-hidden ring-4 ring-gray-700 ring-opacity-20 transition-all duration-300">
       {/* Top Notch Area / Status Bar */}

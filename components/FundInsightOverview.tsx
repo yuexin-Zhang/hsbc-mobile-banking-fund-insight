@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import AIAssistant from './AIAssistant';
+import { useMobileDetect } from '../hooks/useMobileDetect';
 import { Chart as ChartJS, Title, Tooltip, Legend, CategoryScale, LinearScale } from 'chart.js';
 import { TreemapController, TreemapElement } from 'chartjs-chart-treemap';
 import HoldingsOverview from './overview/HoldingsOverview';
@@ -26,6 +27,7 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const [activeDetailTab, setActiveDetailTab] = useState('Performance');
   const [currentTime, setCurrentTime] = useState('');
+  const isMobile = useMobileDetect();
   
   // Refs for tab sections
   const performanceRef = useRef<HTMLDivElement>(null);
@@ -474,7 +476,8 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
         </div>
       )}
 
-      {/* Mobile Status Bar */}
+      {/* Mobile Status Bar - Hidden on mobile */}
+      {!isMobile && (
       <div className="bg-white pt-2 pb-1 px-4 sticky top-0 z-50">
         <div className="flex items-center justify-between text-[15px] font-semibold text-gray-900">
           <span>{currentTime || '9:41'}</span>
@@ -494,9 +497,10 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
           </div>
         </div>
       </div>
+      )}
 
       {/* Header */}
-      <div className="bg-white py-2 px-3 border-b border-gray-200 sticky top-[30px] z-50">
+      <div className={`bg-white py-2 px-3 border-b border-gray-200 sticky z-50 ${isMobile ? 'top-0' : 'top-[30px]'}`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button onClick={onBack} className="w-7 h-7 -ml-2 flex items-center justify-center active:bg-gray-100 rounded-full transition-colors">
@@ -545,7 +549,7 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
 
         {/* Tab Selection for Style, Classes, Concentration */}
         <div className="bg-white rounded-[3px] border border-[#ebeef0] overflow-visible shadow-sm">
-          <div className="sticky top-[66px] z-40 bg-white overflow-x-auto no-scrollbar shadow-sm">
+          <div className={`sticky z-40 bg-white overflow-x-auto no-scrollbar shadow-sm ${isMobile ? 'top-[36px]' : 'top-[66px]'}`}>
             <div className="flex">
               {detailTabs.map((tab) => (
                 <button

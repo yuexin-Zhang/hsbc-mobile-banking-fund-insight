@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useMobileDetect } from '../hooks/useMobileDetect';
 
 interface StockDetailPageProps {
   onBack: () => void;
@@ -8,6 +9,7 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ onBack }) => {
   const [currentTime, setCurrentTime] = useState('');
   const [activeTab, setActiveTab] = useState<'Overview' | 'Advance ratio'>('Overview');
   const [activeTimeRange, setActiveTimeRange] = useState('1D');
+  const isMobile = useMobileDetect();
 
   // Update current time
   useEffect(() => {
@@ -26,7 +28,8 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ onBack }) => {
 
   return (
     <div className="flex flex-col h-full bg-white font-sans">
-      {/* Mobile Status Bar */}
+      {/* Mobile Status Bar - Hidden on mobile */}
+      {!isMobile && (
       <div className="bg-white pt-2 pb-1 px-4 sticky top-0 z-50">
         <div className="flex items-center justify-between text-[15px] font-semibold text-gray-900">
           <span>{currentTime || '4:02'}</span>
@@ -46,9 +49,10 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ onBack }) => {
           </div>
         </div>
       </div>
+      )}
 
       {/* Header */}
-      <div className="bg-white py-3 px-4 border-b border-gray-200 sticky top-[30px] z-50">
+      <div className={`bg-white py-3 px-4 border-b border-gray-200 sticky z-50 ${isMobile ? 'top-0' : 'top-[30px]'}`}>
         <div className="flex items-center justify-between">
           <button 
             onClick={onBack} 
