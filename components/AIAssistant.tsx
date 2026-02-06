@@ -7,19 +7,53 @@ interface AIAssistantProps {
 
 const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose }) => {
   const [isAnimating, setIsAnimating] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(true);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [selectedScenario, setSelectedScenario] = useState<string | null>(null);
+  const [showResponse, setShowResponse] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       setIsAnimating(true);
-      setIsGenerating(true);
-      // Complete generation after 2 seconds
-      const timer = setTimeout(() => {
-        setIsGenerating(false);
-      }, 2000);
-      return () => clearTimeout(timer);
+      setIsGenerating(false);
+      setSelectedScenario(null);
+      setShowResponse(false);
     }
   }, [isOpen]);
+
+  const handleScenarioClick = (scenario: string) => {
+    setSelectedScenario(scenario);
+    setIsGenerating(true);
+    setShowResponse(false);
+    // Simulate AI thinking and response generation
+    setTimeout(() => {
+      setIsGenerating(false);
+      setShowResponse(true);
+    }, 2000);
+  };
+
+  const scenarios = [
+    {
+      id: 'fixed-deposit',
+      title: 'Fixed Deposit Maturity',
+      question: "My fixed deposit has just matured and I'm holding a lot of cash. Given the recent HSBC House View on falling interest rates, I'm thinking of moving into the Global Equity Fund. Is now the right time to start, and will this make my portfolio too risky?",
+      icon: (
+        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/>
+        </svg>
+      )
+    },
+    {
+      id: 'retirement-planning',
+      title: 'Retirement Planning',
+      question: "I'm 55 years old and planning to retire in 10 years. I want to make sure I have enough income during retirement. My portfolio has drifted quite a bit from my original allocation. How should I rebalance my investments to generate stable income for my retirement years?",
+      icon: (
+        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+          <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
+        </svg>
+      )
+    }
+  ];
 
   const handleClose = () => {
     setIsAnimating(false);
@@ -88,160 +122,342 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose }) => {
           className="flex-1 overflow-y-auto p-4 space-y-4 overscroll-none" 
           style={{ paddingBottom: '20px' }}
         >
-          {/* AI Avatar & Status */}
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-[#da0011] to-[#ba000e] rounded-full flex items-center justify-center shadow-lg">
-              <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
-              </svg>
-            </div>
-            <div className="flex-1">
-              <div className="text-gray-900 text-sm font-bold">HSBC Wealth Assistant</div>
-              <div className="flex items-center gap-1.5 text-gray-500 text-[10px] mt-0.5">
-                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                Deep thinking (1 second)
-              </div>
-            </div>
-          </div>
-
-          {/* Thought Process Section */}
-          <div className="space-y-3">
-            <div className="flex items-start gap-2">
-              <div className="w-5 h-5 bg-emerald-100 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
-                <svg className="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <div>
-                <div className="text-gray-900 text-xs font-medium mb-1">Analyzed your 9 fund holdings</div>
-                <div className="text-gray-500 text-[10px]">Total portfolio value: ¥9.40M CNY (9 funds)</div>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-2">
-              <div className="w-5 h-5 bg-emerald-100 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
-                <svg className="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <div>
-                <div className="text-gray-900 text-xs font-medium mb-1">Retrieved performance metrics</div>
-                <div className="text-gray-500 text-[10px]">1Y Return: +28.59% | Max Drawdown: 16.70%</div>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-2">
-              <div className={`w-5 h-5 rounded flex items-center justify-center flex-shrink-0 mt-0.5 transition-all ${isGenerating ? 'bg-gray-100 animate-spin' : 'bg-emerald-100'}`}>
-                {isGenerating ? (
-                  <div className="w-2 h-2 border-2 border-gray-300 border-t-gray-600 rounded-full" />
-                ) : (
-                  <svg className="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                )}
-              </div>
-              <div>
-                <div className="text-gray-900 text-xs font-medium">{isGenerating ? 'Generating insights' : 'Insights generated'}</div>
-              </div>
-            </div>
-          </div>
-
-          {/* AI Response - Only show after generation completes */}
-          {!isGenerating && (
+          {/* Show Scenarios if no scenario selected */}
+          {!selectedScenario && (
             <>
-              {/* AI Response */}
-              <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm animate-fade-in">
-            <div className="text-gray-900 text-xs leading-relaxed space-y-3">
-              <p>
-                Based on your portfolio analysis, I've identified key insights about your fund holdings worth 
-                <span className="font-bold text-[#da0011]"> ¥9.40M CNY</span> across 9 funds.
-              </p>
-              <p className="flex items-start gap-2">
-                <span className="inline-flex items-center justify-center w-5 h-5 bg-red-50 text-[#da0011] rounded text-[10px] font-bold flex-shrink-0 mt-0.5">1</span>
-                <span>Your <span className="font-bold">top performer</span> is BLK Sys GE High Inc (IPFD3116) with an outstanding return of <span className="font-bold text-[#da0011]">+42.56%</span>, significantly outperforming the market.</span>
-              </p>
-              <p className="flex items-start gap-2">
-                <span className="inline-flex items-center justify-center w-5 h-5 bg-red-50 text-[#da0011] rounded text-[10px] font-bold flex-shrink-0 mt-0.5">2</span>
-                <span>Your portfolio shows strong diversification with exposure to global equity, energy, precious metals, and fixed income sectors.</span>
-              </p>
-            </div>
-          </div>
-
-          {/* Fund Performance Card */}
-          <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
-            <div className="flex items-center justify-between mb-3">
-              <div className="text-gray-900 text-sm font-bold">Top Performing Funds</div>
-              <div className="text-gray-500 text-[9px]">Based on Your Holdings</div>
-            </div>
-
-            <div className="text-gray-600 text-[10px] mb-3">Filter: Highest Returns YTD</div>
-
-            {/* Table Header */}
-            <div className="grid grid-cols-3 gap-2 mb-2 pb-2 border-b border-gray-200">
-              <div className="text-gray-500 text-[9px] font-medium">Fund Name</div>
-              <div className="text-gray-500 text-[9px] font-medium text-center">Return</div>
-              <div className="text-gray-500 text-[9px] font-medium text-right">Market Value</div>
-            </div>
-
-            {/* Fund Items */}
-            {[
-              { name: 'BLK Sys GE High Inc', code: 'IPFD3116', change: '+42.56%', value: '$215,204', isUp: true },
-              { name: 'BLK Sys GE High Inc', code: 'IPFD2116', change: '+11.10%', value: '$213,257', isUp: true },
-              { name: 'BGF WLD MIN', code: 'IPFD3004', change: '+21.76%', value: '$134,832', isUp: true },
-            ].map((fund, idx) => (
-              <div key={idx} className="grid grid-cols-3 gap-2 py-2.5 border-b border-gray-100 last:border-0">
-                <div>
-                  <div className="text-gray-900 text-[10px] font-bold">{fund.name}</div>
-                  <div className="text-gray-500 text-[9px] flex items-center gap-1">
-                    {fund.code}
-                    <button className="w-3 h-3 border border-gray-400 rounded-sm flex items-center justify-center hover:border-gray-600">
-                      <span className="text-gray-500 text-[8px]">→</span>
-                    </button>
+              {/* AI Avatar & Header */}
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-gradient-to-br from-[#da0011] to-[#ba000e] rounded-full flex items-center justify-center shadow-lg">
+                  <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <div className="text-gray-900 text-sm font-bold">HSBC Wealth Assistant</div>
+                  <div className="flex items-center gap-1.5 text-gray-500 text-[10px] mt-0.5">
+                    <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                    Ready to assist
                   </div>
                 </div>
-                <div className="flex items-center justify-center">
-                  <div className={`flex items-center justify-center px-2 h-7 rounded-full ${fund.isUp ? 'bg-red-50' : 'bg-emerald-50'}`}>
-                    <span className={`text-[10px] font-bold ${fund.isUp ? 'text-[#da0011]' : 'text-[#5cb85c]'}`}>
-                      {fund.change}
-                    </span>
+              </div>
+
+              {/* Welcome Message */}
+              <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+                <div className="text-gray-900 text-xs leading-relaxed">
+                  Hello Wei Zhang, I'm your HSBC Wealth Assistant. How can I help you today? Choose a scenario below or ask me anything about your portfolio.
+                </div>
+              </div>
+
+              {/* Scenario Cards */}
+              <div className="space-y-2">
+                {scenarios.map((scenario) => (
+                  <button
+                    key={scenario.id}
+                    onClick={() => handleScenarioClick(scenario.id)}
+                    className="w-full bg-white rounded-lg p-4 border border-gray-200 shadow-sm hover:shadow-md hover:border-[#da0011] transition-all text-left group"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-[#da0011] to-[#ba000e] rounded-lg flex items-center justify-center text-white flex-shrink-0 group-hover:scale-110 transition-transform">
+                        {scenario.icon}
+                      </div>
+                      <div className="flex-1">
+                        <div className="text-gray-900 text-xs font-bold mb-1">{scenario.title}</div>
+                        <div className="text-gray-600 text-[10px] leading-relaxed line-clamp-2">{scenario.question}</div>
+                      </div>
+                      <svg className="w-4 h-4 text-gray-400 group-hover:text-[#da0011] flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+
+          {/* Show Conversation when scenario is selected */}
+          {selectedScenario && (
+            <>
+              {/* User Question */}
+              <div className="flex justify-end">
+                <div className="bg-[#da0011] text-white rounded-lg p-3 max-w-[85%] shadow-sm">
+                  <div className="text-[10px] leading-relaxed">
+                    {scenarios.find(s => s.id === selectedScenario)?.question}
                   </div>
                 </div>
-                <div className="text-gray-900 text-[11px] font-bold text-right flex items-center justify-end">
-                  {fund.value}
+              </div>
+
+              {/* AI Avatar & Status */}
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-gradient-to-br from-[#da0011] to-[#ba000e] rounded-full flex items-center justify-center shadow-lg">
+                  <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <div className="text-gray-900 text-sm font-bold">HSBC Wealth Assistant</div>
+                  <div className="flex items-center gap-1.5 text-gray-500 text-[10px] mt-0.5">
+                    <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                    {isGenerating ? 'Deep thinking (1 second)' : 'Analysis complete'}
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
 
-          {/* Risk Alert */}
-          <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg p-4 border border-amber-200 animate-fade-in">
-            <div className="flex items-start gap-2">
-              <svg className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-              </svg>
-              <div className="text-gray-900 text-xs leading-relaxed">
-                <span className="font-bold text-amber-700">Portfolio Alert:</span> Your China Trust holdings 
-                (CR Trust FirstEagle No.8) show a slight decline of <span className="font-medium text-[#3c763d]">-1.49%</span>. 
-                Consider reviewing your fixed income allocation as market conditions evolve.
-              </div>
-            </div>
-          </div>
+              {/* Thought Process - Only show during generation */}
+              {isGenerating && (
+                <div className="space-y-3">
+                  <div className="flex items-start gap-2">
+                    <div className="w-5 h-5 bg-emerald-100 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <svg className="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="text-gray-900 text-xs font-medium mb-1">Analyzing your portfolio</div>
+                      <div className="text-gray-500 text-[10px]">Reviewing asset allocation and market conditions</div>
+                    </div>
+                  </div>
 
-          {/* Additional Insight */}
-          <div className="bg-gradient-to-br from-red-50 to-pink-50 rounded-lg p-4 border border-red-100 animate-fade-in">
-            <div className="flex items-start gap-2">
-              <svg className="w-5 h-5 text-[#da0011] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-              </svg>
-              <div className="text-gray-900 text-xs leading-relaxed">
-                <span className="font-bold text-[#da0011]">Rebalancing Strategy:</span> Your portfolio's 
-                1-year return of <span className="font-bold">+28.59%</span> with a max drawdown of 
-                <span className="font-bold"> 16.70%</span> indicates strong performance but higher volatility. 
-                Consider increasing your exposure to defensive assets like BGF GOLD to 
-                balance risk during potential market corrections.
-              </div>
-            </div>
-          </div>
+                  <div className="flex items-start gap-2">
+                    <div className="w-5 h-5 bg-emerald-100 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <svg className="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="text-gray-900 text-xs font-medium mb-1">Consulting HSBC House View</div>
+                      <div className="text-gray-500 text-[10px]">Checking latest market outlook and recommendations</div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2">
+                    <div className="w-5 h-5 bg-gray-100 rounded flex items-center justify-center flex-shrink-0 mt-0.5 animate-spin">
+                      <div className="w-2 h-2 border-2 border-gray-300 border-t-gray-600 rounded-full" />
+                    </div>
+                    <div>
+                      <div className="text-gray-900 text-xs font-medium">Generating personalized recommendation</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* AI Response - Only show after generation completes */}
+              {showResponse && selectedScenario === 'fixed-deposit' && (
+                <>
+                  {/* Main AI Response */}
+                  <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+                    <div className="text-gray-900 text-xs leading-relaxed space-y-3">
+                      <p>
+                        Certainly, Wei Zhang. Let me analyze this for you.
+                      </p>
+                      <p>
+                        Thank you for this thoughtful question about your investment timing. I can sense you're being prudent about both market opportunities and risk management - that's exactly the right approach.
+                      </p>
+                      <p>
+                        Looking at the current market environment, our <span className="font-bold">HSBC House View</span> indicates we're entering a favorable period for investments. Global interest rates are expected to trend downward, and we're seeing moderate global economic growth forecasts for 2026, with gradually easing inflation pressures. This environment indeed creates an interesting opportunity to reconsider your cash allocation.
+                      </p>
+                      <p>
+                        However, rather than moving all your funds at once, I'd recommend our proven <span className="font-bold text-[#da0011]">Phased Entry Strategy</span>:
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Strategy Card */}
+                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200">
+                    <div className="space-y-3">
+                      <div className="flex items-start gap-2">
+                        <span className="inline-flex items-center justify-center w-5 h-5 bg-[#da0011] text-white rounded text-[10px] font-bold flex-shrink-0 mt-0.5">1</span>
+                        <div className="text-gray-900 text-xs leading-relaxed">
+                          Start with investing <span className="font-bold">30% of your intended amount now</span> - this gives you immediate market participation while managing risk
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="inline-flex items-center justify-center w-5 h-5 bg-[#da0011] text-white rounded text-[10px] font-bold flex-shrink-0 mt-0.5">2</span>
+                        <div className="text-gray-900 text-xs leading-relaxed">
+                          Gradually invest the remaining <span className="font-bold">70% over the next few months</span> through systematic investments
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Portfolio Review */}
+                  <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+                    <div className="text-gray-900 text-xs leading-relaxed space-y-3">
+                      <p>
+                        Regarding your portfolio risk concern - I've reviewed your current asset allocation:
+                      </p>
+                      <div className="grid grid-cols-2 gap-2 my-3">
+                        <div className="bg-gray-50 rounded-lg p-2.5">
+                          <div className="text-gray-500 text-[9px] mb-1">Equities</div>
+                          <div className="text-gray-900 text-sm font-bold">40%</div>
+                        </div>
+                        <div className="bg-gray-50 rounded-lg p-2.5">
+                          <div className="text-gray-500 text-[9px] mb-1">Fixed Income</div>
+                          <div className="text-gray-900 text-sm font-bold">30%</div>
+                        </div>
+                        <div className="bg-gray-50 rounded-lg p-2.5">
+                          <div className="text-gray-500 text-[9px] mb-1">Cash</div>
+                          <div className="text-gray-900 text-sm font-bold">20%</div>
+                        </div>
+                        <div className="bg-gray-50 rounded-lg p-2.5">
+                          <div className="text-gray-500 text-[9px] mb-1">Alternatives</div>
+                          <div className="text-gray-900 text-sm font-bold">10%</div>
+                        </div>
+                      </div>
+                      <p>
+                        Your portfolio actually shows good diversification. Our CIO team currently has an <span className="font-bold text-[#da0011]">'Overweight' recommendation</span> for both equities and bonds, with a particular focus on <span className="font-bold">technology and consumer sectors</span>. Given this view and your existing balanced allocation, a gradual increase in equity exposure could align well with our market outlook.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Risk Alert */}
+                  <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg p-4 border border-amber-200">
+                    <div className="flex items-start gap-2">
+                      <svg className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                      </svg>
+                      <div className="text-gray-900 text-xs leading-relaxed">
+                        <span className="font-bold text-amber-700">Key Risk Factors:</span> We should be mindful of potential geopolitical risks, inflation resurgence possibilities, and real estate market adjustments.
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Card */}
+                  <div className="bg-gradient-to-br from-red-50 to-pink-50 rounded-lg p-4 border border-red-100">
+                    <div className="flex items-start gap-2">
+                      <svg className="w-5 h-5 text-[#da0011] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
+                      </svg>
+                      <div className="text-gray-900 text-xs leading-relaxed">
+                        <span className="font-bold text-[#da0011]">Next Step:</span> I suggest we schedule a detailed portfolio review with your relationship manager to fine-tune the entry strategy and ensure it aligns perfectly with your long-term financial goals.
+                        <div className="mt-2">
+                          <span className="text-[#da0011] underline font-medium cursor-pointer">Schedule Meeting</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Retirement Planning Response */}
+              {showResponse && selectedScenario === 'retirement-planning' && (
+                <>
+                  {/* Main AI Response */}
+                  <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+                    <div className="text-gray-900 text-xs leading-relaxed space-y-3">
+                      <p>
+                        Certainly, Wei Zhang. Let me analyze this for you.
+                      </p>
+                      <p>
+                        I understand you're looking ahead to retirement in 10 years and feeling concerned about both your portfolio's current allocation and future income stability. Let me help you address both aspects.
+                      </p>
+                      <p>
+                        Looking at your current situation, your portfolio of <span className="font-bold text-[#da0011]">CNY 4.5 million</span> has drifted from its target allocation. I notice your equity exposure is at 40%, fixed income at 30%, cash at 20%, and alternatives at 10%. Given your 10-year horizon to retirement, we should adjust this to better align with your retirement income goals.
+                      </p>
+                      <p className="font-bold text-gray-900">
+                        Here's what I recommend:
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Portfolio Rebalancing Card */}
+                  <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+                    <div className="text-gray-900 text-sm font-bold mb-3">1. Portfolio Rebalancing</div>
+                    <div className="space-y-2.5 text-xs">
+                      <div className="flex items-start gap-2">
+                        <div className="w-1.5 h-1.5 bg-[#da0011] rounded-full flex-shrink-0 mt-1.5"></div>
+                        <div className="text-gray-900">First, let's gradually reduce your cash position from <span className="font-bold">20% to around 10%</span>, as this is higher than optimal for your time horizon</div>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <div className="w-1.5 h-1.5 bg-[#da0011] rounded-full flex-shrink-0 mt-1.5"></div>
+                        <div className="text-gray-900">Increase your fixed income allocation to <span className="font-bold">35-40%</span> to start building your income base</div>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <div className="w-1.5 h-1.5 bg-[#da0011] rounded-full flex-shrink-0 mt-1.5"></div>
+                        <div className="text-gray-900">Maintain equity exposure around <span className="font-bold">40-45%</span> for continued growth potential</div>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <div className="w-1.5 h-1.5 bg-[#da0011] rounded-full flex-shrink-0 mt-1.5"></div>
+                        <div className="text-gray-900">Keep the <span className="font-bold">10% allocation to alternatives</span> (particularly your gold position) as a hedge against market volatility</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Income Strategy Card */}
+                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200">
+                    <div className="text-gray-900 text-sm font-bold mb-3">2. Income Strategy for Retirement</div>
+                    <div className="text-gray-900 text-xs leading-relaxed space-y-3">
+                      <p>
+                        Your retirement goal is <span className="font-bold text-[#da0011]">CNY 5 million</span>, and you're currently <span className="font-bold">65% of the way there</span>, which is good progress. To strengthen your retirement income strategy:
+                      </p>
+                      <div className="space-y-2.5">
+                        <div className="flex items-start gap-2">
+                          <div className="w-1.5 h-1.5 bg-[#da0011] rounded-full flex-shrink-0 mt-1.5"></div>
+                          <div>Consider increasing your allocation to <span className="font-bold">dividend-paying stocks</span>, particularly through funds like your existing HSBC China Growth Fund which can provide both growth and income</div>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <div className="w-1.5 h-1.5 bg-[#da0011] rounded-full flex-shrink-0 mt-1.5"></div>
+                          <div>Add more <span className="font-bold">high-quality bonds</span> to your fixed income portion - the current market outlook suggests favorable conditions for bonds with rates expected to peak</div>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <div className="w-1.5 h-1.5 bg-[#da0011] rounded-full flex-shrink-0 mt-1.5"></div>
+                          <div>Maintain a <span className="font-bold">diversified approach</span> across different income sources (dividends, bond interest, and alternative investments)</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Implementation Timeline Card */}
+                  <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+                    <div className="text-gray-900 text-sm font-bold mb-3">3. Implementation Timeline</div>
+                    <div className="text-gray-900 text-xs leading-relaxed space-y-3">
+                      <p>
+                        I recommend executing these changes gradually over the next <span className="font-bold">3-6 months</span> to minimize market timing risks. We can start with:
+                      </p>
+                      <div className="space-y-2.5">
+                        <div className="flex items-start gap-2">
+                          <div className="w-1.5 h-1.5 bg-[#da0011] rounded-full flex-shrink-0 mt-1.5"></div>
+                          <div>Redeploying half of your excess cash position (about <span className="font-bold">CNY 450,000</span>) into fixed income initially</div>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <div className="w-1.5 h-1.5 bg-[#da0011] rounded-full flex-shrink-0 mt-1.5"></div>
+                          <div>Adding to your equity positions through dollar-cost averaging</div>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <div className="w-1.5 h-1.5 bg-[#da0011] rounded-full flex-shrink-0 mt-1.5"></div>
+                          <div>Regular quarterly reviews to ensure we stay on track with the new allocation</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Income Projection Card */}
+                  <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-lg p-4 border border-emerald-200">
+                    <div className="flex items-start gap-2">
+                      <svg className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                      </svg>
+                      <div className="text-gray-900 text-xs leading-relaxed">
+                        <span className="font-bold text-emerald-700">Income Projection:</span> Based on your current portfolio value and our recommended strategy, you could generate approximately <span className="font-bold text-[#da0011]">CNY 180,000-225,000 annually</span> (4-5% withdrawal rate) in retirement income, while maintaining portfolio growth potential.
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Card */}
+                  <div className="bg-gradient-to-br from-red-50 to-pink-50 rounded-lg p-4 border border-red-100">
+                    <div className="flex items-start gap-2">
+                      <svg className="w-5 h-5 text-[#da0011] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
+                      </svg>
+                      <div className="text-gray-900 text-xs leading-relaxed">
+                        <span className="font-bold text-[#da0011]">Next Step:</span> Would you like to schedule a detailed review session to discuss these recommendations in more depth and create a specific implementation plan?
+                        <div className="mt-2">
+                          <span className="text-[#da0011] underline font-medium cursor-pointer">Schedule Review Session</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
             </>
           )}
         </div>
@@ -254,10 +470,9 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose }) => {
               placeholder="Ask about your portfolio performance..."
               className="flex-1 bg-transparent text-gray-900 text-xs placeholder:text-gray-400 focus:outline-none"
             />
-            <button className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors">
-              <svg className="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
-                <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+            <button className="w-8 h-8 bg-[#da0011] rounded-full flex items-center justify-center hover:bg-[#ba000e] transition-colors">
+              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
               </svg>
             </button>
           </div>

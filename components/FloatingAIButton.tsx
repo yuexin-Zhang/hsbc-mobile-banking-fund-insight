@@ -33,7 +33,7 @@ const FloatingAIButton: React.FC<FloatingAIButtonProps> = ({ onClick }) => {
 
           {/* Button Text */}
           <span className="relative z-10 text-white font-bold text-[10px] tracking-wide whitespace-nowrap">
-            Ask: "Will the market continue to rise?"
+            Ask: "What's my portfolio performance?"
           </span>
 
           {/* Chat Icon */}
