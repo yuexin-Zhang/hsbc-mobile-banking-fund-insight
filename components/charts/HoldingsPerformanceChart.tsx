@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef } from 'react';
 
 interface ChartDataPoint {
   date: string;
@@ -7,7 +7,7 @@ interface ChartDataPoint {
   saa: number;
 }
 
-interface PerformanceChartProps {
+interface HoldingsPerformanceChartProps {
   chartData: ChartDataPoint[];
   colors: {
     red: string;
@@ -21,7 +21,7 @@ interface PerformanceChartProps {
   };
 }
 
-const PerformanceChart: React.FC<PerformanceChartProps> = ({ chartData, colors }) => {
+const HoldingsPerformanceChart: React.FC<HoldingsPerformanceChartProps> = ({ chartData, colors }) => {
   const [hoverData, setHoverData] = useState<{ index: number; x: number; y: number } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [dateRange, setDateRange] = useState<'1M' | '3M' | '6M' | '1Y' | 'YTD'>('1Y');
@@ -297,4 +297,4 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ chartData, colors }
   );
 };
 
-export default PerformanceChart;
+export default HoldingsPerformanceChart;

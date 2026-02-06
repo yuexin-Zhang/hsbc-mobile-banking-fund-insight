@@ -1,6 +1,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import FloatingAIButton from './FloatingAIButton';
+import AIAssistant from './AIAssistant';
+import HoldingsPerformanceChart from './charts/HoldingsPerformanceChart';
+import StockDetailPage from './StockDetailPage';
 
 interface PortfolioOverviewPageProps {
   onBack: () => void;
@@ -10,8 +13,11 @@ interface PortfolioOverviewPageProps {
 const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, onGoToUnitTrusts }) => {
   const [currentTime, setCurrentTime] = useState('');
   const [currentInsightIndex, setCurrentInsightIndex] = useState(0);
-  const [activeAnalysisTab, setActiveAnalysisTab] = useState('Unit Trust');
+    const [activeAnalysisTab, setActiveAnalysisTab] = useState('Stock');
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [showAIAssistant, setShowAIAssistant] = useState(false);
+  const [isCarouselPaused, setIsCarouselPaused] = useState(false);
+  const [showStockDetail, setShowStockDetail] = useState(false);
   
   // Refs for analysis sections
   const unitTrustRef = useRef<HTMLDivElement>(null);
@@ -24,44 +30,167 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
   // Ref for carousel
   const carouselRef = useRef<HTMLDivElement>(null);
 
-  // AI Insights data
+  // Chart data for Holdings Performance - Same as Fund Holding Analysis
+  const chartData = [
+    { date: '2025-01', all: 0, fund: 0, saa: 0 },
+    { date: '2025-01', all: 1.2, fund: 0.8, saa: 0.5 },
+    { date: '2025-01', all: 2.8, fund: 2.1, saa: 1.2 },
+    { date: '2025-01', all: 4.5, fund: 4.2, saa: 2.8 },
+    { date: '2025-02', all: 6.2, fund: 6.8, saa: 4.5 },
+    { date: '2025-02', all: 8.9, fund: 9.5, saa: 6.2 },
+    { date: '2025-02', all: 10.5, fund: 11.8, saa: 7.8 },
+    { date: '2025-03', all: 12.8, fund: 14.2, saa: 9.5 },
+    { date: '2025-03', all: 11.5, fund: 12.8, saa: 8.9 },
+    { date: '2025-03', all: 13.2, fund: 15.5, saa: 10.2 },
+    { date: '2025-04', all: 10.8, fund: 12.2, saa: 9.1 },
+    { date: '2025-04', all: 9.2, fund: 10.5, saa: 7.8 },
+    { date: '2025-04', all: 8.5, fund: 9.2, saa: 6.9 },
+    { date: '2025-05', all: 7.8, fund: 8.1, saa: 6.2 },
+    { date: '2025-05', all: 6.5, fund: 6.8, saa: 5.5 },
+    { date: '2025-05', all: 5.8, fund: 5.2, saa: 4.8 },
+    { date: '2025-06', all: 7.2, fund: 7.5, saa: 6.1 },
+    { date: '2025-06', all: 9.5, fund: 10.2, saa: 8.2 },
+    { date: '2025-07', all: 11.8, fund: 12.8, saa: 9.8 },
+    { date: '2025-07', all: 14.2, fund: 15.5, saa: 11.5 },
+    { date: '2025-08', all: 16.8, fund: 18.2, saa: 13.8 },
+    { date: '2025-08', all: 19.5, fund: 21.5, saa: 16.2 },
+    { date: '2025-09', all: 22.8, fund: 25.2, saa: 18.9 },
+    { date: '2025-09', all: 26.5, fund: 28.59, saa: 21.8 }, // Peak for fund
+    { date: '2025-10', all: 24.2, fund: 26.8, saa: 20.5 },
+    { date: '2025-10', all: 21.8, fund: 23.8, saa: 19.2 }, // Start of max drawdown
+    { date: '2025-10', all: 19.5, fund: 21.2, saa: 17.8 },
+    { date: '2025-11', all: 17.2, fund: 18.5, saa: 16.5 },
+    { date: '2025-11', all: 16.8, fund: 17.8, saa: 15.9 },
+    { date: '2025-11', all: 18.5, fund: 20.2, saa: 17.2 },
+    { date: '2025-12', all: 20.8, fund: 22.8, saa: 19.1 },
+    { date: '2025-12', all: 23.5, fund: 25.5, saa: 21.2 },
+    { date: '2025-12', all: 26.2, fund: 28.2, saa: 23.5 },
+    { date: '2026-01', all: 28.8, fund: 30.5, saa: 25.2 },
+    { date: '2026-01', all: 30.5, fund: 32.8, saa: 26.8 },
+    { date: '2026-01', all: 29.2, fund: 31.5, saa: 25.83 },
+  ];
+
+  const chartColors = {
+    red: '#da0011',
+    lightRed: '#fff5f5',
+    grey: '#999',
+    dark: '#1e1e1e',
+    greyBg: '#f5f5f5',
+    border: '#ebeef0',
+    muted: '#767676',
+    axis: '#dcddde'
+  };
+
+  // AI Insights data - 6 cards corresponding to What happened (3) and What's next (3)
   const insights = [
+    // What happened - Performance (Chart/Graph icon)
     {
       icon: (
         <svg className="w-4 h-4 text-[#da0011]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
           <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
         </svg>
       ),
-      title: 'Performance Attribution',
-      description: '90% of your gains came from Unit Trust holdings. Tech sector rally contributed HKD 120K to net value, driven by strong YTD +18.5% returns.'
+      title: 'Performance Analysis',
+      description: (
+        <>
+          Your portfolio is <span className="font-bold">outperforming the market by 8.3%</span> this month. The <span className="font-bold">HSBC Global Equity Fund</span> led gains with a <span className="font-bold">12.5% return</span>, contributing <span className="font-bold">HKD 145,000</span> in unrealized gains.
+        </>
+      ),
+      additionalAction: 'CIO House View'
     },
+    // What happened - Top Movers (Trending Down icon)
     {
       icon: (
         <svg className="w-4 h-4 text-[#da0011]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
         </svg>
       ),
-      title: 'Stress Test Scenario',
-      description: 'If rates rise 50bps, your 28% stock concentration faces simulated -3.8% drawdown. Bond allocation provides cushion with stable 4.2% yield.'
+      title: 'Top Movers Impact',
+      description: (
+        <>
+          The <span className="font-bold">HSBC Global Equity Fund</span> experienced a <span className="font-bold">5% decline</span> yesterday, reducing portfolio value by <span className="font-bold">HKD 77,271</span>. Our AI analysis suggests recovery expected in <span className="font-bold">Q2 2026</span>.
+        </>
+      ),
+      action: 'View details'
     },
+    // What happened - Allocation (Pie Chart icon)
+    {
+      icon: (
+        <svg className="w-4 h-4 text-[#da0011]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+        </svg>
+      ),
+      title: 'Strategic Allocation Opportunity',
+      description: (
+        <>
+          AI recommends increasing <span className="font-bold">Global Equity allocation by 25%</span> (<span className="font-bold">HKD 2.66M</span>). Suggested allocation:
+          <br />
+          <span className="font-bold">• 15%</span> Asian technology
+          <br />
+          <span className="font-bold">• 5%</span> Healthcare innovation
+          <br />
+          <span className="font-bold">• 5%</span> Sustainable infrastructure
+        </>
+      ),
+      action: 'Rebalance'
+    },
+    // What's next - Risk Profile (Shield Check icon)
     {
       icon: (
         <svg className="w-4 h-4 text-[#da0011]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
         </svg>
       ),
-      title: 'Tactical Profit-Locking',
-      description: 'With +18.5% gains in Unit Trust, AI recommends locking profits. Shifting 5% to Bond (41%) protects gains, aligns with HSBC House View.'
+      title: 'Risk Profile Update Required',
+      description: (
+        <>
+          Your risk assessment expires <span className="font-bold">March 15, 2026</span>. Over the past year, volatility increased <span className="font-bold">28%</span> and your equity exposure rose to <span className="font-bold">35%</span>. Complete the <span className="font-bold">10-minute review</span> to maintain personalized AI recommendations.
+        </>
+      ),
+      action: 'Update now'
     },
+    // What's next - Time Deposit (Cash/Money icon)
     {
       icon: (
         <svg className="w-4 h-4 text-[#da0011]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
         </svg>
       ),
-      title: 'Style Drift Alert',
-      description: 'AI detected style rotation in growth funds towards value stocks. Creates 15% overlap with bond holdings, potentially diluting growth target.'
+      title: 'Time Deposit Maturity Decision',
+      description: (
+        <>
+          Your <span className="font-bold">HKD 1,500,000</span> time deposit matures <span className="font-bold">Feb 9, 2026</span>. Options:
+          <br />
+          <span className="font-bold">1.</span> Renew at <span className="font-bold">3.85% APR</span> for 3 months
+          <br />
+          <span className="font-bold">2.</span> Deploy 60% into Bond Fund (<span className="font-bold">4.8%</span> yield)
+          <br />
+          <span className="font-bold">3.</span> Structured products with principal protection
+        </>
+      ),
+      action: 'Renew or withdraw'
+    },
+    // What's next - Bond Coupon (Document/Receipt icon)
+    {
+      icon: (
+        <svg className="w-4 h-4 text-[#da0011]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+      ),
+      title: 'Bond Coupon Cashflow Planning',
+      description: (
+        <>
+          Bond coupon of <span className="font-bold">HKD 850,000</span> due <span className="font-bold">Mar 10, 2026</span>. AI recommends:
+          <br />
+          <span className="font-bold">1.</span> Reinvest 70% (<span className="font-bold">HKD 595K</span>) into High Yield Fund
+          <br />
+          <span className="font-bold">2.</span> Deploy 20% (<span className="font-bold">HKD 170K</span>) into blue-chips
+          <br />
+          <span className="font-bold">3.</span> Reserve 10% as tactical dry powder
+        </>
+      ),
+      action: 'View schedule'
     }
   ];
 
@@ -79,6 +208,19 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
     
     return () => clearInterval(interval);
   }, []);
+
+  // Auto-carousel for AI Deep Dive Insights
+  useEffect(() => {
+    if (isCarouselPaused || isTransitioning) return;
+    
+    const carouselInterval = setInterval(() => {
+      setIsTransitioning(true);
+      setCurrentInsightIndex((prev) => (prev + 1) % insights.length);
+      setTimeout(() => setIsTransitioning(false), 500);
+    }, 3000);
+    
+    return () => clearInterval(carouselInterval);
+  }, [isCarouselPaused, isTransitioning, insights.length]);
 
   // Handle scroll to update active analysis tab
   useEffect(() => {
@@ -153,7 +295,7 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#f4f5f6] font-sans">
+    <div className="flex flex-col h-full bg-[#f4f5f6] font-sans relative">
       {/* Mobile Status Bar */}
       <div className="bg-white pt-2 pb-1 px-4 sticky top-0 z-50">
         <div className="flex items-center justify-between text-[15px] font-semibold text-gray-900">
@@ -200,42 +342,117 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
             <span className="text-[14px] text-gray-600">Total market value</span>
           </div>
           <div className="">
-            <span className="text-[32px] font-bold text-gray-900">632,546</span>
+            <span className="text-[32px] font-bold text-gray-900">10,632,546</span>
             <span className="text-[20px] text-gray-600">.65</span>
             <span className="text-[14px] text-gray-600 ml-2">HKD</span>
           </div>
           
-          {/* Yesterday's Return Label */}
+          {/* Unrealised gain/loss */}
           <div className="mb-1">
-            <span className="text-[11px] text-[#767676]">Yesterday's Return</span>
+            <span className="text-[13px] text-gray-900">Unrealised gain/loss </span>
+            <span className="text-[13px] font-semibold text-[#da0011]">▲ 231,617.06</span>
+            <span className="text-[12px] text-[#da0011] ml-1">(+2.23%)</span>
           </div>
           
-          {/* Yesterday's Returns Row */}
-          <div className="flex items-start gap-3 text-[12px]">
-            <div className="flex flex-col gap-0.5 pr-3 border-r border-[#e5e5e5]">
-              <span className="text-[#767676] whitespace-nowrap text-[11px]">Unit Trust</span>
-              <span className="text-[#da0011] font-bold">+0.32%</span>
-            </div>
-            <div className="flex flex-col gap-0.5 pr-3 border-r border-[#e5e5e5]">
-              <span className="text-[#767676] whitespace-nowrap text-[11px]">Stock</span>
-              <span className="text-[#5cb85c] font-bold">-0.18%</span>
-            </div>
-            <div className="flex flex-col gap-0.5 pr-3 border-r border-[#e5e5e5]">
-              <span className="text-[#767676] whitespace-nowrap text-[11px]">Structured Product</span>
-              <span className="text-[#da0011] font-bold">+0.05%</span>
-            </div>
-            <div className="flex flex-col gap-0.5">
-              <span className="text-[#767676] whitespace-nowrap text-[11px]">Bond</span>
-              <span className="text-[#5cb85c] font-bold">-0.12%</span>
+          {/* Macro Indicators - Horizontal Scroll */}
+          <div className="">
+            <div className="overflow-x-auto no-scrollbar -mx-2 px-2">
+              <div className="flex gap-2 pb-1">
+                {/* HSI Card - Increase (Red up) */}
+                <div className="flex-shrink-0 w-[88px] bg-white rounded border border-gray-200 overflow-hidden shadow-md">
+                  <div className="px-2 pt-2.5">
+                    <div className="text-[11px] font-bold text-gray-900 mb-0.5 leading-tight">HSI</div>
+                    <div className="text-[10px] text-gray-500 mb-1.5 leading-tight">7,649.60</div>
+                  </div>
+                  <div className="bg-[#ffebee] px-2 py-1 flex items-center gap-0.5">
+                    <span className="text-[9px] text-[#c62828]">▲</span>
+                    <span className="text-[10px] font-medium text-gray-600">1.28%</span>
+                  </div>
+                </div>
+
+                {/* HSAHP Card - Decrease (Green down) */}
+                <div className="flex-shrink-0 w-[88px] bg-white rounded border border-gray-200 overflow-hidden shadow-md">
+                  <div className="px-2 pt-2.5">
+                    <div className="text-[11px] font-bold text-gray-900 mb-0.5 leading-tight">HSAHP</div>
+                    <div className="text-[10px] text-gray-500 mb-1.5 leading-tight">16,475.82</div>
+                  </div>
+                  <div className="bg-[#e8f5e9] px-2 py-1 flex items-center gap-0.5">
+                    <span className="text-[9px] text-[#2e7d32]">▼</span>
+                    <span className="text-[10px] font-medium text-gray-600">1.28%</span>
+                  </div>
+                </div>
+
+                {/* HSCEI Card - Increase (Red up) */}
+                <div className="flex-shrink-0 w-[88px] bg-white rounded border border-gray-200 overflow-hidden shadow-md">
+                  <div className="px-2 pt-2.5">
+                    <div className="text-[11px] font-bold text-gray-900 mb-0.5 leading-tight">HSCEI</div>
+                    <div className="text-[10px] text-gray-500 mb-1.5 leading-tight">7,369.66</div>
+                  </div>
+                  <div className="bg-[#ffebee] px-2 py-1 flex items-center gap-0.5">
+                    <span className="text-[9px] text-[#c62828]">▲</span>
+                    <span className="text-[10px] font-medium text-gray-600">0.28%</span>
+                  </div>
+                </div>
+
+                {/* HSTEC Card - Increase (Red up) */}
+                <div className="flex-shrink-0 w-[88px] bg-white rounded border border-gray-200 overflow-hidden shadow-md">
+                  <div className="px-2 pt-2.5">
+                    <div className="text-[11px] font-bold text-gray-900 mb-0.5 leading-tight">HSTEC</div>
+                    <div className="text-[10px] text-gray-500 mb-1.5 leading-tight">10,389.0</div>
+                  </div>
+                  <div className="bg-[#ffebee] px-2 py-1 flex items-center gap-0.5">
+                    <span className="text-[9px] text-[#c62828]">▲</span>
+                    <span className="text-[10px] font-medium text-gray-600">0.23%</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         {/* AI Insights Section - Horizontal Scroll */}
-        <div className="bg-[#f4f5f6] px-2 py-2 relative">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-[14px] font-semibold text-gray-900">AI Deep Dive Insights</span>
-            <div className="flex items-center gap-1 ml-auto">
+        <div className="bg-[#f4f5f6] px-2 py-2 pb-4 relative">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-[15px] font-bold whitespace-nowrap inline-flex items-stretch">
+              {/* AI section with borders */}
+              <span className="relative inline-flex items-center overflow-hidden">
+                {/* Left border with glow animation */}
+                <span className="absolute left-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-purple-500 to-pink-500 shadow-[0_0_8px_rgba(168,85,247,0.6)]">
+                  <span className="absolute inset-0 bg-gradient-to-b from-purple-500 to-pink-500 animate-pulse opacity-50"></span>
+                </span>
+                {/* Top border with glow */}
+                <span className="absolute left-0 top-0 right-0 h-[2px] bg-gradient-to-r from-purple-500 to-pink-500 shadow-[0_0_8px_rgba(168,85,247,0.6)]"></span>
+                {/* Bottom border with glow */}
+                <span className="absolute left-0 bottom-0 right-0 h-[2px] bg-gradient-to-r from-purple-500 to-pink-500 shadow-[0_0_8px_rgba(168,85,247,0.6)]"></span>
+                {/* AI text with icon */}
+                <span className="relative flex items-center px-1 py-0.5">
+                  <svg className="w-3 h-3 animate-pulse" viewBox="0 0 24 24" fill="none" style={{animationDuration: '2s'}}>
+                    <defs>
+                      <linearGradient id="lightning-gradient-deepdive" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style={{stopColor: 'rgb(168, 85, 247)'}} />
+                        <stop offset="100%" style={{stopColor: 'rgb(236, 72, 153)'}} />
+                      </linearGradient>
+                      <filter id="glow-deepdive">
+                        <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
+                        <feMerge>
+                          <feMergeNode in="coloredBlur"/>
+                          <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                      </filter>
+                    </defs>
+                    <path fill="url(#lightning-gradient-deepdive)" d="M13 10V3L4 14h7v7l9-11h-7z" filter="url(#glow-deepdive)" />
+                  </svg>
+                  <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-transparent bg-clip-text font-bold drop-shadow-[0_0_8px_rgba(168,85,247,0.3)]">AI</span>
+                </span>
+              </span>
+              
+              {/* Deep Dive Insights with background and shimmer effect */}
+              <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-1.5 py-0.5 flex items-center rounded-r-full relative overflow-hidden shadow-[0_0_12px_rgba(168,85,247,0.4)]">
+                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-[shimmer_3s_ease-in-out_infinite]"></span>
+                <span className="relative">Deep Dive Insights</span>
+              </span>
+            </h3>
+            <div className="flex items-center gap-1">
               <span className="text-[11px] text-gray-500">{currentInsightIndex + 1}/{insights.length}</span>
             </div>
           </div>
@@ -246,7 +463,10 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
             style={{ 
               perspective: '1000px',
               touchAction: 'pan-y',
+              minHeight: '180px',
             }}
+            onMouseEnter={() => setIsCarouselPaused(true)}
+            onMouseLeave={() => setIsCarouselPaused(false)}
             onWheel={(e) => {
               e.preventDefault();
               if (isTransitioning) return;
@@ -262,7 +482,7 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
               setTimeout(() => setIsTransitioning(false), 500);
             }}
           >
-            <div className="relative min-h-[140px]">
+            <div className="relative pb-4">
               {insights.map((insight, index) => {
                 const offset = index - currentInsightIndex;
                 const isActive = offset === 0;
@@ -334,8 +554,30 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
                           <div className="text-[13px] font-semibold text-gray-900 mb-1">
                             {insight.title}
                           </div>
-                          <div className="text-[11px] text-gray-600 leading-relaxed">
+                          <div className="text-[11px] text-gray-600 leading-relaxed whitespace-normal mb-2">
                             {insight.description}
+                          </div>
+                          <div className="flex items-center gap-3">
+                            {insight.action && (
+                              <button className="text-[11px] text-[#da0011] font-semibold inline-flex items-center gap-0.5">
+                                <span className="underline inline-flex items-center gap-0.5">
+                                  <span>{insight.action}</span>
+                                  <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                                  </svg>
+                                </span>
+                              </button>
+                            )}
+                            {insight.additionalAction && (
+                              <button className="text-[11px] text-[#da0011] font-semibold inline-flex items-center gap-0.5">
+                                <span className="underline inline-flex items-center gap-0.5">
+                                  <span>{insight.additionalAction}</span>
+                                  <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                                  </svg>
+                                </span>
+                              </button>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -352,7 +594,7 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
           {/* Sticky Tab Group */}
           <div className="sticky top-[0px] z-40 bg-white overflow-x-auto no-scrollbar shadow-sm border-b border-gray-200">
             <div className="flex">
-              {['Unit Trust', 'Stock', 'Structured Product', 'Bond'].map((tab) => (
+              {['Stock', 'Unit Trust', 'Structured Product', 'Bond'].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => handleAnalysisTabClick(tab)}
@@ -371,109 +613,8 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
 
           {/* Analysis Content */}
           <div className="px-4 py-4">
-            {/* Unit Trust Section */}
-            <div ref={unitTrustRef} className="scroll-mt-[150px]">
-              {/* Section Title */}
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-1 h-5 bg-[#da0011]"></div>
-                  <h2 className="text-[16px] font-bold text-gray-900">Unit Trust</h2>
-                </div>
-                <button 
-                  onClick={onGoToUnitTrusts}
-                  className="flex items-center gap-0.5 text-[10px] text-white bg-[#da0011] px-2 py-1 active:opacity-80 transition-opacity rounded-l-full rounded-r-full"
-                >
-                  <span>Details</span>
-                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              </div>
-              
-              <div className="space-y-3">
-                {/* AI Summary */}
-                <div className="bg-[#f0f8ff] p-2 rounded-sm">
-                  <p className="text-[11px] text-gray-700 leading-snug">
-                    Strong performance <span className="font-bold text-[#da0011]">+18.5%</span> YoY, outperforming benchmark by <span className="font-bold text-[#da0011]">+3.2%</span>. Tech and healthcare exposure solid. Consider <span className="font-bold">+5%</span> Asia allocation.
-                  </p>
-                </div>
-
-                {/* Performance Chart */}
-                <div className="pb-3 border-b border-gray-200">
-                  <div className="bg-white rounded p-3">
-                    <h4 className="text-[11px] font-semibold text-gray-700 mb-3">12-Month Performance Trend</h4>
-                    <div className="relative h-32">
-                      <svg className="w-full h-full" viewBox="0 0 300 100" preserveAspectRatio="none">
-                        {/* Grid lines */}
-                        <line x1="0" y1="25" x2="300" y2="25" stroke="#e5e7eb" strokeWidth="0.5"/>
-                        <line x1="0" y1="50" x2="300" y2="50" stroke="#e5e7eb" strokeWidth="0.5"/>
-                        <line x1="0" y1="75" x2="300" y2="75" stroke="#e5e7eb" strokeWidth="0.5"/>
-                        {/* Benchmark line */}
-                        <polyline
-                          points="0,85 25,82 50,80 75,78 100,75 125,73 150,70 175,68 200,65 225,63 250,60 275,58 300,55"
-                          fill="none"
-                          stroke="#94a3b8"
-                          strokeWidth="1.5"
-                          strokeDasharray="3,3"
-                        />
-                        {/* Portfolio line */}
-                        <polyline
-                          points="0,90 25,88 50,84 75,80 100,75 125,70 150,65 175,58 200,52 225,48 250,42 275,38 300,32"
-                          fill="none"
-                          stroke="#db0011"
-                          strokeWidth="2"
-                        />
-                        {/* End point */}
-                        <circle cx="300" cy="32" r="3" fill="#db0011"/>
-                      </svg>
-                      <div className="absolute top-0 right-0 flex gap-3 text-[9px]">
-                        <div className="flex items-center gap-1">
-                          <div className="w-3 h-0.5 bg-[#db0011]"></div>
-                          <span className="text-gray-600">Portfolio +18.5%</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <div className="w-3 h-0.5 bg-[#94a3b8] border-dashed"></div>
-                          <span className="text-gray-600">Benchmark +15.3%</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* AI Recommendations */}
-                <div className="bg-white border border-gray-300 rounded p-4">
-                  <div className="mb-3">
-                    <h4 className="text-[13px] font-bold text-gray-900 mb-2">AI Recommendations</h4>
-                    <ul className="space-y-2 text-[11px] text-gray-700">
-                      <li className="flex items-start gap-2">
-                        <span className="text-[#db0011] font-bold mt-0.5">•</span>
-                        <span>Consider rebalancing: Increase Asia ex-Japan exposure by 3-5% to capture emerging market growth</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-[#db0011] font-bold mt-0.5">•</span>
-                        <span>BGF ENERGY showing recent underperformance; monitor for potential reallocation to renewable energy funds</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-[#db0011] font-bold mt-0.5">•</span>
-                        <span>Optimal timing to add defensive positions as market volatility indicators suggest caution ahead</span>
-                      </li>
-                    </ul>
-                  </div>
-                  {/* Action Buttons */}
-                  <div className="flex gap-2 mt-3 pt-3 border-t border-gray-300">
-                    <button className="flex-1 bg-[#db0011] text-white text-[11px] font-semibold py-2 px-3 rounded-sm active:opacity-80 transition-opacity">
-                      Rebalance Portfolio
-                    </button>
-                    <button className="flex-1 bg-white text-[#db0011] text-[11px] font-semibold py-2 px-3 rounded-sm border border-[#db0011] active:opacity-80 transition-opacity">
-                      View Details
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
             {/* Stock Section */}
-            <div ref={stockRef} className="scroll-mt-[150px] mt-8 pt-8 border-t-[6px] border-[#f4f5f6]">
+            <div ref={stockRef} className="scroll-mt-[150px]">
               {/* Section Title */}
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-1 h-5 bg-[#da0011]"></div>
@@ -541,31 +682,141 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
                   </div>
                 </div>
 
-                <div className="bg-white border border-gray-300 rounded p-4">
+                <div className="bg-gradient-to-br from-[#e8f4f8] via-[#fef5f4] to-[#f0f8fc] px-4 py-3 rounded-[20px] border border-[#d5e5ec] shadow-sm">
                   <div className="mb-3">
-                    <h4 className="text-[13px] font-bold text-gray-900 mb-2">AI Recommendations</h4>
-                    <ul className="space-y-2 text-[11px] text-gray-700">
-                      <li className="flex items-start gap-2">
+                    <h4 className="text-[13px] font-bold text-gray-900 mb-2">AI Suggestions</h4>
+                    <div className="space-y-3">
+                      {/* Suggestion 1 */}
+                      <div className="flex items-start gap-2 text-[11px]">
                         <span className="text-[#db0011] font-bold mt-0.5">•</span>
-                        <span>Tech concentration at 45% exceeds recommended 35% threshold; consider partial profit-taking</span>
-                      </li>
-                      <li className="flex items-start gap-2">
+                        <div className="text-gray-700">
+                          <span>Tech concentration at 45% exceeds recommended 35% threshold; consider partial profit-taking </span>
+                          <button className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5">
+                            <span>Rebalance Now</span>
+                            <svg className="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                      {/* Suggestion 2 */}
+                      <div className="flex items-start gap-2 text-[11px]">
                         <span className="text-[#db0011] font-bold mt-0.5">•</span>
-                        <span>Add defensive stocks in consumer staples or utilities to hedge against market correction</span>
-                      </li>
-                      <li className="flex items-start gap-2">
+                        <div className="text-gray-700">
+                          <span>Add defensive stocks in consumer staples or utilities to hedge against market correction </span>
+                          <button className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5">
+                            <span>Explore Defensive Stocks</span>
+                            <svg className="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                      {/* Suggestion 3 */}
+                      <div className="flex items-start gap-2 text-[11px]">
                         <span className="text-[#db0011] font-bold mt-0.5">•</span>
-                        <span>NVIDIA valuation stretched; set stop-loss at 12% below current price to protect gains</span>
-                      </li>
-                    </ul>
+                        <div className="text-gray-700">
+                          <span>NVIDIA's revenue surged 262% YOY last quarter, highlighting its dominance in AI chips. </span>
+                          <button onClick={() => setShowStockDetail(true)} className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5">
+                            <span>View Price</span>
+                            <svg className="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   {/* Action Buttons */}
-                  <div className="flex gap-2 mt-3 pt-3 border-t border-gray-300">
-                    <button className="flex-1 bg-[#db0011] text-white text-[11px] font-semibold py-2 px-3 rounded-sm active:opacity-80 transition-opacity">
-                      Adjust Holdings
-                    </button>
+                  <div className="flex gap-2 mt-3 pt-3 border-t border-[#d5e5ec]">
                     <button className="flex-1 bg-white text-[#db0011] text-[11px] font-semibold py-2 px-3 rounded-sm border border-[#db0011] active:opacity-80 transition-opacity">
-                      Set Alert
+                      View Details
+                    </button>
+                    <button className="flex-1 bg-[#db0011] text-white text-[11px] font-semibold py-2 px-3 rounded-sm active:opacity-80 transition-opacity">
+                      Search Stock
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Unit Trust Section */}
+            <div ref={unitTrustRef} className="scroll-mt-[150px] mt-8 pt-8 border-t-[6px] border-[#f4f5f6]">
+              {/* Section Title */}
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-1 h-5 bg-[#da0011]"></div>
+                <h2 className="text-[16px] font-bold text-gray-900">Unit Trust</h2>
+              </div>
+              
+              <div className="space-y-3">
+                {/* AI Summary */}
+                <div className="bg-[#f0f8ff] p-2 rounded-sm">
+                  <p className="text-[11px] text-gray-700 leading-snug">
+                    Strong performance <span className="font-bold text-[#da0011]">+18.5%</span> YoY, outperforming benchmark by <span className="font-bold text-[#da0011]">+3.2%</span>. Tech and healthcare exposure solid. Consider <span className="font-bold">+5%</span> Asia allocation.
+                  </p>
+                </div>
+
+                {/* Performance Chart */}
+                <div className="pb-3 border-b border-gray-200">
+                  <HoldingsPerformanceChart chartData={chartData} colors={chartColors} />
+                </div>
+
+                {/* AI Suggestions */}
+                <div className="bg-gradient-to-br from-[#e8f4f8] via-[#fef5f4] to-[#f0f8fc] px-4 py-3 rounded-[20px] border border-[#d5e5ec] shadow-sm">
+                  <div className="mb-3">
+                    <h4 className="text-[13px] font-bold text-gray-900 mb-2">AI Suggestions</h4>
+                    <div className="space-y-3">
+                      {/* Suggestion 1 */}
+                      <div className="flex items-start gap-2 text-[11px]">
+                        <span className="text-[#db0011] font-bold mt-0.5">•</span>
+                        <div className="text-gray-700">
+                          <span>Consider rebalancing: Increase Asia ex-Japan exposure by 3-5% to capture emerging market growth </span>
+                          <button className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5">
+                            <span>View Asia Funds</span>
+                            <svg className="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                      {/* Suggestion 2 */}
+                      <div className="flex items-start gap-2 text-[11px]">
+                        <span className="text-[#db0011] font-bold mt-0.5">•</span>
+                        <div className="text-gray-700">
+                          <span>BGF ENERGY showing recent underperformance; monitor for potential reallocation to renewable energy funds </span>
+                          <button className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5">
+                            <span>Compare Alternatives</span>
+                            <svg className="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                      {/* Suggestion 3 */}
+                      <div className="flex items-start gap-2 text-[11px]">
+                        <span className="text-[#db0011] font-bold mt-0.5">•</span>
+                        <div className="text-gray-700">
+                          <span>Optimal timing to add defensive positions as market volatility indicators suggest caution ahead </span>
+                          <button className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5">
+                            <span>Explore Defensive Funds</span>
+                            <svg className="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Action Buttons */}
+                  <div className="flex gap-2 mt-3 pt-3 border-t border-[#d5e5ec]">
+                    <button 
+                      onClick={onGoToUnitTrusts}
+                      className="flex-1 bg-white text-[#db0011] text-[11px] font-semibold py-2 px-3 rounded-sm border border-[#db0011] active:opacity-80 transition-opacity"
+                    >
+                      View Details
+                    </button>
+                    <button className="flex-1 bg-[#db0011] text-white text-[11px] font-semibold py-2 px-3 rounded-sm active:opacity-80 transition-opacity">
+                      Search Fund
                     </button>
                   </div>
                 </div>
@@ -632,31 +883,58 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
                   </div>
                 </div>
 
-                <div className="bg-white border border-gray-300 rounded p-4">
+                <div className="bg-gradient-to-br from-[#e8f4f8] via-[#fef5f4] to-[#f0f8fc] px-4 py-3 rounded-[20px] border border-[#d5e5ec] shadow-sm">
                   <div className="mb-3">
-                    <h4 className="text-[13px] font-bold text-gray-900 mb-2">AI Recommendations</h4>
-                    <ul className="space-y-2 text-[11px] text-gray-700">
-                      <li className="flex items-start gap-2">
+                    <h4 className="text-[13px] font-bold text-gray-900 mb-2">AI Suggestions</h4>
+                    <div className="space-y-3">
+                      {/* Suggestion 1 */}
+                      <div className="flex items-start gap-2 text-[11px]">
                         <span className="text-[#db0011] font-bold mt-0.5">•</span>
-                        <span>Two products maturing in Q2 2025; consider reinvesting in higher-yield structures as rates stabilize</span>
-                      </li>
-                      <li className="flex items-start gap-2">
+                        <div className="text-gray-700">
+                          <span>Two products maturing in Q2 2025; consider reinvesting in higher-yield structures as rates stabilize </span>
+                          <button className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5">
+                            <span>View New Issues</span>
+                            <svg className="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                      {/* Suggestion 2 */}
+                      <div className="flex items-start gap-2 text-[11px]">
                         <span className="text-[#db0011] font-bold mt-0.5">•</span>
-                        <span>Current market conditions favor autocallable notes on tech indices for enhanced returns</span>
-                      </li>
-                      <li className="flex items-start gap-2">
+                        <div className="text-gray-700">
+                          <span>Current market conditions favor autocallable notes on tech indices for enhanced returns </span>
+                          <button className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5">
+                            <span>Explore Autocallables</span>
+                            <svg className="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                      {/* Suggestion 3 */}
+                      <div className="flex items-start gap-2 text-[11px]">
                         <span className="text-[#db0011] font-bold mt-0.5">•</span>
-                        <span>Monitor barrier levels closely; one product approaching 75% barrier threshold (currently at 78%)</span>
-                      </li>
-                    </ul>
+                        <div className="text-gray-700">
+                          <span>Monitor barrier levels closely; one product approaching 75% barrier threshold (currently at 78%) </span>
+                          <button className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5">
+                            <span>Set Barrier Alert</span>
+                            <svg className="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   {/* Action Buttons */}
-                  <div className="flex gap-2 mt-3 pt-3 border-t border-gray-300">
-                    <button className="flex-1 bg-[#db0011] text-white text-[11px] font-semibold py-2 px-3 rounded-sm active:opacity-80 transition-opacity">
-                      Explore Products
-                    </button>
+                  <div className="flex gap-2 mt-3 pt-3 border-t border-[#d5e5ec]">
                     <button className="flex-1 bg-white text-[#db0011] text-[11px] font-semibold py-2 px-3 rounded-sm border border-[#db0011] active:opacity-80 transition-opacity">
-                      Monitor Status
+                      View Details
+                    </button>
+                    <button className="flex-1 bg-[#db0011] text-white text-[11px] font-semibold py-2 px-3 rounded-sm active:opacity-80 transition-opacity">
+                      Search Product
                     </button>
                   </div>
                 </div>
@@ -730,31 +1008,58 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
                   </div>
                 </div>
 
-                <div className="bg-white border border-gray-300 rounded p-4">
+                <div className="bg-gradient-to-br from-[#e8f4f8] via-[#fef5f4] to-[#f0f8fc] px-4 py-3 rounded-[20px] border border-[#d5e5ec] shadow-sm">
                   <div className="mb-3">
-                    <h4 className="text-[13px] font-bold text-gray-900 mb-2">AI Recommendations</h4>
-                    <ul className="space-y-2 text-[11px] text-gray-700">
-                      <li className="flex items-start gap-2">
+                    <h4 className="text-[13px] font-bold text-gray-900 mb-2">AI Suggestions</h4>
+                    <div className="space-y-3">
+                      {/* Suggestion 1 */}
+                      <div className="flex items-start gap-2 text-[11px]">
                         <span className="text-[#db0011] font-bold mt-0.5">•</span>
-                        <span>Consider ladder strategy: Stagger maturities to balance reinvestment risk as rates may fluctuate</span>
-                      </li>
-                      <li className="flex items-start gap-2">
+                        <div className="text-gray-700">
+                          <span>Consider ladder strategy: Stagger maturities to balance reinvestment risk as rates may fluctuate </span>
+                          <button className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5">
+                            <span>Build Ladder</span>
+                            <svg className="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                      {/* Suggestion 2 */}
+                      <div className="flex items-start gap-2 text-[11px]">
                         <span className="text-[#db0011] font-bold mt-0.5">•</span>
-                        <span>Increase Asia corporate bond exposure by 5-7% to capture higher yields with manageable credit risk</span>
-                      </li>
-                      <li className="flex items-start gap-2">
+                        <div className="text-gray-700">
+                          <span>Increase Asia corporate bond exposure by 5-7% to capture higher yields with manageable credit risk </span>
+                          <button className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5">
+                            <span>View Asia Bonds</span>
+                            <svg className="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                      {/* Suggestion 3 */}
+                      <div className="flex items-start gap-2 text-[11px]">
                         <span className="text-[#db0011] font-bold mt-0.5">•</span>
-                        <span>Review high-yield positions: Two issuers showing credit deterioration, suggest reallocation to IG bonds</span>
-                      </li>
-                    </ul>
+                        <div className="text-gray-700">
+                          <span>Review high-yield positions: Two issuers showing credit deterioration, suggest reallocation to IG bonds </span>
+                          <button className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5">
+                            <span>Review Credit Risk</span>
+                            <svg className="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   {/* Action Buttons */}
-                  <div className="flex gap-2 mt-3 pt-3 border-t border-gray-300">
-                    <button className="flex-1 bg-[#db0011] text-white text-[11px] font-semibold py-2 px-3 rounded-sm active:opacity-80 transition-opacity">
-                      Optimize Portfolio
-                    </button>
+                  <div className="flex gap-2 mt-3 pt-3 border-t border-[#d5e5ec]">
                     <button className="flex-1 bg-white text-[#db0011] text-[11px] font-semibold py-2 px-3 rounded-sm border border-[#db0011] active:opacity-80 transition-opacity">
-                      Review Holdings
+                      View Details
+                    </button>
+                    <button className="flex-1 bg-[#db0011] text-white text-[11px] font-semibold py-2 px-3 rounded-sm active:opacity-80 transition-opacity">
+                      Search Bond
                     </button>
                   </div>
                 </div>
@@ -765,7 +1070,17 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
       </div>
       
       {/* Floating AI Button */}
-      <FloatingAIButton />
+      <FloatingAIButton onClick={() => setShowAIAssistant(true)} />
+      
+      {/* AI Assistant Modal */}
+      <AIAssistant isOpen={showAIAssistant} onClose={() => setShowAIAssistant(false)} />
+      
+      {/* Stock Detail Overlay */}
+      {showStockDetail && (
+        <div className="absolute inset-0 z-50 bg-white">
+          <StockDetailPage onBack={() => setShowStockDetail(false)} />
+        </div>
+      )}
     </div>
   );
 };

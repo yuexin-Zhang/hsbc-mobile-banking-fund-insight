@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import AIAssistant from './AIAssistant';
 
 interface WealthOverviewProps {
   onBack: () => void;
@@ -8,6 +9,7 @@ interface WealthOverviewProps {
 
 const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolioOverview }) => {
   const [currentTime, setCurrentTime] = useState('');
+  const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
 
   // Update current time
   useEffect(() => {
@@ -25,7 +27,18 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
   }, []);
 
   return (
-    <div className="flex flex-col h-full bg-[#f5f5f5] font-sans">
+    <>
+      <style>{`
+        @keyframes shimmer {
+          0% {
+            transform: translateX(-100%);
+          }
+          100% {
+            transform: translateX(200%);
+          }
+        }
+      `}</style>
+      <div className="flex flex-col h-full bg-[#f5f5f5] font-sans">
       {/* Combined Status Bar and Navigation */}
       <div className="bg-white shrink-0">
         {/* Status Bar */}
@@ -74,44 +87,6 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto no-scrollbar">
-        {/* Risk Profile Banner */}
-        <div className="bg-white mx-4 mt-4 rounded-sm border border-gray-200 shadow-md relative">
-          <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#da0011] rounded-l-sm"></div>
-          <button className="absolute top-3 right-3 p-1 active:opacity-60 transition-opacity">
-            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-          <div className="p-4 pr-12">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center flex-shrink-0 mt-1">
-                <svg className="w-5 h-5 text-[#da0011]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-              <div className="flex-1">
-                <div className="text-[15px] font-semibold text-gray-900 mb-1">Expired risk profile</div>
-                <div className="text-[13px] text-gray-600 mb-3">
-                  To continue investing, please retake the risk profile questionnaire.
-                </div>
-                <button className="text-[14px] text-[#da0011] font-medium">
-                  Retake questionnaire
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Account Selection */}
-        <div className="px-4 mt-4">
-          <button className="flex items-center gap-2 text-[15px] text-gray-900 bg-white border border-gray-300 rounded px-3 py-2 active:bg-gray-50 transition-colors">
-            <span>All accounts selected</span>
-            <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-        </div>
-
         {/* Total Market Value */}
         <div className="px-4 mt-4">
           <div className="flex items-center gap-2 mb-2">
@@ -121,7 +96,7 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
             </button>
           </div>
           <div className="mb-1">
-            <span className="text-[32px] font-bold text-gray-900">632,546</span>
+            <span className="text-[32px] font-bold text-gray-900">10,632,546</span>
             <span className="text-[20px] text-gray-600">.65</span>
             <span className="text-[14px] text-gray-600 ml-2">HKD</span>
           </div>
@@ -140,8 +115,8 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
               </button>
             </div>
             <div className="text-right">
-              <span className="text-[13px] font-semibold text-[#da0011]">▲ 15,478.80</span>
-              <span className="text-[12px] text-[#da0011] ml-1">(+23.21%)</span>
+              <span className="text-[13px] font-semibold text-[#da0011]">▲ 231,617.06</span>
+              <span className="text-[12px] text-[#da0011] ml-1">(+2.23%)</span>
             </div>
           </div>
         </div>
@@ -163,74 +138,203 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
 
         {/* Overall AI Portfolio Summary */}
         <div className="mt-4">
-          <div className="rounded-[3px] border border-[#ebeef0] shadow-sm overflow-hidden relative bg-white">
-            {/* AI Tag */}
-            <div className="absolute top-2 right-2 z-10">
-              <div className="flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full shadow-md">
-                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-                <span className="text-[9px] font-bold text-white">AI</span>
-              </div>
-            </div>
+          <div className="overflow-hidden relative bg-white">
             
             <div className="px-3 py-3 relative z-20">
-              <div className="flex items-center gap-1 mb-3">
-                <div className="w-1 h-5 bg-[#da0011]"></div>
-                <h3 className="text-[15px] font-bold text-[#1e1e1e]">AI Portfolio Review</h3>
+              <div className="mb-3 flex items-center justify-between">
+                <h3 className="text-[15px] font-bold whitespace-nowrap inline-flex items-stretch">
+                  {/* AI section with borders */}
+                  <span className="relative inline-flex items-center overflow-hidden">
+                    {/* Left border with glow animation */}
+                    <span className="absolute left-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-purple-500 to-pink-500 shadow-[0_0_8px_rgba(168,85,247,0.6)]">
+                      <span className="absolute inset-0 bg-gradient-to-b from-purple-500 to-pink-500 animate-pulse opacity-50"></span>
+                    </span>
+                    {/* Top border with glow */}
+                    <span className="absolute left-0 top-0 right-0 h-[2px] bg-gradient-to-r from-purple-500 to-pink-500 shadow-[0_0_8px_rgba(168,85,247,0.6)]"></span>
+                    {/* Bottom border with glow */}
+                    <span className="absolute left-0 bottom-0 right-0 h-[2px] bg-gradient-to-r from-purple-500 to-pink-500 shadow-[0_0_8px_rgba(168,85,247,0.6)]"></span>
+                    {/* AI text with icon */}
+                    <span className="relative flex items-center px-1 py-0.5">
+                      <svg className="w-3 h-3 animate-pulse" viewBox="0 0 24 24" fill="none" style={{animationDuration: '2s'}}>
+                        <defs>
+                          <linearGradient id="lightning-gradient-title" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style={{stopColor: 'rgb(168, 85, 247)'}} />
+                            <stop offset="100%" style={{stopColor: 'rgb(236, 72, 153)'}} />
+                          </linearGradient>
+                          <filter id="glow">
+                            <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
+                            <feMerge>
+                              <feMergeNode in="coloredBlur"/>
+                              <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                          </filter>
+                        </defs>
+                        <path fill="url(#lightning-gradient-title)" d="M13 10V3L4 14h7v7l9-11h-7z" filter="url(#glow)" />
+                      </svg>
+                      <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-transparent bg-clip-text font-bold drop-shadow-[0_0_8px_rgba(168,85,247,0.3)]">AI</span>
+                    </span>
+                  </span>
+                  
+                  {/* Portfolio Review with background and shimmer effect */}
+                  <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-1.5 py-0.5 flex items-center rounded-r-full relative overflow-hidden shadow-[0_0_12px_rgba(168,85,247,0.4)]">
+                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-[shimmer_3s_ease-in-out_infinite]"></span>
+                    <span className="relative">Portfolio Review</span>
+                  </span>
+                </h3>
+                
+                {/* Read More Button - Inline with title */}
+                <button
+                  onClick={onGoToPortfolioOverview}
+                  className="bg-white border border-[#da0011] rounded px-2 py-1 flex items-center cursor-pointer active:bg-[#fff5f5] transition-all duration-200 hover:shadow-sm flex-shrink-0 ml-2"
+                >
+                  <span className="text-[10px] font-semibold text-[#da0011] leading-none">Read more</span>
+                </button>
               </div>
 
-              <div className="space-y-2.5">
-                {/* Combined Card */}
-                <div className="group cursor-pointer transition-all duration-300 hover:scale-[1.01]">
-                  <div className="bg-gradient-to-br from-[#e8f4f8] via-[#fef5f4] to-[#f0f8fc] px-4 py-3 rounded-[20px] border border-[#d5e5ec] shadow-sm hover:shadow-md transition-all duration-300">
-                    <div className="space-y-2">
-                      {/* Portfolio Health */}
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-[#31b0d5] flex-shrink-0 animate-pulse"></div>
-                        <div className="flex-1 text-[12px] leading-snug">
-                          <span className="text-[#31708f] font-semibold">Health: </span>
-                          <span className="text-[#1e1e1e]">Your portfolio shows </span>
-                          <span className="font-bold text-[#da0011]">strong diversification</span>
-                          <span className="text-[#1e1e1e]"> with balanced risk exposure</span>
+              <div className="space-y-3">
+                {/* What Happened Section */}
+                <div>
+                  <h4 className="text-[13px] font-bold text-[#1e1e1e] mb-2 flex items-center gap-1.5">
+                    <svg className="w-4 h-4 text-[#da0011]" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M3 13h2v7H3v-7zm4-6h2v13H7V7zm4-4h2v17h-2V3zm4 9h2v8h-2v-8zm4-3h2v11h-2V9z"/>
+                    </svg>
+                    <span>What happened</span>
+                  </h4>
+                  <div className="bg-gradient-to-br from-[#e8f4f8] via-[#fef5f4] to-[#f0f8fc] px-4 py-3 rounded-[20px] border border-[#d5e5ec] shadow-sm">
+                    <div className="space-y-2.5">
+                      {/* Performance */}
+                      <div className="flex items-start gap-2">
+                        <div className="w-2 h-2 rounded-full bg-[#31b0d5] flex-shrink-0 mt-1 animate-pulse"></div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-[12px] leading-snug">
+                            <span className="text-[#31708f] font-semibold">Performance: </span>
+                            <span className="text-[#1e1e1e]">Outperforming market by </span>
+                            <span className="font-bold text-[#da0011]">8.3%</span>
+                            <span className="text-[#1e1e1e]"> this month</span>
+                          </div>
                         </div>
                       </div>
                       
-                      {/* Performance Insight */}
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-[#31b0d5] flex-shrink-0 animate-pulse"></div>
-                        <div className="flex-1 text-[12px] leading-snug">
-                          <span className="text-[#31708f] font-semibold">Performance: </span>
-                          <span className="text-[#1e1e1e]">Outperforming market by </span>
-                          <span className="font-bold text-[#da0011]">8.3%</span>
-                          <span className="text-[#1e1e1e]"> this quarter</span>
+                      {/* Top Movers */}
+                      <div className="flex items-start gap-2">
+                        <div className="w-2 h-2 rounded-full bg-[#31b0d5] flex-shrink-0 mt-1 animate-pulse"></div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-[12px] leading-snug">
+                            <span className="text-[#31708f] font-semibold">Top movers: </span>
+                            <span className="text-[#1e1e1e]">HSBC Global Equity Fund dropped </span>
+                            <span className="font-bold text-[#a94442]">5%</span>
+                            <span className="text-[#1e1e1e]"> yesterday </span>
+                            <button className="text-[11px] text-[#da0011] font-semibold inline-flex items-center gap-0.5">
+                              <span className="underline inline-flex items-center gap-0.5">
+                                <span>View details</span>
+                                <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                                </svg>
+                              </span>
+                            </button>
+                          </div>
                         </div>
                       </div>
 
-                      {/* Allocation Insight */}
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-[#31b0d5] flex-shrink-0 animate-pulse"></div>
-                        <div className="flex-1 text-[12px] leading-snug">
-                          <span className="text-[#31708f] font-semibold">Allocation: </span>
-                          <span className="text-[#1e1e1e]">Consider adding </span>
-                          <span className="font-bold text-[#da0011]">5%</span>
-                          <span className="text-[#1e1e1e]"> to Unit Trusts for optimal balance</span>
+                      {/* Allocation */}
+                      <div className="flex items-start gap-2">
+                        <div className="w-2 h-2 rounded-full bg-[#31b0d5] flex-shrink-0 mt-1 animate-pulse"></div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-[12px] leading-snug">
+                            <span className="text-[#31708f] font-semibold">Allocation: </span>
+                            <span className="text-[#1e1e1e]">Consider adding </span>
+                            <span className="font-bold text-[#da0011]">25%</span>
+                            <span className="text-[#1e1e1e]"> into Global Equity </span>
+                            <button className="text-[11px] text-[#da0011] font-semibold inline-flex items-center gap-0.5">
+                              <span className="underline inline-flex items-center gap-0.5">
+                                <span>Rebalance</span>
+                                <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                                </svg>
+                              </span>
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Read More Button */}
-                <button
-                  onClick={onGoToPortfolioOverview}
-                  className="w-full bg-white border-2 border-[#da0011] rounded-lg px-4 py-2.5 flex items-center justify-center gap-2 active:bg-[#fff5f5] transition-all duration-200 hover:shadow-md group"
-                >
-                  <span className="text-[13px] font-semibold text-[#da0011]">Read more</span>
-                  <svg className="w-4 h-4 text-[#da0011] group-active:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                </button>
+                {/* What's Next Section */}
+                <div>
+                  <h4 className="text-[13px] font-bold text-[#1e1e1e] mb-2 flex items-center gap-1.5">
+                    <svg className="w-4 h-4 text-[#da0011]" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
+                    </svg>
+                    <span>What's next</span>
+                  </h4>
+                  <div className="bg-gradient-to-br from-[#fff9f0] via-[#fef5f4] to-[#f0f8fc] px-4 py-3 rounded-[20px] border border-[#f5e5d5] shadow-sm">
+                    <div className="space-y-2.5">
+                      {/* Risk Profile */}
+                      <div className="flex items-start gap-2">
+                        <div className="w-2 h-2 rounded-full bg-[#f0ad4e] flex-shrink-0 mt-1 animate-pulse"></div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-[12px] leading-snug">
+                            <span className="text-[#8a6d3b] font-semibold">Risk profile: </span>
+                            <span className="text-[#1e1e1e]">Your risk assessment is expiring soon </span>
+                            <button className="text-[11px] text-[#da0011] font-semibold inline-flex items-center gap-0.5">
+                              <span className="underline inline-flex items-center gap-0.5">
+                                <span>Update now</span>
+                                <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                                </svg>
+                              </span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Time Deposit Maturity */}
+                      <div className="flex items-start gap-2">
+                        <div className="w-2 h-2 rounded-full bg-[#f0ad4e] flex-shrink-0 mt-1 animate-pulse"></div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-[12px] leading-snug">
+                            <span className="text-[#8a6d3b] font-semibold">Cashflow: </span>
+                            <span className="text-[#1e1e1e]">Your </span>
+                            <span className="font-bold text-[#da0011]">HKD 1,500,000</span>
+                            <span className="text-[#1e1e1e]"> time deposit maturing on </span>
+                            <span className="font-bold text-[#1e1e1e]">9 Feb </span>
+                            <button className="text-[11px] text-[#da0011] font-semibold inline-flex items-center gap-0.5">
+                              <span className="underline inline-flex items-center gap-0.5">
+                                <span>Renew or withdraw</span>
+                                <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                                </svg>
+                              </span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Bond Coupon */}
+                      <div className="flex items-start gap-2">
+                        <div className="w-2 h-2 rounded-full bg-[#f0ad4e] flex-shrink-0 mt-1 animate-pulse"></div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-[12px] leading-snug">
+                            <span className="text-[#8a6d3b] font-semibold">Cashflow: </span>
+                            <span className="text-[#1e1e1e]">Bond coupon payment of </span>
+                            <span className="font-bold text-[#da0011]">HKD 850,000</span>
+                            <span className="text-[#1e1e1e]"> due </span>
+                            <span className="font-bold text-[#1e1e1e]">10 Mar </span>
+                            <button className="text-[11px] text-[#da0011] font-semibold inline-flex items-center gap-0.5">
+                              <span className="underline inline-flex items-center gap-0.5">
+                                <span>View schedule</span>
+                                <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                                </svg>
+                              </span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -304,13 +408,13 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
                 <div>
                   <div className="text-[15px] text-gray-900">Stocks (34.85%)</div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[15px] font-semibold text-gray-900">220,442</span>
+                    <span className="text-[15px] font-semibold text-gray-900">3,705,442</span>
                     <span className="text-[13px] text-gray-600">.00 HKD</span>
                   </div>
                 </div>
               </div>
               <div className="flex items-center gap-1 text-[#5cb85c]">
-                <span className="text-[15px] font-medium">▲ 12,345.90</span>
+                <span className="text-[15px] font-medium">▲ 19,939.05</span>
               </div>
             </div>
 
@@ -321,13 +425,13 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
                 <div>
                   <div className="text-[15px] text-gray-900">Unit Trusts (14.54%)</div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[15px] font-semibold text-gray-900">91,972</span>
+                    <span className="text-[15px] font-semibold text-gray-900">1,545,972</span>
                     <span className="text-[13px] text-gray-600">.28 HKD</span>
                   </div>
                 </div>
               </div>
               <div className="flex items-center gap-1 text-[#a94442]">
-                <span className="text-[15px] font-medium">▼ 3,233.23</span>
+                <span className="text-[15px] font-medium">▼ 5,223.18</span>
               </div>
             </div>
 
@@ -340,7 +444,7 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
               <div className="ml-6">
                 <div className="text-[12px] text-gray-600 mb-1">Total fund balance</div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[15px] font-semibold text-gray-900">82,294</span>
+                  <span className="text-[15px] font-semibold text-gray-900">1,383,294</span>
                   <span className="text-[13px] text-gray-600">.32 HKD</span>
                 </div>
               </div>
@@ -355,8 +459,8 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
               <div className="ml-6">
                 <div className="text-[12px] text-gray-600 mb-1">Policy value</div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[15px] font-semibold text-gray-900">82,294</span>
-                  <span className="text-[13px] text-gray-600">.32 HKD</span>
+                  <span className="text-[15px] font-semibold text-gray-900">1,374,788</span>
+                  <span className="text-[13px] text-gray-600">.28 HKD</span>
                 </div>
               </div>
             </div>
@@ -368,7 +472,7 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
                 <div>
                   <div className="text-[15px] text-gray-900">Bonds and CDs (11.49%)</div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[15px] font-semibold text-gray-900">72,679</span>
+                    <span className="text-[15px] font-semibold text-gray-900">1,221,679</span>
                     <span className="text-[13px] text-gray-600">.61 HKD</span>
                   </div>
                 </div>
@@ -388,11 +492,11 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
                   <div className="text-[13px] text-gray-900 mb-1">ELIs and Structured Notes (3.45%)</div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="text-[15px] font-semibold text-gray-900">21,822</span>
+                      <span className="text-[15px] font-semibold text-gray-900">366,822</span>
                       <span className="text-[13px] text-gray-600">.86 HKD</span>
                     </div>
                     <div className="flex items-center gap-1 text-[#5cb85c]">
-                      <span className="text-[15px] font-medium">▲ 3,023.00</span>
+                      <span className="text-[15px] font-medium">▲ 4,883.96</span>
                     </div>
                   </div>
                 </div>
@@ -401,11 +505,11 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
                   <div className="text-[13px] text-gray-900 mb-1">HSBC Gold Token (3.02%)</div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="text-[15px] font-semibold text-gray-900">19,102</span>
-                      <span className="text-[13px] text-gray-600">.81 HKD</span>
+                      <span className="text-[15px] font-semibold text-gray-900">321,102</span>
+                      <span className="text-[13px] text-gray-600">.91 HKD</span>
                     </div>
                     <div className="flex items-center gap-1 text-[#5cb85c]">
-                      <span className="text-[15px] font-medium">▲ 2,345.90</span>
+                      <span className="text-[15px] font-medium">▲ 3,791.34</span>
                     </div>
                   </div>
                 </div>
@@ -414,7 +518,27 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
           </div>
         </div>
       </div>
+
+      {/* HSBC Lion AI Button - Fixed at bottom right within phone area */}
+      <button
+        onClick={() => setIsAIAssistantOpen(true)}
+        className="absolute bottom-24 right-4 w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 z-50 overflow-hidden"
+        aria-label="Open AI Assistant"
+      >
+        <img 
+          src={`${import.meta.env.BASE_URL}icon-lion.png`} 
+          alt="HSBC Lion" 
+          className="w-full h-full object-cover"
+        />
+      </button>
+
+      {/* AI Assistant Dialog */}
+      <AIAssistant 
+        isOpen={isAIAssistantOpen} 
+        onClose={() => setIsAIAssistantOpen(false)} 
+      />
     </div>
+    </>
   );
 };
 
