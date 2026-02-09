@@ -3,15 +3,17 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useMobileDetect } from '../hooks/useMobileDetect';
 import FloatingAIButton from './FloatingAIButton';
 import AIAssistant from './AIAssistant';
+import RiskProfileQuestionnaire from './RiskProfileQuestionnaire';
 import HoldingsPerformanceChart from './charts/HoldingsPerformanceChart';
 import StockDetailPage from './StockDetailPage';
 
 interface PortfolioOverviewPageProps {
   onBack: () => void;
   onGoToUnitTrusts: () => void;
+  onNavigateToInsights: () => void;
 }
 
-const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, onGoToUnitTrusts }) => {
+const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, onGoToUnitTrusts, onNavigateToInsights }) => {
   const [currentTime, setCurrentTime] = useState('');
   const [currentInsightIndex, setCurrentInsightIndex] = useState(0);
     const [activeAnalysisTab, setActiveAnalysisTab] = useState('Stock');
@@ -19,7 +21,13 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const [isCarouselPaused, setIsCarouselPaused] = useState(false);
   const [showStockDetail, setShowStockDetail] = useState(false);
+  const [isRiskProfileOpen, setIsRiskProfileOpen] = useState(false);
   const isMobile = useMobileDetect();
+  
+  // Stock carousel states
+  const [currentStockViewIndex, setCurrentStockViewIndex] = useState(0); // 0 = risers, 1 = fallers
+  const [isStockViewTransitioning, setIsStockViewTransitioning] = useState(false);
+  const [isStockViewPaused, setIsStockViewPaused] = useState(false);
   
   // Refs for analysis sections
   const unitTrustRef = useRef<HTMLDivElement>(null);
@@ -31,6 +39,19 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
   
   // Ref for carousel
   const carouselRef = useRef<HTMLDivElement>(null);
+  
+  // Stock data
+  const risers = [
+    { name: 'HSBC HOLDING...', code: '00005', exchange: 'HK', price: '139.000 HKD', change: '+4.200', percent: '+3.12%', trend: 'up' },
+    { name: 'UBTECH ROBOT...', code: '09880', exchange: 'HK', price: '128.000 HKD', change: '+2.300', percent: '+1.83%', trend: 'up' },
+    { name: 'HS HIGH DIV', code: '03466', exchange: 'HK', price: '21.300 HKD', change: '+0.240', percent: '+1.14%', trend: 'up' },
+  ];
+  
+  const fallers = [
+    { name: 'MTR CORP LTD', code: '00066', exchange: 'HK', price: '36.120 HKD', change: '-0.540', percent: '-1.47%', trend: 'down' },
+    { name: 'HSBC HOLDING...', code: '00005', exchange: 'HK', price: '139.000 HKD', change: '-2.100', percent: '-1.49%', trend: 'down' },
+    { name: 'HS HIGH DIV', code: '03466', exchange: 'HK', price: '21.300 HKD', change: '-0.180', percent: '-0.84%', trend: 'down' },
+  ];
 
   // Chart data for Holdings Performance - Same as Fund Holding Analysis
   const chartData = [
@@ -219,10 +240,12 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
       setIsTransitioning(true);
       setCurrentInsightIndex((prev) => (prev + 1) % insights.length);
       setTimeout(() => setIsTransitioning(false), 500);
-    }, 3000);
+    }, 1000);
     
     return () => clearInterval(carouselInterval);
   }, [isCarouselPaused, isTransitioning, insights.length]);
+
+  // Stock carousel - Manual control only (no auto-scroll)
 
   // Handle scroll to update active analysis tab
   useEffect(() => {
@@ -297,6 +320,34 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
   };
 
   return (
+    <>
+      <style>{`
+        @keyframes pulseRing {
+          0% {
+            transform: scale(1);
+            opacity: 1;
+          }
+          50% {
+            transform: scale(1.15);
+            opacity: 0.4;
+          }
+          100% {
+            transform: scale(1);
+            opacity: 1;
+          }
+        }
+        @keyframes pulseText {
+          0% {
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(1.15);
+          }
+          100% {
+            transform: scale(1);
+          }
+        }
+      `}</style>
     <div className="flex flex-col h-full bg-[#f4f5f6] font-sans relative">
       {/* Mobile Status Bar - Hidden on mobile */}
       {!isMobile && (
@@ -333,7 +384,36 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
             </button>
-            <h1 className="text-[17px] font-semibold text-gray-900 whitespace-nowrap">AI Portfolio Review</h1>
+            <h1 className="text-[17px] font-semibold text-gray-900 whitespace-nowrap relative overflow-hidden">
+              <span className="relative inline-block">
+                AI Portfolio Review
+                <span className="absolute inset-0 -left-full animate-shine bg-gradient-to-r from-transparent via-white to-transparent opacity-60" style={{
+                  animation: 'shine 2.5s ease-in-out infinite',
+                  backgroundSize: '200% 100%'
+                }}></span>
+              </span>
+              <style>{`
+                @keyframes shine {
+                  0% {
+                    left: -100%;
+                  }
+                  20% {
+                    left: 100%;
+                  }
+                  100% {
+                    left: 100%;
+                  }
+                }
+                @keyframes shimmer {
+                  0% {
+                    transform: translateX(-100%);
+                  }
+                  100% {
+                    transform: translateX(200%);
+                  }
+                }
+              `}</style>
+            </h1>
           </div>
         </div>
       </div>
@@ -415,7 +495,7 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
         </div>
 
         {/* AI Insights Section - Horizontal Scroll */}
-        <div className="bg-[#f4f5f6] px-2 py-2 pb-4 relative">
+        <div className="bg-[#f4f5f6] px-2 py-2 pb-3 relative">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-[15px] font-bold whitespace-nowrap inline-flex items-stretch">
               {/* AI section with borders */}
@@ -452,13 +532,10 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
               
               {/* Deep Dive Insights with background and shimmer effect */}
               <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-1.5 py-0.5 flex items-center rounded-r-full relative overflow-hidden shadow-[0_0_12px_rgba(168,85,247,0.4)]">
-                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-[shimmer_3s_ease-in-out_infinite]"></span>
+                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent -translate-x-full animate-[shimmer_1.8s_ease-in-out_infinite] w-[200%]"></span>
                 <span className="relative">Deep Dive Insights</span>
               </span>
             </h3>
-            <div className="flex items-center gap-1">
-              <span className="text-[11px] text-gray-500">{currentInsightIndex + 1}/{insights.length}</span>
-            </div>
           </div>
 
           {/* AI Deep Dive Insights - Mobile-style Carousel */}
@@ -563,23 +640,44 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
                           </div>
                           <div className="flex items-center gap-3">
                             {insight.action && (
-                              <button className="text-[11px] text-[#da0011] font-semibold inline-flex items-center gap-0.5">
-                                <span className="underline inline-flex items-center gap-0.5">
+                              <button 
+                                onClick={() => {
+                                  if (insight.action === 'Update now') {
+                                    setIsRiskProfileOpen(true);
+                                  }
+                                }}
+                                className={`text-[11px] text-[#da0011] font-semibold inline-flex items-center gap-0.5 ${insight.action === 'Update now' ? 'relative' : ''}`}
+                              >
+                                <span className={`underline inline-flex items-center gap-0.5 ${insight.action === 'Update now' ? 'inline-block' : ''}`} style={insight.action === 'Update now' ? { animation: 'pulseText 1.5s ease-in-out infinite' } : undefined}>
                                   <span>{insight.action}</span>
                                   <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                                   </svg>
                                 </span>
+                                {/* Pulsing Ring Indicator - Only for Update now */}
+                                {insight.action === 'Update now' && (
+                                  <div className="absolute top-[-5px] left-0 w-7 h-7 rounded-full border-[1px] pointer-events-none" style={{ borderColor: '#999999', boxShadow: '0 0 15px rgba(153, 153, 153, 0.7), 0 0 8px rgba(0, 0, 0, 0.2)', animation: 'pulseRing 1.5s ease-in-out infinite' }}></div>
+                                )}
                               </button>
                             )}
                             {insight.additionalAction && (
-                              <button className="text-[11px] text-[#da0011] font-semibold inline-flex items-center gap-0.5">
-                                <span className="underline inline-flex items-center gap-0.5">
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (insight.additionalAction === 'CIO House View') {
+                                    onNavigateToInsights();
+                                  }
+                                }}
+                                className="text-[11px] text-[#da0011] font-semibold inline-flex items-center gap-0.5 relative"
+                              >
+                                <span className="underline inline-flex items-center gap-0.5 inline-block" style={{ animation: 'pulseText 1.5s ease-in-out infinite' }}>
                                   <span>{insight.additionalAction}</span>
                                   <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                                   </svg>
                                 </span>
+                                {/* Pulsing Ring Indicator */}
+                                <div className="absolute top-[-5px] left-0 w-7 h-7 rounded-full border-[1px] pointer-events-none" style={{ borderColor: '#999999', boxShadow: '0 0 15px rgba(153, 153, 153, 0.7), 0 0 8px rgba(0, 0, 0, 0.2)', animation: 'pulseRing 1.5s ease-in-out infinite' }}></div>
                               </button>
                             )}
                           </div>
@@ -590,6 +688,65 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
                 );
               })}
             </div>
+          </div>
+          
+          {/* Navigation Controls - Below the carousel */}
+          <div className="flex items-center justify-between px-1 pt-1">
+            {/* Left Arrow */}
+            <button
+              onClick={() => {
+                if (!isTransitioning) {
+                  setIsTransitioning(true);
+                  setCurrentInsightIndex((prev) => (prev - 1 + insights.length) % insights.length);
+                  setTimeout(() => setIsTransitioning(false), 500);
+                }
+              }}
+              className="p-1 transition-colors"
+              disabled={isTransitioning}
+            >
+              <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            
+            {/* Dot Indicators */}
+            <div className="flex items-center gap-1.5">
+              {insights.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    if (!isTransitioning && index !== currentInsightIndex) {
+                      setIsTransitioning(true);
+                      setCurrentInsightIndex(index);
+                      setTimeout(() => setIsTransitioning(false), 500);
+                    }
+                  }}
+                  className={`transition-all duration-300 rounded-full ${
+                    index === currentInsightIndex 
+                      ? 'w-2 h-2 bg-gradient-to-r from-purple-500 to-pink-500 shadow-[0_0_6px_rgba(168,85,247,0.6)]' 
+                      : 'w-1.5 h-1.5 bg-gray-400'
+                  }`}
+                  disabled={isTransitioning}
+                />
+              ))}
+            </div>
+            
+            {/* Right Arrow */}
+            <button
+              onClick={() => {
+                if (!isTransitioning) {
+                  setIsTransitioning(true);
+                  setCurrentInsightIndex((prev) => (prev + 1) % insights.length);
+                  setTimeout(() => setIsTransitioning(false), 500);
+                }
+              }}
+              className="p-1 transition-colors"
+              disabled={isTransitioning}
+            >
+              <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
           </div>
         </div>
 
@@ -633,7 +790,8 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
                   </p>
                 </div>
 
-                {/* Sector Allocation Pie Chart */}
+                {/* Sector Allocation Pie Chart - HIDDEN but preserved */}
+                {false && (
                 <div className="pb-3 border-b border-gray-200">
                   <div className="bg-white rounded p-3">
                     <h4 className="text-[11px] font-semibold text-gray-700 mb-3">Sector Allocation</h4>
@@ -685,6 +843,143 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
                     </div>
                   </div>
                 </div>
+                )}
+
+                {/* Stock Movers Carousel - Horizontal Scroll Layout */}
+                <div className="pb-3 border-b border-gray-200">
+                  <div className="relative">
+                    {/* Horizontal Scrolling Container */}
+                    <div className="overflow-hidden">
+                      <div 
+                        className="flex transition-transform duration-500 ease-out"
+                        style={{
+                          transform: `translateX(calc(-${currentStockViewIndex * 70}%))`,
+                        }}
+                      >
+                        {/* Risers View */}
+                        <div className="flex-shrink-0" style={{ width: '70%', paddingRight: '8px' }}>
+                          <h4 className="text-[11px] font-semibold text-gray-700 mb-3">Biggest day risers</h4>
+                          <div className="bg-white rounded border border-gray-200 overflow-hidden">
+                            {risers.map((stock, index) => (
+                              <div 
+                                key={index} 
+                                className={`p-3 ${index < risers.length - 1 ? 'border-b border-gray-100' : ''}`}
+                              >
+                                <div className="flex items-center justify-between">
+                                  <div className="flex-1">
+                                    <div className="text-[11px] font-semibold text-gray-900 mb-1">{stock.name}</div>
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-[9px] bg-gray-100 px-1.5 py-0.5 rounded text-gray-700">{stock.exchange}</span>
+                                      <span className="text-[10px] text-gray-600">{stock.code}</span>
+                                    </div>
+                                  </div>
+                                  <div className="text-right">
+                                    <div className="text-[13px] font-bold text-gray-900 mb-1">{stock.price}</div>
+                                    <div className="flex items-center gap-1 justify-end">
+                                      <span className="text-[10px] text-[#da0011]">▲</span>
+                                      <span className="text-[10px] font-medium text-gray-900">{stock.change}</span>
+                                      <span className="text-[9px] text-[#da0011]">{stock.percent}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Fallers View - Partially Visible */}
+                        <div className="flex-shrink-0" style={{ width: '70%', paddingLeft: '8px' }}>
+                          <h4 className="text-[11px] font-semibold text-gray-700 mb-3">Biggest day fallers</h4>
+                          <div className="bg-white rounded border border-gray-200 overflow-hidden">
+                            {fallers.map((stock, index) => (
+                              <div 
+                                key={index} 
+                                className={`p-3 ${index < fallers.length - 1 ? 'border-b border-gray-100' : ''}`}
+                              >
+                                <div className="flex items-center justify-between">
+                                  <div className="flex-1">
+                                    <div className="text-[11px] font-semibold text-gray-900 mb-1">{stock.name}</div>
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-[9px] bg-gray-100 px-1.5 py-0.5 rounded text-gray-700">{stock.exchange}</span>
+                                      <span className="text-[10px] text-gray-600">{stock.code}</span>
+                                    </div>
+                                  </div>
+                                  <div className="text-right">
+                                    <div className="text-[13px] font-bold text-gray-900 mb-1">{stock.price}</div>
+                                    <div className="flex items-center gap-1 justify-end">
+                                      <span className="text-[10px] text-green-600">▼</span>
+                                      <span className="text-[10px] font-medium text-gray-900">{stock.change}</span>
+                                      <span className="text-[9px] text-green-600">{stock.percent}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Navigation Controls */}
+                    <div className="flex items-center justify-between mt-3">
+                      {/* Left Arrow */}
+                      <button
+                        onClick={() => {
+                          if (!isStockViewTransitioning) {
+                            setIsStockViewTransitioning(true);
+                            setCurrentStockViewIndex((prev) => (prev - 1 + 2) % 2);
+                            setTimeout(() => setIsStockViewTransitioning(false), 500);
+                          }
+                        }}
+                        className="p-1 transition-colors"
+                        disabled={isStockViewTransitioning}
+                      >
+                        <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                        </svg>
+                      </button>
+                      
+                      {/* Dot Indicators */}
+                      <div className="flex items-center gap-1.5">
+                        {[0, 1].map((index) => (
+                          <button
+                            key={index}
+                            onClick={() => {
+                              if (!isStockViewTransitioning && index !== currentStockViewIndex) {
+                                setIsStockViewTransitioning(true);
+                                setCurrentStockViewIndex(index);
+                                setTimeout(() => setIsStockViewTransitioning(false), 500);
+                              }
+                            }}
+                            className={`transition-all duration-300 rounded-full ${
+                              index === currentStockViewIndex 
+                                ? 'w-2 h-2 bg-gray-900' 
+                                : 'w-1.5 h-1.5 bg-gray-400'
+                            }`}
+                            disabled={isStockViewTransitioning}
+                          />
+                        ))}
+                      </div>
+                      
+                      {/* Right Arrow */}
+                      <button
+                        onClick={() => {
+                          if (!isStockViewTransitioning) {
+                            setIsStockViewTransitioning(true);
+                            setCurrentStockViewIndex((prev) => (prev + 1) % 2);
+                            setTimeout(() => setIsStockViewTransitioning(false), 500);
+                          }
+                        }}
+                        className="p-1 transition-colors"
+                        disabled={isStockViewTransitioning}
+                      >
+                        <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
 
                 <div className="bg-gradient-to-br from-[#e8f4f8] via-[#fef5f4] to-[#f0f8fc] px-4 py-3 rounded-[20px] border border-[#d5e5ec] shadow-sm">
                   <div className="mb-3">
@@ -721,11 +1016,15 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
                         <span className="text-[#db0011] font-bold mt-0.5">•</span>
                         <div className="text-gray-700">
                           <span>NVIDIA's revenue surged 262% YOY last quarter, highlighting its dominance in AI chips. </span>
-                          <button onClick={() => setShowStockDetail(true)} className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5">
-                            <span>View Price</span>
-                            <svg className="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                            </svg>
+                          <button onClick={() => setShowStockDetail(true)} className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5 relative">
+                            <span className="inline-flex items-center gap-0.5 inline-block" style={{ animation: 'pulseText 1.5s ease-in-out infinite' }}>
+                              <span>View Price</span>
+                              <svg className="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                              </svg>
+                            </span>
+                            {/* Pulsing Ring Indicator */}
+                            <div className="absolute top-[-5px] left-0 w-7 h-7 rounded-full border-[1px] pointer-events-none" style={{ borderColor: '#999999', boxShadow: '0 0 15px rgba(153, 153, 153, 0.7), 0 0 8px rgba(0, 0, 0, 0.2)', animation: 'pulseRing 1.5s ease-in-out infinite' }}></div>
                           </button>
                         </div>
                       </div>
@@ -815,9 +1114,13 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
                   <div className="flex gap-2 mt-3 pt-3 border-t border-[#d5e5ec]">
                     <button 
                       onClick={onGoToUnitTrusts}
-                      className="flex-1 bg-white text-[#db0011] text-[11px] font-semibold py-2 px-3 rounded-sm border border-[#db0011] active:opacity-80 transition-opacity"
+                      className="flex-1 bg-white text-[#db0011] text-[11px] font-semibold py-2 px-3 rounded-sm border border-[#db0011] active:opacity-80 transition-opacity relative"
                     >
-                      View Details
+                      <span className="inline-block" style={{ animation: 'pulseText 1.5s ease-in-out infinite' }}>
+                        View Details
+                      </span>
+                      {/* Pulsing Ring Indicator - Centered on text */}
+                      <div className="absolute top-[3px] left-1/3 -translate-x-1/2 w-7 h-7 rounded-full border-[1px] pointer-events-none" style={{ borderColor: '#999999', boxShadow: '0 0 15px rgba(153, 153, 153, 0.7), 0 0 8px rgba(0, 0, 0, 0.2)', animation: 'pulseRing 1.5s ease-in-out infinite' }}></div>
                     </button>
                     <button className="flex-1 bg-[#db0011] text-white text-[11px] font-semibold py-2 px-3 rounded-sm active:opacity-80 transition-opacity">
                       Search Fund
@@ -1089,7 +1392,14 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
           <StockDetailPage onBack={() => setShowStockDetail(false)} />
         </div>
       )}
+
+      {/* Risk Profile Questionnaire */}
+      <RiskProfileQuestionnaire
+        isOpen={isRiskProfileOpen}
+        onClose={() => setIsRiskProfileOpen(false)}
+      />
     </div>
+    </>
   );
 };
 

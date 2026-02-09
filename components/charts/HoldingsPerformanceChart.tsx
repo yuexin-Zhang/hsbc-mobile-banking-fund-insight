@@ -133,7 +133,7 @@ const HoldingsPerformanceChart: React.FC<HoldingsPerformanceChartProps> = ({ cha
           className={`flex items-center gap-1.5 px-2 py-0.5 border text-[9px] font-bold transition-all ${visibleLines.fund ? 'bg-red-50 border-red-100 text-[#da0011]' : 'bg-gray-50 border-gray-200 text-gray-400 opacity-60'}`}
         >
           <div className={`w-1.5 h-0.5 ${visibleLines.fund ? 'bg-[#da0011]' : 'bg-gray-300'}`}></div>
-          Yours
+          Your Holdings
         </button>
         <button 
           onClick={() => toggleLine('saa')}
@@ -263,7 +263,7 @@ const HoldingsPerformanceChart: React.FC<HoldingsPerformanceChartProps> = ({ cha
             <div className="absolute z-20 bg-[#1e1e1e]/90 shadow-2xl rounded-[2px] p-1.5 text-white pointer-events-none transform -translate-x-1/2 -translate-y-full mb-2" style={{ left: `${getXForFiltered(hoverData.index)}%`, top: `${getYForFiltered(filteredData[hoverData.index]?.fund || 0)}%` }}>
               <div className="text-[7px] opacity-60 text-center leading-none mb-1">{filteredData[hoverData.index]?.date}</div>
               <div className="space-y-0.5">
-                {visibleLines.fund && <div className="flex justify-between items-center gap-2 text-[8px]"><span className="opacity-70">Yours:</span><span className="font-bold text-red-200">{filteredData[hoverData.index]?.fund.toFixed(2)}%</span></div>}
+                {visibleLines.fund && <div className="flex justify-between items-center gap-2 text-[8px]"><span className="opacity-70">Your Holdings:</span><span className="font-bold text-red-200">{filteredData[hoverData.index]?.fund.toFixed(2)}%</span></div>}
                 {visibleLines.saa && <div className="flex justify-between items-center gap-2 text-[8px]"><span className="opacity-70">Benchmark:</span><span className="font-bold text-gray-300">{filteredData[hoverData.index]?.saa.toFixed(2)}%</span></div>}
                 {hoverData.index > 0 && filteredData[hoverData.index]?.fund < filteredData[hoverData.index - 1]?.fund && (
                   <div className="flex justify-between items-center gap-2 text-[8px] border-t border-white/20 pt-0.5 mt-0.5">

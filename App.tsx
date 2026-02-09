@@ -16,6 +16,7 @@ import PortfolioOverviewPage from './components/PortfolioOverviewPage';
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<'home' | 'overview' | 'details' | 'simulation' | 'holdings' | 'wealthOverview' | 'portfolioOverview'>('wealthOverview');
   const [isAIGenerated, setIsAIGenerated] = useState(false);
+  const [shouldNavigateToInsights, setShouldNavigateToInsights] = useState(false);
   const isMobile = useMobileDetect();
 
   const navigateToOverview = () => setCurrentPage('overview');
@@ -23,7 +24,14 @@ const App: React.FC = () => {
   const navigateToSimulation = () => setCurrentPage('simulation');
   const navigateToHoldings = () => setCurrentPage('holdings');
   const navigateToHome = () => setCurrentPage('home');
-  const navigateToWealthOverview = () => setCurrentPage('wealthOverview');
+  const navigateToWealthOverview = () => {
+    setShouldNavigateToInsights(false);
+    setCurrentPage('wealthOverview');
+  };
+  const navigateToWealthOverviewWithInsights = () => {
+    setShouldNavigateToInsights(true);
+    setCurrentPage('wealthOverview');
+  };
   const navigateToPortfolioOverview = () => {
     console.log('Navigating to Portfolio Overview');
     setCurrentPage('portfolioOverview');
@@ -72,6 +80,8 @@ const App: React.FC = () => {
           <WealthOverview 
             onBack={navigateToHome}
             onGoToPortfolioOverview={navigateToPortfolioOverview}
+            shouldNavigateToInsights={shouldNavigateToInsights}
+            onInsightsNavigated={() => setShouldNavigateToInsights(false)}
           />
         )}
 
@@ -79,6 +89,7 @@ const App: React.FC = () => {
           <PortfolioOverviewPage 
             onBack={navigateToWealthOverview}
             onGoToUnitTrusts={navigateToOverview}
+            onNavigateToInsights={navigateToWealthOverviewWithInsights}
           />
         )}
       </PhoneFrame>

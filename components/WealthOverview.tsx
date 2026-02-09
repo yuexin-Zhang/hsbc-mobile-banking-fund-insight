@@ -1,17 +1,110 @@
 
 import React, { useState, useEffect } from 'react';
 import AIAssistant from './AIAssistant';
+import RiskProfileQuestionnaire from './RiskProfileQuestionnaire';
 import { useMobileDetect } from '../hooks/useMobileDetect';
 
 interface WealthOverviewProps {
   onBack: () => void;
   onGoToPortfolioOverview: () => void;
+  shouldNavigateToInsights?: boolean;
+  onInsightsNavigated?: () => void;
 }
 
-const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolioOverview }) => {
+const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolioOverview, shouldNavigateToInsights, onInsightsNavigated }) => {
   const [currentTime, setCurrentTime] = useState('');
   const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [currentInfoIndex, setCurrentInfoIndex] = useState(0);
+  const [isRiskProfileOpen, setIsRiskProfileOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'overview' | 'insights'>('overview');
   const isMobile = useMobileDetect();
+
+  // Insights articles data
+  const insightsArticles = [
+    {
+      id: 1,
+      image: `${import.meta.env.BASE_URL}insight-01.png`,
+      title: 'FX Viewpoint: USD and CAD: Continued underperformance?',
+      date: '02 Feb 2026'
+    },
+    {
+      id: 2,
+      image: `${import.meta.env.BASE_URL}insight-02.png`,
+      title: 'Investment Monthly: Diversifying further amid evolving geopolitical risks',
+      date: '30 Jan 2026'
+    },
+    {
+      id: 3,
+      image: `${import.meta.env.BASE_URL}insight-03.png`,
+      title: 'Investment Weekly: Broadening out in 2026',
+      date: '09 Feb 2026'
+    },
+    {
+      id: 4,
+      image: `${import.meta.env.BASE_URL}insight-04.png`,
+      title: 'Special Coverage: Policy on hold as the Fed signals patience',
+      date: '29 Jan 2026'
+    },
+    {
+      id: 5,
+      image: `${import.meta.env.BASE_URL}insight-05.png`,
+      title: 'Think Future 2026: Your guide to the global investment landscape',
+      date: '20 Nov 2025'
+    }
+  ];
+
+  // 6 pieces of information to cycle through
+  const infoItems = [
+    {
+      label: 'Performance',
+      text: 'Outperforming market by ',
+      highlight: '8.3%',
+      suffix: ' this month',
+      color: '#31b0d5',
+      labelColor: '#31708f'
+    },
+    {
+      label: 'Top movers',
+      text: 'HSBC Global Equity Fund dropped ',
+      highlight: '5%',
+      suffix: ' yesterday',
+      color: '#31b0d5',
+      labelColor: '#31708f'
+    },
+    {
+      label: 'Allocation',
+      text: 'Consider adding ',
+      highlight: '25%',
+      suffix: ' into Global Equity',
+      color: '#31b0d5',
+      labelColor: '#31708f'
+    },
+    {
+      label: 'Risk profile',
+      text: 'Your risk assessment is expiring soon',
+      highlight: '',
+      suffix: '',
+      color: '#f0ad4e',
+      labelColor: '#8a6d3b'
+    },
+    {
+      label: 'Cashflow',
+      text: 'Your ',
+      highlight: 'HKD 1,500,000',
+      suffix: ' time deposit maturing on 9 Feb',
+      color: '#f0ad4e',
+      labelColor: '#8a6d3b'
+    },
+    {
+      label: 'Cashflow',
+      text: 'Bond coupon payment of ',
+      highlight: 'HKD 850,000',
+      suffix: ' due 10 Mar',
+      color: '#f0ad4e',
+      labelColor: '#8a6d3b'
+    }
+  ];
 
   // Update current time
   useEffect(() => {
@@ -28,6 +121,35 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
     return () => clearInterval(interval);
   }, []);
 
+  // Cycle through info items when collapsed
+  useEffect(() => {
+    if (!isExpanded) {
+      const interval = setInterval(() => {
+        setCurrentInfoIndex((prev) => (prev + 1) % infoItems.length);
+      }, 3000); // Change every 3 seconds
+      
+      return () => clearInterval(interval);
+    }
+  }, [isExpanded]);
+
+  // Handle navigation to Insights tab
+  useEffect(() => {
+    if (shouldNavigateToInsights) {
+      setActiveTab('insights');
+      // Scroll to Insights tab section
+      setTimeout(() => {
+        const insightsSection = document.querySelector('[data-insights-section]');
+        if (insightsSection) {
+          insightsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        // Reset the flag after navigation
+        if (onInsightsNavigated) {
+          onInsightsNavigated();
+        }
+      }, 100);
+    }
+  }, [shouldNavigateToInsights, onInsightsNavigated]);
+
   return (
     <>
       <style>{`
@@ -39,8 +161,64 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
             transform: translateX(200%);
           }
         }
+        @keyframes fadeInUp {
+          0% {
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+        @keyframes fadeOut {
+          0% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+          100% {
+            opacity: 0;
+            transform: translateY(-20px) scale(0.95);
+          }
+        }
+        @keyframes glow {
+          0%, 100% {
+            box-shadow: 0 0 5px rgba(168, 85, 247, 0.3), 0 0 10px rgba(168, 85, 247, 0.2);
+          }
+          50% {
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.5), 0 0 20px rgba(168, 85, 247, 0.3), 0 0 30px rgba(236, 72, 153, 0.2);
+          }
+        }
+        @keyframes pulseRing {
+          0% {
+            transform: scale(1);
+            opacity: 1;
+          }
+          50% {
+            transform: scale(1.15);
+            opacity: 0.4;
+          }
+          100% {
+            transform: scale(1);
+            opacity: 1;
+          }
+        }
+        @keyframes pulseText {
+          0% {
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(1.15);
+          }
+          100% {
+            transform: scale(1);
+          }
+        }
+        .info-item-enter {
+          animation: fadeInUp 0.6s ease-out forwards;
+        }
       `}</style>
-      <div className="flex flex-col h-full bg-[#f5f5f5] font-sans">
+      <div className="flex flex-col h-full bg-[#f5f5f5] font-sans relative">
       {/* Combined Status Bar and Navigation */}
       <div className="bg-white shrink-0">
         {/* Status Bar - Hidden on mobile */}
@@ -144,7 +322,7 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
         <div className="mt-4">
           <div className="overflow-hidden relative bg-white">
             
-            <div className="px-3 py-3 relative z-20">
+            <div className="px-3 pt-3 relative z-20">
               <div className="mb-3 flex items-center justify-between">
                 <h3 className="text-[15px] font-bold whitespace-nowrap inline-flex items-stretch">
                   {/* AI section with borders */}
@@ -181,21 +359,70 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
                   
                   {/* Portfolio Review with background and shimmer effect */}
                   <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-1.5 py-0.5 flex items-center rounded-r-full relative overflow-hidden shadow-[0_0_12px_rgba(168,85,247,0.4)]">
-                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-[shimmer_3s_ease-in-out_infinite]"></span>
+                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent -translate-x-full animate-[shimmer_1.8s_ease-in-out_infinite] w-[200%]"></span>
                     <span className="relative">Portfolio Review</span>
                   </span>
                 </h3>
                 
-                {/* Read More Button - Inline with title */}
+                {/* View Details Button - Inline with title */}
                 <button
                   onClick={onGoToPortfolioOverview}
-                  className="bg-white border border-[#da0011] rounded px-2 py-1 flex items-center cursor-pointer active:bg-[#fff5f5] transition-all duration-200 hover:shadow-sm flex-shrink-0 ml-2"
+                  className="bg-white border border-[#da0011] px-2 py-1 flex items-center cursor-pointer active:bg-[#fff5f5] transition-all duration-200 hover:shadow-sm flex-shrink-0 ml-2 relative"
                 >
-                  <span className="text-[10px] font-semibold text-[#da0011] leading-none">Read more</span>
+                  <span className="text-[10px] font-semibold text-[#da0011] leading-none inline-block" style={{ animation: 'pulseText 1.5s ease-in-out infinite' }}>View details</span>
+                  {/* Pulsing Ring Indicator - Gray border on the right */}
+                  <div className="absolute top-[-5px] left-0 w-7 h-7 rounded-full border-[1px] pointer-events-none" style={{ borderColor: '#999999', boxShadow: '0 0 15px rgba(153, 153, 153, 0.7), 0 0 8px rgba(0, 0, 0, 0.2)', animation: 'pulseRing 1.5s ease-in-out infinite' }}></div>
                 </button>
               </div>
 
-              <div className="space-y-3">
+              {/* Collapsed State - Cycling Information */}
+              {!isExpanded ? (
+                <div className="relative">
+                  <div 
+                    className="bg-gradient-to-br from-[#e8f4f8] via-[#fef5f4] to-[#f0f8fc] px-2 rounded-[20px] border border-[#d5e5ec] shadow-sm min-h-[70px] flex items-center"
+                    style={{ animation: 'glow 3s ease-in-out infinite' }}
+                  >
+                    <div key={currentInfoIndex} className="flex items-start gap-2 w-full info-item-enter">
+                      <div 
+                        className="w-2 h-2 rounded-full flex-shrink-0 mt-1.5 animate-pulse" 
+                        style={{ backgroundColor: infoItems[currentInfoIndex].color }}
+                      ></div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-[13px] leading-relaxed">
+                          <span 
+                            className="font-semibold" 
+                            style={{ color: infoItems[currentInfoIndex].labelColor }}
+                          >
+                            {infoItems[currentInfoIndex].label}:{' '}
+                          </span>
+                          <span className="text-[#1e1e1e]">{infoItems[currentInfoIndex].text}</span>
+                          {infoItems[currentInfoIndex].highlight && (
+                            <span className="font-bold text-[#da0011]">{infoItems[currentInfoIndex].highlight}</span>
+                          )}
+                          <span className="text-[#1e1e1e]">{infoItems[currentInfoIndex].suffix}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Expand Button */}
+                  <button
+                    onClick={() => setIsExpanded(true)}
+                    className="w-full mt-1 flex items-center justify-center gap-2 py-2 text-[#da0011] font-semibold text-[13px] active:opacity-70 transition-all"
+                  >
+                    <div className="relative inline-flex items-center">
+                      {/* Pulsing Ring Indicator */}
+                      <div className="absolute top-[-5px] left-0 w-7 h-7 rounded-full border-[1px] pointer-events-none" style={{ borderColor: '#999999', boxShadow: '0 0 15px rgba(153, 153, 153, 0.7), 0 0 8px rgba(0, 0, 0, 0.2)', animation: 'pulseRing 1.5s ease-in-out infinite' }}></div>
+                      <span className="underline inline-block" style={{ animation: 'pulseText 1.5s ease-in-out infinite' }}>Show More</span>
+                    </div>
+                    <svg className="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                </div>
+              ) : (
+                /* Expanded State - Full Content */
+                <div className="space-y-3">
                 {/* What Happened Section */}
                 <div>
                   <h4 className="text-[13px] font-bold text-[#1e1e1e] mb-2 flex items-center gap-1.5">
@@ -212,16 +439,31 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
                         <div className="flex-1 min-w-0">
                           <div className="text-[12px] leading-snug">
                             <span className="text-[#31708f] font-semibold">Performance: </span>
-                            <span className="text-[#1e1e1e]">Outperforming market by </span>
+                           <span className="text-[#1e1e1e]">Outperforming market by </span>
                             <span className="font-bold text-[#da0011]">8.3%</span>
                             <span className="text-[#1e1e1e]"> this month </span>
-                            <button className="text-[11px] text-[#da0011] font-semibold inline-flex items-center gap-0.5">
-                              <span className="underline inline-flex items-center gap-0.5">
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setActiveTab('insights');
+                                // Scroll to Insights tab section
+                                setTimeout(() => {
+                                  const insightsSection = document.querySelector('[data-insights-section]');
+                                  if (insightsSection) {
+                                    insightsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                  }
+                                }, 100);
+                              }}
+                              className="text-[11px] text-[#da0011] font-semibold inline-flex items-center gap-0.5 relative"
+                            >
+                              <span className="underline inline-flex items-center gap-0.5 inline-block" style={{ animation: 'pulseText 1.5s ease-in-out infinite' }}>
                                 <span>CIO House View</span>
                                 <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
                                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                                 </svg>
                               </span>
+                              {/* Pulsing Ring Indicator */}
+                              <div className="absolute top-[-5px] left-0 w-7 h-7 rounded-full border-[1px] pointer-events-none" style={{ borderColor: '#999999', boxShadow: '0 0 15px rgba(153, 153, 153, 0.7), 0 0 8px rgba(0, 0, 0, 0.2)', animation: 'pulseRing 1.5s ease-in-out infinite' }}></div>
                             </button>
                           </div>
                         </div>
@@ -289,13 +531,18 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
                           <div className="text-[12px] leading-snug">
                             <span className="text-[#8a6d3b] font-semibold">Risk profile: </span>
                             <span className="text-[#1e1e1e]">Your risk assessment is expiring soon </span>
-                            <button className="text-[11px] text-[#da0011] font-semibold inline-flex items-center gap-0.5">
-                              <span className="underline inline-flex items-center gap-0.5">
+                            <button 
+                              onClick={() => setIsRiskProfileOpen(true)}
+                              className="text-[11px] text-[#da0011] font-semibold inline-flex items-center gap-0.5 relative"
+                            >
+                              <span className="underline inline-flex items-center gap-0.5 inline-block" style={{ animation: 'pulseText 1.5s ease-in-out infinite' }}>
                                 <span>Update now</span>
                                 <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
                                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                                 </svg>
                               </span>
+                              {/* Pulsing Ring Indicator */}
+                              <div className="absolute top-[-5px] left-0 w-7 h-7 rounded-full border-[1px] pointer-events-none" style={{ borderColor: '#999999', boxShadow: '0 0 15px rgba(153, 153, 153, 0.7), 0 0 8px rgba(0, 0, 0, 0.2)', animation: 'pulseRing 1.5s ease-in-out infinite' }}></div>
                             </button>
                           </div>
                         </div>
@@ -306,7 +553,7 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
                         <div className="w-2 h-2 rounded-full bg-[#f0ad4e] flex-shrink-0 mt-1 animate-pulse"></div>
                         <div className="flex-1 min-w-0">
                           <div className="text-[12px] leading-snug">
-                            <span className="text-[#8a6d3b] font-semibold">Cashflow: </span>
+                            <span className="text-[#8a6d3b] font-semibold">Deposit: </span>
                             <span className="text-[#1e1e1e]">Your </span>
                             <span className="font-bold text-[#da0011]">HKD 1,500,000</span>
                             <span className="text-[#1e1e1e]"> time deposit maturing on </span>
@@ -347,7 +594,23 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
                     </div>
                   </div>
                 </div>
+                  
+                {/* Collapse Button */}
+                <button
+                  onClick={() => setIsExpanded(false)}
+                  className="w-full flex items-center justify-center gap-2 pb-2 text-[#da0011] font-semibold text-[13px] active:opacity-70 transition-all"
+                >
+                  <div className="relative inline-flex items-center">
+                    {/* Pulsing Ring Indicator */}
+                    <div className="absolute top-[-5px] left-0 w-7 h-7 rounded-full border-[1px] pointer-events-none" style={{ borderColor: '#999999', boxShadow: '0 0 15px rgba(153, 153, 153, 0.7), 0 0 8px rgba(0, 0, 0, 0.2)', animation: 'pulseRing 1.5s ease-in-out infinite' }}></div>
+                    <span className="underline inline-block" style={{ animation: 'pulseText 1.5s ease-in-out infinite' }}>Show less</span>
+                  </div>
+                  <svg className="w-4 h-4 rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
               </div>
+              )}
             </div>
           </div>
         </div>
@@ -386,18 +649,37 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
         </div>
 
         {/* Overview/Insights Tabs */}
-        <div className="bg-white border-b-2 border-gray-200">
+        <div className="bg-white border-b-2 border-gray-200" data-insights-section>
           <div className="flex px-4">
-            <button className="px-1 py-3 text-[15px] font-semibold text-gray-900 border-b-2 border-[#da0011] -mb-[2px]">
+            <button 
+              onClick={() => setActiveTab('overview')}
+              className={`px-1 py-3 text-[15px] font-semibold ${
+                activeTab === 'overview' 
+                  ? 'text-gray-900 border-b-2 border-[#da0011] -mb-[2px]' 
+                  : 'text-gray-600'
+              }`}
+            >
               Overview
             </button>
-            <button className="px-6 py-3 text-[15px] text-gray-600 ml-8">
-              Insights
+            <button 
+              onClick={() => setActiveTab('insights')}
+              className={`px-6 py-3 text-[15px] ml-8 ${
+                activeTab === 'insights' 
+                  ? 'font-semibold text-gray-900 border-b-2 border-[#da0011] -mb-[2px]' 
+                  : 'text-gray-600'
+              }`}
+            >
+              <div className="relative inline-flex items-center">
+                {/* Pulsing Ring Indicator */}
+                <div className="absolute top-[-5px] left-0 w-7 h-7 rounded-full border-[1px] pointer-events-none" style={{ borderColor: '#999999', boxShadow: '0 0 15px rgba(153, 153, 153, 0.7), 0 0 8px rgba(0, 0, 0, 0.2)', animation: 'pulseRing 1.5s ease-in-out infinite' }}></div>
+                <span className="inline-block" style={{ animation: 'pulseText 1.5s ease-in-out infinite' }}>Insights</span>
+              </div>
             </button>
           </div>
         </div>
 
         {/* Your holdings section */}
+        {activeTab === 'overview' && (
         <div className="bg-white px-4 pb-20 pt-6">
           <h3 className="text-[17px] font-semibold text-gray-900 mb-4">Your holdings</h3>
           
@@ -529,6 +811,59 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
             </div>
           </div>
         </div>
+        )}
+
+        {/* Insights Tab Content */}
+        {activeTab === 'insights' && (
+        <div className="bg-white px-4 pb-20 pt-4">
+          <div className="space-y-4">
+            {insightsArticles.map((article) => (
+              <button
+                key={article.id}
+                className="w-full flex items-start gap-3 text-left active:bg-gray-50 transition-colors py-2"
+              >
+                {/* Article Image */}
+                <div className="w-[100px] h-[100px] flex-shrink-0 overflow-hidden bg-gray-200">
+                  <img 
+                    src={article.image} 
+                    alt={article.title}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      // Fallback: Display a gradient background if image fails to load
+                      (e.target as HTMLImageElement).style.display = 'none';
+                      const parent = (e.target as HTMLElement).parentElement;
+                      if (parent) {
+                        parent.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                      }
+                    }}
+                  />
+                </div>
+
+                {/* Article Content */}
+                <div className="flex-1 min-w-0 pt-1">
+                  <h4 className="text-[15px] font-normal text-gray-900 leading-snug mb-3">
+                    {article.title}
+                  </h4>
+                  <div className="flex items-center gap-1.5 text-gray-600">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="text-[13px]">{article.date}</span>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+
+          {/* Important information section */}
+          <div className="mt-8 pt-4 border-t border-gray-200">
+            <h4 className="text-[15px] font-semibold text-gray-900 mb-3">Important information</h4>
+            <div className="text-[12px] text-gray-600 leading-relaxed space-y-2">
+              <p>• Unrealised gain/loss and market value are not available for certain product types including Insurance with saving benefit, Investment-linked insurance, Structured products and Payment Protection Policies</p>
+            </div>
+          </div>
+        </div>
+        )}
       </div>
 
       {/* HSBC Lion AI Button - Fixed at bottom right within phone area */}
@@ -548,6 +883,12 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
       <AIAssistant 
         isOpen={isAIAssistantOpen} 
         onClose={() => setIsAIAssistantOpen(false)} 
+      />
+
+      {/* Risk Profile Questionnaire */}
+      <RiskProfileQuestionnaire
+        isOpen={isRiskProfileOpen}
+        onClose={() => setIsRiskProfileOpen(false)}
       />
     </div>
     </>

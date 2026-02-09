@@ -11,6 +11,8 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose, mode = 'scen
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedScenario, setSelectedScenario] = useState<string | null>(null);
   const [showResponse, setShowResponse] = useState(false);
+  const [conversationHistory, setConversationHistory] = useState<Array<{type: 'user' | 'ai', content: string, timestamp: number}>>([]);
+  const [inputValue, setInputValue] = useState('');
 
   useEffect(() => {
     if (isOpen) {
@@ -85,6 +87,50 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose, mode = 'scen
     }, 300);
   };
 
+  const handleHomeClick = () => {
+    setSelectedScenario(null);
+    setIsGenerating(false);
+    setShowResponse(false);
+    setConversationHistory([]);
+    setInputValue('');
+  };
+
+  const handleSendMessage = () => {
+    if (!inputValue.trim()) return;
+    
+    // Add user message to conversation
+    const userMessage = {
+      type: 'user' as const,
+      content: inputValue,
+      timestamp: Date.now()
+    };
+    setConversationHistory(prev => [...prev, userMessage]);
+    setInputValue('');
+    
+    // Start generating AI response
+    setIsGenerating(true);
+    setTimeout(() => {
+      setIsGenerating(false);
+      // Add AI response based on the question
+      const aiResponse = {
+        type: 'ai' as const,
+        content: generateFollowUpResponse(inputValue),
+        timestamp: Date.now()
+      };
+      setConversationHistory(prev => [...prev, aiResponse]);
+    }, 2000);
+  };
+
+  const generateFollowUpResponse = (question: string) => {
+    // Check if question contains 'market' keyword
+    if (question.toLowerCase().includes('market')) {
+      return 'market-analysis';
+    }
+    // For now, return a predefined response for profit-taking question
+    // You can expand this with more sophisticated logic
+    return 'profit-taking-advice';
+  };
+
   if (!isOpen && !isAnimating) return null;
 
   return (
@@ -145,8 +191,8 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose, mode = 'scen
           className="flex-1 overflow-y-auto p-4 space-y-4 overscroll-none" 
           style={{ paddingBottom: '20px' }}
         >
-          {/* Show Scenarios if no scenario selected */}
-          {!selectedScenario && (
+          {/* Show Scenarios if no scenario selected AND no conversation history */}
+          {!selectedScenario && conversationHistory.length === 0 && (
             <>
               {/* AI Avatar & Header */}
               <div className="flex items-center gap-3">
@@ -197,36 +243,53 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose, mode = 'scen
             </>
           )}
 
-          {/* Show Conversation when scenario is selected */}
-          {selectedScenario && (
+          {/* Show Conversation when scenario is selected OR when user sends a message */}
+          {(selectedScenario || conversationHistory.length > 0) && (
             <>
-              {/* User Question */}
-              <div className="flex justify-end">
-                <div className="bg-[#da0011] text-white rounded-lg p-3 max-w-[85%] shadow-sm">
-                  <div className="text-[10px] leading-relaxed">
-                    {scenarios.find(s => s.id === selectedScenario)?.question}
+              {/* User Question from scenario */}
+              {selectedScenario && (
+                <div className="flex justify-end">
+                  <div className="bg-[#da0011] text-white rounded-lg p-3 max-w-[85%] shadow-sm">
+                    <div className="text-[10px] leading-relaxed">
+                      {scenarios.find(s => s.id === selectedScenario)?.question}
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
 
-              {/* AI Avatar & Status */}
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-[#da0011] to-[#ba000e] rounded-full flex items-center justify-center shadow-lg">
-                  <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
-                  </svg>
-                </div>
-                <div className="flex-1">
-                  <div className="text-gray-900 text-sm font-bold">HSBC Wealth Assistant</div>
-                  <div className="flex items-center gap-1.5 text-gray-500 text-[10px] mt-0.5">
-                    <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                    {isGenerating ? 'Deep thinking (1 second)' : 'Analysis complete'}
+              {/* User messages from conversation history */}
+              {!selectedScenario && conversationHistory.filter(msg => msg.type === 'user').map((msg, idx) => (
+                <div key={`user-${idx}`} className="flex justify-end">
+                  <div className="bg-[#da0011] text-white rounded-lg p-3 max-w-[85%] shadow-sm">
+                    <div className="text-[10px] leading-relaxed">
+                      {msg.content}
+                    </div>
                   </div>
                 </div>
-              </div>
+              ))}
+
+              {/* AI Avatar & Status - only for scenario questions */}
+              {selectedScenario && (
+                <>
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-gradient-to-br from-[#da0011] to-[#ba000e] rounded-full flex items-center justify-center shadow-lg">
+                      <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-gray-900 text-sm font-bold">HSBC Wealth Assistant</div>
+                      <div className="flex items-center gap-1.5 text-gray-500 text-[10px] mt-0.5">
+                        <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                        {isGenerating ? 'Deep thinking (1 second)' : 'Analysis complete'}
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
 
               {/* Thought Process - Only show during generation */}
-              {isGenerating && (
+              {isGenerating && selectedScenario && (
                 <div className="space-y-3">
                   <div className="flex items-start gap-2">
                     <div className="w-5 h-5 bg-emerald-100 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -271,6 +334,153 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose, mode = 'scen
                     </div>
                   </div>
                 </div>
+              )}
+
+              {/* Thought Process for user input (non-scenario) */}
+              {isGenerating && !selectedScenario && conversationHistory.length > 0 && (
+                <div className="space-y-3">
+                  <div className="flex items-start gap-2">
+                    <div className="w-5 h-5 bg-gray-100 rounded flex items-center justify-center flex-shrink-0 mt-0.5 animate-spin">
+                      <div className="w-2 h-2 border-2 border-gray-300 border-t-gray-600 rounded-full" />
+                    </div>
+                    <div>
+                      <div className="text-gray-900 text-xs font-medium">Analyzing your question...</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Market Analysis Response - Triggered by user input containing 'market' */}
+              {conversationHistory.some(msg => msg.type === 'ai' && msg.content === 'market-analysis') && (
+                <>
+                  {conversationHistory.map((msg, idx) => {
+                    if (msg.type === 'ai' && msg.content === 'market-analysis') {
+                      return (
+                        <React.Fragment key={`market-${idx}`}>
+                          {/* Market Analysis AI Avatar */}
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 bg-gradient-to-br from-[#da0011] to-[#ba000e] rounded-full flex items-center justify-center shadow-lg">
+                              <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                              </svg>
+                            </div>
+                            <div className="flex-1">
+                              <div className="text-gray-900 text-sm font-bold">HSBC Wealth Assistant</div>
+                              <div className="flex items-center gap-1.5 text-gray-500 text-[10px] mt-0.5">
+                                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                                Analysis complete
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Market Analysis Response */}
+                          <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+                            <div className="text-gray-900 text-xs leading-relaxed space-y-3">
+                              <p>
+                                Certainly, Wei Zhang. Let me provide you with today's market analysis based on the current environment.
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Sector Impact Quadrant Chart */}
+                          <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+                            <div className="text-gray-900 text-sm font-bold mb-3">Sector Impact from Rising Yield Environment</div>
+                            <div className="bg-gradient-to-br from-gray-50 to-blue-50 rounded-lg p-4 border border-gray-200">
+                              <div className="grid grid-cols-2 gap-4 relative">
+                                {/* Quadrant Chart Representation */}
+                                <div className="col-span-2 relative h-64 border-2 border-gray-300">
+                                  {/* Axes Labels */}
+                                  <div className="absolute -left-20 top-1/2 -translate-y-1/2 -rotate-90 text-[10px] text-gray-600 font-medium whitespace-nowrap">Cyclical ← → Defensive</div>
+                                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-6 text-[10px] text-gray-600 font-medium whitespace-nowrap">Negative Impact ← → Positive Impact</div>
+                                  
+                                  {/* Center Lines */}
+                                  <div className="absolute left-1/2 top-0 bottom-0 border-l border-gray-300"></div>
+                                  <div className="absolute top-1/2 left-0 right-0 border-t border-gray-300"></div>
+                                  
+                                  {/* Sector Positions */}
+                                  {/* Real Estate - Top Left (0.1, 0.85) */}
+                                  <div className="absolute" style={{left: '10%', top: '15%'}}>
+                                    <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                                    <div className="text-[8px] text-gray-700 font-medium mt-1 whitespace-nowrap">Real Estate</div>
+                                  </div>
+                                  
+                                  {/* Utilities - Top Left (0.15, 0.8) */}
+                                  <div className="absolute" style={{left: '15%', top: '20%'}}>
+                                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                                    <div className="text-[8px] text-gray-700 font-medium mt-1 whitespace-nowrap">Utilities</div>
+                                  </div>
+                                  
+                                  {/* Staples - Top Middle (0.4, 0.7) */}
+                                  <div className="absolute" style={{left: '40%', top: '30%'}}>
+                                    <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                                    <div className="text-[8px] text-gray-700 font-medium mt-1 whitespace-nowrap">Staples</div>
+                                  </div>
+                                  
+                                  {/* Technology - Right Middle (0.7, 0.6) */}
+                                  <div className="absolute" style={{left: '70%', top: '40%'}}>
+                                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                    <div className="text-[8px] text-gray-700 font-medium mt-1 whitespace-nowrap">Technology</div>
+                                  </div>
+                                  
+                                  {/* Financials - Right Middle (0.65, 0.5) */}
+                                  <div className="absolute" style={{left: '65%', top: '50%'}}>
+                                    <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
+                                    <div className="text-[8px] text-gray-700 font-medium mt-1 whitespace-nowrap">Financials</div>
+                                  </div>
+                                  
+                                  {/* Energy - Bottom Right (0.8, 0.4) */}
+                                  <div className="absolute" style={{left: '80%', top: '60%'}}>
+                                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                    <div className="text-[8px] text-gray-700 font-medium mt-1 whitespace-nowrap">Energy</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Market Drivers Card */}
+                          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200">
+                            <div className="flex items-center gap-2 mb-3">
+                              <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                              </svg>
+                              <div className="text-gray-900 text-xs font-bold">Primary Driver</div>
+                            </div>
+                            <div className="text-gray-900 text-xs leading-relaxed">
+                              Markets are digesting a <span className="font-bold text-[#da0011]">"higher-for-longer"</span> interest rate narrative, pushing Treasury yields up and pressuring rate-sensitive sectors.
+                            </div>
+                          </div>
+
+                          {/* Key Rotation Card */}
+                          <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+                            <div className="flex items-center gap-2 mb-3">
+                              <svg className="w-5 h-5 text-[#da0011] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+                              </svg>
+                              <div className="text-gray-900 text-xs font-bold">Key Rotation</div>
+                            </div>
+                            <div className="text-gray-900 text-xs leading-relaxed">
+                              Leadership remains <span className="font-bold">narrow</span>, concentrated in <span className="font-bold text-blue-600">mega-cap Tech</span> (driven by AI themes), while <span className="font-bold text-orange-600">Utilities</span> and <span className="font-bold text-red-600">Real Estate</span> weaken. Small-caps are lagging, indicating compressed risk appetite.
+                            </div>
+                          </div>
+
+                          {/* Strategic Takeaway Card */}
+                          <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-lg p-4 border border-emerald-200">
+                            <div className="flex items-start gap-2">
+                              <svg className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                              </svg>
+                              <div className="text-gray-900 text-xs leading-relaxed">
+                                <span className="font-bold text-emerald-700">Strategic Takeaway:</span> Portfolios should emphasize <span className="font-bold">quality</span> and review <span className="font-bold text-[#da0011]">duration risk</span>. Consider tilting exposure toward sectors with <span className="font-bold">secular tailwinds</span> or <span className="font-bold">pricing power</span> that can navigate the current rate environment.
+                              </div>
+                            </div>
+                          </div>
+                        </React.Fragment>
+                      );
+                    }
+                    return null;
+                  })}
+                </>
               )}
 
               {/* Portfolio Performance Response - From AIAssistantOriginal.tsx */}
@@ -369,6 +579,127 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose, mode = 'scen
                       </div>
                     </div>
                   </div>
+                
+                  {/* Follow-up conversation */}
+                  {conversationHistory.map((msg, idx) => (
+                    <React.Fragment key={idx}>
+                      {msg.type === 'user' ? (
+                        <div className="flex justify-end">
+                          <div className="bg-[#da0011] text-white rounded-lg p-3 max-w-[85%] shadow-sm">
+                            <div className="text-[10px] leading-relaxed">
+                              {msg.content}
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          {/* AI Avatar for follow-up */}
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 bg-gradient-to-br from-[#da0011] to-[#ba000e] rounded-full flex items-center justify-center shadow-lg">
+                              <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                              </svg>
+                            </div>
+                            <div className="flex-1">
+                              <div className="text-gray-900 text-sm font-bold">HSBC Wealth Assistant</div>
+                              <div className="flex items-center gap-1.5 text-gray-500 text-[10px] mt-0.5">
+                                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                                Analysis complete
+                              </div>
+                            </div>
+                          </div>
+                
+                          {msg.content === 'profit-taking-advice' && (
+                            <>
+                              {/* Main Response */}
+                              <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+                                <div className="text-gray-900 text-xs leading-relaxed space-y-3">
+                                  <p>
+                                    Excellent question, Wei Zhang. Given your portfolio's strong performance with a <span className="font-bold text-[#da0011]">+28.59% return</span> but relatively high <span className="font-bold">16.70% drawdown</span>, let me provide a balanced perspective on profit-taking.
+                                  </p>
+                                  <p>
+                                    Rather than an all-or-nothing approach, I recommend a <span className="font-bold text-[#da0011]">strategic partial profit-taking strategy</span>:
+                                  </p>
+                                </div>
+                              </div>
+                
+                              {/* Strategy Card */}
+                              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200">
+                                <div className="text-gray-900 text-sm font-bold mb-3">Recommended Action Plan</div>
+                                <div className="space-y-3">
+                                  <div className="flex items-start gap-2">
+                                    <span className="inline-flex items-center justify-center w-5 h-5 bg-[#da0011] text-white rounded text-[10px] font-bold flex-shrink-0 mt-0.5">1</span>
+                                    <div className="text-gray-900 text-xs leading-relaxed">
+                                      <span className="font-bold">Take partial profits from your top performer</span> - Consider reducing your BLK Sys GE High Inc (IPFD3116) position by <span className="font-bold text-[#da0011]">20-30%</span> to lock in gains while maintaining exposure.
+                                    </div>
+                                  </div>
+                                  <div className="flex items-start gap-2">
+                                    <span className="inline-flex items-center justify-center w-5 h-5 bg-[#da0011] text-white rounded text-[10px] font-bold flex-shrink-0 mt-0.5">2</span>
+                                    <div className="text-gray-900 text-xs leading-relaxed">
+                                      <span className="font-bold">Rebalance into defensive assets</span> - Use proceeds to increase your BGF GOLD allocation, which serves as a hedge during market volatility.
+                                    </div>
+                                  </div>
+                                  <div className="flex items-start gap-2">
+                                    <span className="inline-flex items-center justify-center w-5 h-5 bg-[#da0011] text-white rounded text-[10px] font-bold flex-shrink-0 mt-0.5">3</span>
+                                    <div className="text-gray-900 text-xs leading-relaxed">
+                                      <span className="font-bold">Maintain core equity positions</span> - Keep your long-term holdings as the overall market outlook remains positive according to HSBC House View.
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                
+                              {/* Market Timing Card */}
+                              <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+                                <div className="text-gray-900 text-xs leading-relaxed space-y-3">
+                                  <p className="font-bold text-gray-900">Why Now Could Be a Good Time:</p>
+                                  <div className="space-y-2.5">
+                                    <div className="flex items-start gap-2">
+                                      <div className="w-1.5 h-1.5 bg-[#da0011] rounded-full flex-shrink-0 mt-1.5"></div>
+                                      <div>Your top fund has gained <span className="font-bold text-[#da0011]">+42.56%</span>, significantly above market averages</div>
+                                    </div>
+                                    <div className="flex items-start gap-2">
+                                      <div className="w-1.5 h-1.5 bg-[#da0011] rounded-full flex-shrink-0 mt-1.5"></div>
+                                      <div>Current market conditions show some uncertainty with geopolitical risks</div>
+                                    </div>
+                                    <div className="flex items-start gap-2">
+                                      <div className="w-1.5 h-1.5 bg-[#da0011] rounded-full flex-shrink-0 mt-1.5"></div>
+                                      <div>Rebalancing helps maintain your target risk profile</div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                
+                              {/* Action Card */}
+                              <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-lg p-4 border border-emerald-200">
+                                <div className="flex items-start gap-2">
+                                  <svg className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                  </svg>
+                                  <div className="text-gray-900 text-xs leading-relaxed">
+                                    <span className="font-bold text-emerald-700">Bottom Line:</span> Don't sell everything, but taking <span className="font-bold text-[#da0011]">strategic partial profits</span> from your strongest performers and rebalancing into defensive assets can help protect your gains while keeping you positioned for future growth.
+                                  </div>
+                                </div>
+                              </div>
+                            </>
+                          )}
+                        </>
+                      )}
+                    </React.Fragment>
+                  ))}
+                
+                  {/* Thinking animation for follow-up */}
+                  {isGenerating && conversationHistory.length > 0 && (
+                    <div className="space-y-3">
+                      <div className="flex items-start gap-2">
+                        <div className="w-5 h-5 bg-gray-100 rounded flex items-center justify-center flex-shrink-0 mt-0.5 animate-spin">
+                          <div className="w-2 h-2 border-2 border-gray-300 border-t-gray-600 rounded-full" />
+                        </div>
+                        <div>
+                          <div className="text-gray-900 text-xs font-medium">Analyzing your question</div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </>
               )}
 
@@ -597,12 +928,28 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose, mode = 'scen
         {/* Input Bar at Bottom - Fixed */}
         <div className="bg-white border-t border-gray-200 p-4 flex-shrink-0">
           <div className="flex items-center gap-2 bg-gray-50 rounded-full px-4 py-3 border border-gray-200">
+            <button 
+              onClick={handleHomeClick}
+              className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-[#da0011] transition-colors flex-shrink-0"
+              title="Start new conversation"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+              </svg>
+            </button>
             <input 
               type="text"
               placeholder="Ask about your portfolio performance..."
               className="flex-1 bg-transparent text-gray-900 text-xs placeholder:text-gray-400 focus:outline-none"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
             />
-            <button className="w-8 h-8 bg-[#da0011] rounded-full flex items-center justify-center hover:bg-[#ba000e] transition-colors">
+            <button 
+              onClick={handleSendMessage}
+              className="w-8 h-8 bg-[#da0011] rounded-full flex items-center justify-center hover:bg-[#ba000e] transition-colors flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={!inputValue.trim()}
+            >
               <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
               </svg>
