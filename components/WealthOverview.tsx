@@ -346,9 +346,9 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
                 {/* View Details Button - Inline with title */}
                 <button
                   onClick={onGoToPortfolioOverview}
-                  className="bg-white border border-[#da0011] px-2 py-1 flex items-center cursor-pointer active:bg-[#fff5f5] transition-all duration-200 hover:shadow-sm flex-shrink-0 ml-2 relative"
+                  className="bg-white border border-[#da0011] px-3 py-1.5 flex items-center cursor-pointer active:bg-[#fff5f5] transition-all duration-200 hover:shadow-sm flex-shrink-0 ml-2 relative"
                 >
-                  <span className="text-[10px] font-semibold text-[#da0011] leading-none inline-block">View details</span>
+                  <span className="text-[12px] font-semibold text-[#da0011] leading-none inline-block">View details</span>
                 </button>
               </div>
 
@@ -470,12 +470,12 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
                   {/* Expand Button */}
                   <button
                     onClick={() => setIsExpanded(true)}
-                    className="w-full mt-1 flex items-center justify-center gap-2 py-2 text-[#da0011] font-semibold text-[13px] active:opacity-70 transition-all cursor-pointer"
+                    className="w-full mt-1 flex items-center justify-center gap-1 py-1 text-[#da0011] font-semibold text-[10px] active:opacity-70 transition-all cursor-pointer"
                   >
                     <div className="relative inline-flex items-center">
                       <span className="underline inline-block">Show More</span>
                     </div>
-                    <svg className="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+                    <svg className="w-3 h-3 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                     </svg>
                   </button>
@@ -656,12 +656,12 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
                 {/* Collapse Button */}
                 <button
                   onClick={() => setIsExpanded(false)}
-                  className="w-full flex items-center justify-center gap-2 pb-2 text-[#da0011] font-semibold text-[13px] active:opacity-70 transition-all cursor-pointer"
+                  className="w-full flex items-center justify-center gap-1 pb-1 text-[#da0011] font-semibold text-[10px] active:opacity-70 transition-all cursor-pointer"
                 >
                   <div className="relative inline-flex items-center">
                     <span className="underline inline-block">Show less</span>
                   </div>
-                  <svg className="w-4 h-4 rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+                  <svg className="w-3 h-3 rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
