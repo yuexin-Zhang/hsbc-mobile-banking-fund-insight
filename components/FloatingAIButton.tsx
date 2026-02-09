@@ -9,7 +9,7 @@ const FloatingAIButton: React.FC<FloatingAIButtonProps> = ({ onClick }) => {
     <div className="sticky bottom-4 left-0 right-0 z-50 pointer-events-none px-4">
       <div className="flex justify-center">
         <button 
-          className="group relative flex items-center gap-3 px-6 py-3.5 rounded-full shadow-2xl overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 pointer-events-auto"
+          className="group relative flex items-center gap-3 px-6 py-3.5 rounded-full shadow-2xl overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 pointer-events-auto cursor-pointer"
           style={{
             background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)',
           }}

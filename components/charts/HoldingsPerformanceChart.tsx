@@ -130,14 +130,14 @@ const HoldingsPerformanceChart: React.FC<HoldingsPerformanceChartProps> = ({ cha
       <div className="flex flex-wrap gap-2 mb-3">
         <button 
           onClick={() => toggleLine('fund')}
-          className={`flex items-center gap-1.5 px-2 py-0.5 border text-[9px] font-bold transition-all ${visibleLines.fund ? 'bg-red-50 border-red-100 text-[#da0011]' : 'bg-gray-50 border-gray-200 text-gray-400 opacity-60'}`}
+          className={`flex items-center gap-1.5 px-2 py-0.5 border text-[9px] font-bold transition-all cursor-pointer ${visibleLines.fund ? 'bg-red-50 border-red-100 text-[#da0011]' : 'bg-gray-50 border-gray-200 text-gray-400 opacity-60'}`}
         >
           <div className={`w-1.5 h-0.5 ${visibleLines.fund ? 'bg-[#da0011]' : 'bg-gray-300'}`}></div>
           Your Holdings
         </button>
         <button 
           onClick={() => toggleLine('saa')}
-          className={`flex items-center gap-1.5 px-2 py-0.5 border text-[9px] font-bold transition-all ${visibleLines.saa ? 'bg-gray-100 border-gray-300 text-[#767676]' : 'bg-gray-50 border-gray-200 text-gray-400 opacity-60'}`}
+          className={`flex items-center gap-1.5 px-2 py-0.5 border text-[9px] font-bold transition-all cursor-pointer ${visibleLines.saa ? 'bg-gray-100 border-gray-300 text-[#767676]' : 'bg-gray-50 border-gray-200 text-gray-400 opacity-60'}`}
         >
           <div className={`w-1.5 h-0.5 ${visibleLines.saa ? 'bg-[#999]' : 'bg-gray-300'}`}></div>
           Benchmark
@@ -153,7 +153,7 @@ const HoldingsPerformanceChart: React.FC<HoldingsPerformanceChartProps> = ({ cha
           ))}
         </div>
           
-        <div className="flex-1 relative h-full" onMouseMove={(e) => {
+        <div className="flex-1 relative h-full cursor-pointer" onMouseMove={(e) => {
             if (!containerRef.current || filteredData.length === 0) return;
             const rect = containerRef.current.getBoundingClientRect();
             const x = e.clientX - rect.left;
@@ -283,7 +283,7 @@ const HoldingsPerformanceChart: React.FC<HoldingsPerformanceChartProps> = ({ cha
           <button
             key={range}
             onClick={() => setDateRange(range)}
-            className={`px-3 py-1.5 text-[9px] font-bold transition-all border ${
+            className={`px-3 py-1.5 text-[9px] font-bold transition-all border cursor-pointer ${
               dateRange === range
                 ? 'bg-[#da0011] text-white border-[#da0011]'
                 : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'

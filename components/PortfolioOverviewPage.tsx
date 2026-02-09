@@ -322,31 +322,7 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
   return (
     <>
       <style>{`
-        @keyframes pulseRing {
-          0% {
-            transform: scale(1);
-            opacity: 1;
-          }
-          50% {
-            transform: scale(1.15);
-            opacity: 0.4;
-          }
-          100% {
-            transform: scale(1);
-            opacity: 1;
-          }
-        }
-        @keyframes pulseText {
-          0% {
-            transform: scale(1);
-          }
-          50% {
-            transform: scale(1.15);
-          }
-          100% {
-            transform: scale(1);
-          }
-        }
+
       `}</style>
     <div className="flex flex-col h-full bg-[#f4f5f6] font-sans relative">
       {/* Mobile Status Bar - Hidden on mobile */}
@@ -378,41 +354,14 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
           <div className="flex items-center gap-3">
             <button 
               onClick={onBack} 
-              className="w-7 h-7 -ml-2 flex items-center justify-center active:bg-gray-100 rounded-full transition-colors"
+              className="w-7 h-7 -ml-2 flex items-center justify-center active:bg-gray-100 rounded-full transition-colors cursor-pointer"
             >
               <svg className="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
             </button>
-            <h1 className="text-[17px] font-semibold text-gray-900 whitespace-nowrap relative overflow-hidden">
-              <span className="relative inline-block">
-                AI Portfolio Review
-                <span className="absolute inset-0 -left-full animate-shine bg-gradient-to-r from-transparent via-white to-transparent opacity-60" style={{
-                  animation: 'shine 2.5s ease-in-out infinite',
-                  backgroundSize: '200% 100%'
-                }}></span>
-              </span>
-              <style>{`
-                @keyframes shine {
-                  0% {
-                    left: -100%;
-                  }
-                  20% {
-                    left: 100%;
-                  }
-                  100% {
-                    left: 100%;
-                  }
-                }
-                @keyframes shimmer {
-                  0% {
-                    transform: translateX(-100%);
-                  }
-                  100% {
-                    transform: translateX(200%);
-                  }
-                }
-              `}</style>
+            <h1 className="text-[17px] font-semibold text-gray-900 whitespace-nowrap">
+              AI Portfolio Review
             </h1>
           </div>
         </div>
@@ -646,18 +595,14 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
                                     setIsRiskProfileOpen(true);
                                   }
                                 }}
-                                className={`text-[11px] text-[#da0011] font-semibold inline-flex items-center gap-0.5 ${insight.action === 'Update now' ? 'relative' : ''}`}
+                                className={`text-[11px] text-[#da0011] font-semibold inline-flex items-center gap-0.5 cursor-pointer ${insight.action === 'Update now' ? 'relative' : ''}`}
                               >
-                                <span className={`underline inline-flex items-center gap-0.5 ${insight.action === 'Update now' ? 'inline-block' : ''}`} style={insight.action === 'Update now' ? { animation: 'pulseText 1.5s ease-in-out infinite' } : undefined}>
+                                <span className="underline inline-flex items-center gap-0.5">
                                   <span>{insight.action}</span>
                                   <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                                   </svg>
                                 </span>
-                                {/* Pulsing Ring Indicator - Only for Update now */}
-                                {insight.action === 'Update now' && (
-                                  <div className="absolute top-[-5px] left-0 w-7 h-7 rounded-full border-[1px] pointer-events-none" style={{ borderColor: '#999999', boxShadow: '0 0 15px rgba(153, 153, 153, 0.7), 0 0 8px rgba(0, 0, 0, 0.2)', animation: 'pulseRing 1.5s ease-in-out infinite' }}></div>
-                                )}
                               </button>
                             )}
                             {insight.additionalAction && (
@@ -668,16 +613,14 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
                                     onNavigateToInsights();
                                   }
                                 }}
-                                className="text-[11px] text-[#da0011] font-semibold inline-flex items-center gap-0.5 relative"
+                                className="text-[11px] text-[#da0011] font-semibold inline-flex items-center gap-0.5 relative cursor-pointer"
                               >
-                                <span className="underline inline-flex items-center gap-0.5 inline-block" style={{ animation: 'pulseText 1.5s ease-in-out infinite' }}>
+                                <span className="underline inline-flex items-center gap-0.5">
                                   <span>{insight.additionalAction}</span>
                                   <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                                   </svg>
                                 </span>
-                                {/* Pulsing Ring Indicator */}
-                                <div className="absolute top-[-5px] left-0 w-7 h-7 rounded-full border-[1px] pointer-events-none" style={{ borderColor: '#999999', boxShadow: '0 0 15px rgba(153, 153, 153, 0.7), 0 0 8px rgba(0, 0, 0, 0.2)', animation: 'pulseRing 1.5s ease-in-out infinite' }}></div>
                               </button>
                             )}
                           </div>
@@ -701,7 +644,7 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
                   setTimeout(() => setIsTransitioning(false), 500);
                 }
               }}
-              className="p-1 transition-colors"
+              className="p-1 transition-colors cursor-pointer"
               disabled={isTransitioning}
             >
               <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
@@ -721,7 +664,7 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
                       setTimeout(() => setIsTransitioning(false), 500);
                     }
                   }}
-                  className={`transition-all duration-300 rounded-full ${
+                  className={`transition-all duration-300 rounded-full cursor-pointer ${
                     index === currentInsightIndex 
                       ? 'w-2 h-2 bg-gradient-to-r from-purple-500 to-pink-500 shadow-[0_0_6px_rgba(168,85,247,0.6)]' 
                       : 'w-1.5 h-1.5 bg-gray-400'
@@ -740,7 +683,7 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
                   setTimeout(() => setIsTransitioning(false), 500);
                 }
               }}
-              className="p-1 transition-colors"
+              className="p-1 transition-colors cursor-pointer"
               disabled={isTransitioning}
             >
               <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
@@ -759,7 +702,7 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
                 <button
                   key={tab}
                   onClick={() => handleAnalysisTabClick(tab)}
-                  className={`flex-1 py-4 text-[12px] font-bold relative whitespace-nowrap transition-colors ${
+                  className={`flex-1 py-4 text-[12px] font-bold relative whitespace-nowrap transition-colors cursor-pointer ${
                     activeAnalysisTab === tab ? 'text-[#da0011]' : 'text-[#767676]'
                   }`}
                 >
@@ -931,7 +874,7 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
                             setTimeout(() => setIsStockViewTransitioning(false), 500);
                           }
                         }}
-                        className="p-1 transition-colors"
+                        className="p-1 transition-colors cursor-pointer"
                         disabled={isStockViewTransitioning}
                       >
                         <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
@@ -951,7 +894,7 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
                                 setTimeout(() => setIsStockViewTransitioning(false), 500);
                               }
                             }}
-                            className={`transition-all duration-300 rounded-full ${
+                            className={`transition-all duration-300 rounded-full cursor-pointer ${
                               index === currentStockViewIndex 
                                 ? 'w-2 h-2 bg-gray-900' 
                                 : 'w-1.5 h-1.5 bg-gray-400'
@@ -970,7 +913,7 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
                             setTimeout(() => setIsStockViewTransitioning(false), 500);
                           }
                         }}
-                        className="p-1 transition-colors"
+                        className="p-1 transition-colors cursor-pointer"
                         disabled={isStockViewTransitioning}
                       >
                         <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
@@ -990,7 +933,7 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
                         <span className="text-[#db0011] font-bold mt-0.5">•</span>
                         <div className="text-gray-700">
                           <span>Tech concentration at 45% exceeds recommended 35% threshold; consider partial profit-taking </span>
-                          <button className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5">
+                          <button className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5 cursor-pointer">
                             <span>Rebalance Now</span>
                             <svg className="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -1003,7 +946,7 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
                         <span className="text-[#db0011] font-bold mt-0.5">•</span>
                         <div className="text-gray-700">
                           <span>Add defensive stocks in consumer staples or utilities to hedge against market correction </span>
-                          <button className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5">
+                          <button className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5 cursor-pointer">
                             <span>Explore Defensive Stocks</span>
                             <svg className="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -1016,15 +959,13 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
                         <span className="text-[#db0011] font-bold mt-0.5">•</span>
                         <div className="text-gray-700">
                           <span>NVIDIA's revenue surged 262% YOY last quarter, highlighting its dominance in AI chips. </span>
-                          <button onClick={() => setShowStockDetail(true)} className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5 relative">
-                            <span className="inline-flex items-center gap-0.5 inline-block" style={{ animation: 'pulseText 1.5s ease-in-out infinite' }}>
+                          <button onClick={() => setShowStockDetail(true)} className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5 relative cursor-pointer">
+                            <span className="inline-flex items-center gap-0.5">
                               <span>View Price</span>
                               <svg className="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                               </svg>
                             </span>
-                            {/* Pulsing Ring Indicator */}
-                            <div className="absolute top-[-5px] left-0 w-7 h-7 rounded-full border-[1px] pointer-events-none" style={{ borderColor: '#999999', boxShadow: '0 0 15px rgba(153, 153, 153, 0.7), 0 0 8px rgba(0, 0, 0, 0.2)', animation: 'pulseRing 1.5s ease-in-out infinite' }}></div>
                           </button>
                         </div>
                       </div>
@@ -1114,15 +1055,13 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
                   <div className="flex gap-2 mt-3 pt-3 border-t border-[#d5e5ec]">
                     <button 
                       onClick={onGoToUnitTrusts}
-                      className="flex-1 bg-white text-[#db0011] text-[11px] font-semibold py-2 px-3 rounded-sm border border-[#db0011] active:opacity-80 transition-opacity relative"
+                      className="flex-1 bg-white text-[#db0011] text-[11px] font-semibold py-2 px-3 rounded-sm border border-[#db0011] active:opacity-80 transition-opacity relative cursor-pointer"
                     >
-                      <span className="inline-block" style={{ animation: 'pulseText 1.5s ease-in-out infinite' }}>
+                      <span className="inline-block">
                         View Details
                       </span>
-                      {/* Pulsing Ring Indicator - Centered on text */}
-                      <div className="absolute top-[3px] left-1/3 -translate-x-1/2 w-7 h-7 rounded-full border-[1px] pointer-events-none" style={{ borderColor: '#999999', boxShadow: '0 0 15px rgba(153, 153, 153, 0.7), 0 0 8px rgba(0, 0, 0, 0.2)', animation: 'pulseRing 1.5s ease-in-out infinite' }}></div>
                     </button>
-                    <button className="flex-1 bg-[#db0011] text-white text-[11px] font-semibold py-2 px-3 rounded-sm active:opacity-80 transition-opacity">
+                    <button className="flex-1 bg-[#db0011] text-white text-[11px] font-semibold py-2 px-3 rounded-sm active:opacity-80 transition-opacity cursor-pointer">
                       Search Fund
                     </button>
                   </div>

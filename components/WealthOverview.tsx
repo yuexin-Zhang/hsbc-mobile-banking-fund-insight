@@ -126,8 +126,7 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
     if (!isExpanded) {
       const interval = setInterval(() => {
         setCurrentInfoIndex((prev) => (prev + 1) % infoItems.length);
-      }, 3000); // Change every 3 seconds
-      
+      }, 2000); // Change every 2 seconds
       return () => clearInterval(interval);
     }
   }, [isExpanded]);
@@ -189,31 +188,7 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
             box-shadow: 0 0 10px rgba(168, 85, 247, 0.5), 0 0 20px rgba(168, 85, 247, 0.3), 0 0 30px rgba(236, 72, 153, 0.2);
           }
         }
-        @keyframes pulseRing {
-          0% {
-            transform: scale(1);
-            opacity: 1;
-          }
-          50% {
-            transform: scale(1.15);
-            opacity: 0.4;
-          }
-          100% {
-            transform: scale(1);
-            opacity: 1;
-          }
-        }
-        @keyframes pulseText {
-          0% {
-            transform: scale(1);
-          }
-          50% {
-            transform: scale(1.15);
-          }
-          100% {
-            transform: scale(1);
-          }
-        }
+
         .info-item-enter {
           animation: fadeInUp 0.6s ease-out forwards;
         }
@@ -369,9 +344,7 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
                   onClick={onGoToPortfolioOverview}
                   className="bg-white border border-[#da0011] px-2 py-1 flex items-center cursor-pointer active:bg-[#fff5f5] transition-all duration-200 hover:shadow-sm flex-shrink-0 ml-2 relative"
                 >
-                  <span className="text-[10px] font-semibold text-[#da0011] leading-none inline-block" style={{ animation: 'pulseText 1.5s ease-in-out infinite' }}>View details</span>
-                  {/* Pulsing Ring Indicator - Gray border on the right */}
-                  <div className="absolute top-[-5px] left-0 w-7 h-7 rounded-full border-[1px] pointer-events-none" style={{ borderColor: '#999999', boxShadow: '0 0 15px rgba(153, 153, 153, 0.7), 0 0 8px rgba(0, 0, 0, 0.2)', animation: 'pulseRing 1.5s ease-in-out infinite' }}></div>
+                  <span className="text-[10px] font-semibold text-[#da0011] leading-none inline-block">View details</span>
                 </button>
               </div>
 
@@ -408,12 +381,10 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
                   {/* Expand Button */}
                   <button
                     onClick={() => setIsExpanded(true)}
-                    className="w-full mt-1 flex items-center justify-center gap-2 py-2 text-[#da0011] font-semibold text-[13px] active:opacity-70 transition-all"
+                    className="w-full mt-1 flex items-center justify-center gap-2 py-2 text-[#da0011] font-semibold text-[13px] active:opacity-70 transition-all cursor-pointer"
                   >
                     <div className="relative inline-flex items-center">
-                      {/* Pulsing Ring Indicator */}
-                      <div className="absolute top-[-5px] left-0 w-7 h-7 rounded-full border-[1px] pointer-events-none" style={{ borderColor: '#999999', boxShadow: '0 0 15px rgba(153, 153, 153, 0.7), 0 0 8px rgba(0, 0, 0, 0.2)', animation: 'pulseRing 1.5s ease-in-out infinite' }}></div>
-                      <span className="underline inline-block" style={{ animation: 'pulseText 1.5s ease-in-out infinite' }}>Show More</span>
+                      <span className="underline inline-block">Show More</span>
                     </div>
                     <svg className="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
@@ -454,16 +425,14 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
                                   }
                                 }, 100);
                               }}
-                              className="text-[11px] text-[#da0011] font-semibold inline-flex items-center gap-0.5 relative"
+                              className="text-[11px] text-[#da0011] font-semibold inline-flex items-center gap-0.5 relative cursor-pointer"
                             >
-                              <span className="underline inline-flex items-center gap-0.5 inline-block" style={{ animation: 'pulseText 1.5s ease-in-out infinite' }}>
+                              <span className="underline inline-flex items-center gap-0.5 inline-block">
                                 <span>CIO House View</span>
                                 <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
                                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                                 </svg>
                               </span>
-                              {/* Pulsing Ring Indicator */}
-                              <div className="absolute top-[-5px] left-0 w-7 h-7 rounded-full border-[1px] pointer-events-none" style={{ borderColor: '#999999', boxShadow: '0 0 15px rgba(153, 153, 153, 0.7), 0 0 8px rgba(0, 0, 0, 0.2)', animation: 'pulseRing 1.5s ease-in-out infinite' }}></div>
                             </button>
                           </div>
                         </div>
@@ -533,16 +502,14 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
                             <span className="text-[#1e1e1e]">Your risk assessment is expiring soon </span>
                             <button 
                               onClick={() => setIsRiskProfileOpen(true)}
-                              className="text-[11px] text-[#da0011] font-semibold inline-flex items-center gap-0.5 relative"
+                              className="text-[11px] text-[#da0011] font-semibold inline-flex items-center gap-0.5 relative cursor-pointer"
                             >
-                              <span className="underline inline-flex items-center gap-0.5 inline-block" style={{ animation: 'pulseText 1.5s ease-in-out infinite' }}>
+                              <span className="underline inline-flex items-center gap-0.5 inline-block">
                                 <span>Update now</span>
                                 <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
                                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                                 </svg>
                               </span>
-                              {/* Pulsing Ring Indicator */}
-                              <div className="absolute top-[-5px] left-0 w-7 h-7 rounded-full border-[1px] pointer-events-none" style={{ borderColor: '#999999', boxShadow: '0 0 15px rgba(153, 153, 153, 0.7), 0 0 8px rgba(0, 0, 0, 0.2)', animation: 'pulseRing 1.5s ease-in-out infinite' }}></div>
                             </button>
                           </div>
                         </div>
@@ -598,12 +565,10 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
                 {/* Collapse Button */}
                 <button
                   onClick={() => setIsExpanded(false)}
-                  className="w-full flex items-center justify-center gap-2 pb-2 text-[#da0011] font-semibold text-[13px] active:opacity-70 transition-all"
+                  className="w-full flex items-center justify-center gap-2 pb-2 text-[#da0011] font-semibold text-[13px] active:opacity-70 transition-all cursor-pointer"
                 >
                   <div className="relative inline-flex items-center">
-                    {/* Pulsing Ring Indicator */}
-                    <div className="absolute top-[-5px] left-0 w-7 h-7 rounded-full border-[1px] pointer-events-none" style={{ borderColor: '#999999', boxShadow: '0 0 15px rgba(153, 153, 153, 0.7), 0 0 8px rgba(0, 0, 0, 0.2)', animation: 'pulseRing 1.5s ease-in-out infinite' }}></div>
-                    <span className="underline inline-block" style={{ animation: 'pulseText 1.5s ease-in-out infinite' }}>Show less</span>
+                    <span className="underline inline-block">Show less</span>
                   </div>
                   <svg className="w-4 h-4 rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
@@ -653,7 +618,7 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
           <div className="flex px-4">
             <button 
               onClick={() => setActiveTab('overview')}
-              className={`px-1 py-3 text-[15px] font-semibold ${
+              className={`px-1 py-3 text-[15px] font-semibold cursor-pointer ${
                 activeTab === 'overview' 
                   ? 'text-gray-900 border-b-2 border-[#da0011] -mb-[2px]' 
                   : 'text-gray-600'
@@ -663,16 +628,14 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
             </button>
             <button 
               onClick={() => setActiveTab('insights')}
-              className={`px-6 py-3 text-[15px] ml-8 ${
+              className={`px-6 py-3 text-[15px] ml-8 cursor-pointer ${
                 activeTab === 'insights' 
                   ? 'font-semibold text-gray-900 border-b-2 border-[#da0011] -mb-[2px]' 
                   : 'text-gray-600'
               }`}
             >
               <div className="relative inline-flex items-center">
-                {/* Pulsing Ring Indicator */}
-                <div className="absolute top-[-5px] left-0 w-7 h-7 rounded-full border-[1px] pointer-events-none" style={{ borderColor: '#999999', boxShadow: '0 0 15px rgba(153, 153, 153, 0.7), 0 0 8px rgba(0, 0, 0, 0.2)', animation: 'pulseRing 1.5s ease-in-out infinite' }}></div>
-                <span className="inline-block" style={{ animation: 'pulseText 1.5s ease-in-out infinite' }}>Insights</span>
+                <span className="inline-block">Insights</span>
               </div>
             </button>
           </div>
@@ -869,7 +832,7 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
       {/* HSBC Lion AI Button - Fixed at bottom right within phone area */}
       <button
         onClick={() => setIsAIAssistantOpen(true)}
-        className="absolute bottom-24 right-4 w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 z-50 overflow-hidden"
+        className="absolute bottom-24 right-4 w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 z-50 overflow-hidden cursor-pointer"
         aria-label="Open AI Assistant"
       >
         <img 

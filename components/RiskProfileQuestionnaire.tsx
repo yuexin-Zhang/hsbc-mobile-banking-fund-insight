@@ -57,7 +57,7 @@ const RiskProfileQuestionnaire: React.FC<RiskProfileQuestionnaireProps> = ({ isO
       <div className="flex items-center justify-between px-4 py-4 border-b border-gray-200 bg-white shrink-0">
         <button 
           onClick={onClose}
-          className="w-8 h-8 flex items-center justify-center"
+          className="w-8 h-8 flex items-center justify-center cursor-pointer"
         >
           <svg className="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -80,7 +80,7 @@ const RiskProfileQuestionnaire: React.FC<RiskProfileQuestionnaireProps> = ({ isO
             {/* Option 1: 0% */}
             <button
               onClick={() => setSelectedOption(0)}
-              className="w-full flex items-center justify-between py-4 border-b border-gray-200 active:bg-gray-50 transition-colors"
+              className="w-full flex items-center justify-between py-4 border-b border-gray-200 active:bg-gray-50 transition-colors cursor-pointer"
             >
               <span className="text-[17px] text-gray-900">0%</span>
               <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
@@ -97,7 +97,7 @@ const RiskProfileQuestionnaire: React.FC<RiskProfileQuestionnaireProps> = ({ isO
             {/* Option 2: Between >0% and 50% */}
             <button
               onClick={() => setSelectedOption(1)}
-              className="w-full flex items-center justify-between py-4 border-b border-gray-200 active:bg-gray-50 transition-colors"
+              className="w-full flex items-center justify-between py-4 border-b border-gray-200 active:bg-gray-50 transition-colors cursor-pointer"
             >
               <span className="text-[17px] text-gray-900">Between &gt;0% and 50%</span>
               <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
@@ -114,7 +114,7 @@ const RiskProfileQuestionnaire: React.FC<RiskProfileQuestionnaireProps> = ({ isO
             {/* Option 3: Over 50% */}
             <button
               onClick={() => setSelectedOption(2)}
-              className="w-full flex items-center justify-between py-4 border-b border-gray-200 active:bg-gray-50 transition-colors"
+              className="w-full flex items-center justify-between py-4 border-b border-gray-200 active:bg-gray-50 transition-colors cursor-pointer"
             >
               <span className="text-[17px] text-gray-900">Over 50%</span>
               <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
@@ -133,7 +133,7 @@ const RiskProfileQuestionnaire: React.FC<RiskProfileQuestionnaireProps> = ({ isO
           <div className="mt-6">
             <p className="text-[15px] text-gray-900">
               Make sure you read the{' '}
-              <button className="underline font-medium">important notes</button>
+              <button className="underline font-medium cursor-pointer">important notes</button>
               {' '}before answering the questions.
             </p>
           </div>
@@ -143,7 +143,7 @@ const RiskProfileQuestionnaire: React.FC<RiskProfileQuestionnaireProps> = ({ isO
         <div className="px-4 pb-6 pt-4">
           <button 
             onClick={onClose}
-            className="w-full bg-[#da0011] text-white text-[17px] font-semibold py-3.5 rounded active:bg-[#b5000e] transition-colors"
+            className="w-full bg-[#da0011] text-white text-[17px] font-semibold py-3.5 rounded active:bg-[#b5000e] transition-colors cursor-pointer"
           >
             Next
           </button>
