@@ -1,19 +1,15 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useMobileDetect } from '../hooks/useMobileDetect';
-import FloatingAIButton from './FloatingAIButton';
-import AIAssistant from './AIAssistant';
-import RiskProfileQuestionnaire from './RiskProfileQuestionnaire';
-import HoldingsPerformanceChart from './charts/HoldingsPerformanceChart';
-import StockDetailPage from './StockDetailPage';
+import { useNavigate } from 'react-router-dom';
+import { useMobileDetect } from '../../hooks/useMobileDetect';
+import FloatingAIButton from '../../components/FloatingAIButton';
+import AIAssistant from '../../components/AIAssistant';
+import RiskProfileQuestionnaire from '../../components/RiskProfileQuestionnaire';
+import HoldingsPerformanceChart from '../../components/charts/HoldingsPerformanceChart';
+import StockDetailPage from '../../components/StockDetailPage';
 
-interface PortfolioOverviewPageProps {
-  onBack: () => void;
-  onGoToUnitTrusts: () => void;
-  onNavigateToInsights: () => void;
-}
-
-const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, onGoToUnitTrusts, onNavigateToInsights }) => {
+const PortfolioPage: React.FC = () => {
+  const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState('');
   const [currentInsightIndex, setCurrentInsightIndex] = useState(0);
     const [activeAnalysisTab, setActiveAnalysisTab] = useState('Stock');
@@ -353,7 +349,7 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button 
-              onClick={onBack} 
+              onClick={() => navigate('/home')} 
               className="w-7 h-7 -ml-2 flex items-center justify-center active:bg-gray-100 rounded-full transition-colors cursor-pointer"
             >
               <svg className="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
@@ -610,7 +606,13 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   if (insight.additionalAction === 'CIO House View') {
-                                    onNavigateToInsights();
+                                    navigate('/home');
+                                    setTimeout(() => {
+                                      const insightsSection = document.querySelector('[data-insights-section]');
+                                      if (insightsSection) {
+                                        insightsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                      }
+                                    }, 300);
                                   }
                                 }}
                                 className="text-[11px] text-[#da0011] font-semibold inline-flex items-center gap-0.5 relative cursor-pointer"
@@ -1054,7 +1056,7 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
                   {/* Action Buttons */}
                   <div className="flex gap-2 mt-3 pt-3 border-t border-[#d5e5ec]">
                     <button 
-                      onClick={onGoToUnitTrusts}
+                      onClick={() => navigate('/fund')}
                       className="flex-1 bg-white text-[#db0011] text-[11px] font-semibold py-2 px-3 rounded-sm border border-[#db0011] active:opacity-80 transition-opacity relative cursor-pointer"
                     >
                       <span className="inline-block">
@@ -1342,4 +1344,4 @@ const PortfolioOverviewPage: React.FC<PortfolioOverviewPageProps> = ({ onBack, o
   );
 };
 
-export default PortfolioOverviewPage;
+export default PortfolioPage;

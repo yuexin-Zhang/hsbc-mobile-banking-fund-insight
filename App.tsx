@@ -1,99 +1,27 @@
-
-import React, { useState } from 'react';
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useMobileDetect } from './hooks/useMobileDetect';
 import PhoneFrame from './components/PhoneFrame';
-import WealthHeader from './components/WealthHeader';
-import NavGrid from './components/NavGrid';
-import ContactSection from './components/ContactSection';
-import PromoBanner from './components/PromoBanner';
-import BottomNav from './components/BottomNav';
-import FundInsightOverview from './components/FundInsightOverview';
-import PortfolioSimulation from './components/PortfolioSimulation';
-import MyHoldings from './components/MyHoldings';
-import WealthOverview from './components/WealthOverview';
-import PortfolioOverviewPage from './components/PortfolioOverviewPage';
+import HomePage from './pages/Home';
+import PortfolioPage from './pages/Portfolio';
+import FundPage from './pages/Fund';
 
 const App: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState<'home' | 'overview' | 'details' | 'simulation' | 'holdings' | 'wealthOverview' | 'portfolioOverview'>('wealthOverview');
-  const [isAIGenerated, setIsAIGenerated] = useState(false);
-  const [shouldNavigateToInsights, setShouldNavigateToInsights] = useState(false);
   const isMobile = useMobileDetect();
 
-  const navigateToOverview = () => setCurrentPage('overview');
-  const navigateToDetails = () => setCurrentPage('details');
-  const navigateToSimulation = () => setCurrentPage('simulation');
-  const navigateToHoldings = () => setCurrentPage('holdings');
-  const navigateToHome = () => setCurrentPage('home');
-  const navigateToWealthOverview = () => {
-    setShouldNavigateToInsights(false);
-    setCurrentPage('wealthOverview');
-  };
-  const navigateToWealthOverviewWithInsights = () => {
-    setShouldNavigateToInsights(true);
-    setCurrentPage('wealthOverview');
-  };
-  const navigateToPortfolioOverview = () => {
-    console.log('Navigating to Portfolio Overview');
-    setCurrentPage('portfolioOverview');
-  };
-
   return (
-    <div className={`w-full ${isMobile ? 'h-screen' : 'flex justify-center items-center'}`}>
-      <PhoneFrame>
-        {currentPage === 'home' && (
-          <div className="flex flex-col h-full bg-[#f5f5f5] overflow-y-auto no-scrollbar">
-            <WealthHeader onWealthAssetsClick={navigateToWealthOverview} />
-            <NavGrid onInsightClick={navigateToOverview} />
-            <div className="px-4 py-4 space-y-4">
-              <ContactSection />
-              <PromoBanner />
-            </div>
-            <div className="h-24 shrink-0" />
-            <BottomNav />
-          </div>
-        )}
-        
-        {currentPage === 'overview' && (
-          <FundInsightOverview 
-            onBack={navigateToPortfolioOverview} 
-            onGoToDetails={navigateToDetails} 
-            onGoToSimulation={navigateToSimulation}
-            isAIGenerated={isAIGenerated}
-            onToggleAIMode={setIsAIGenerated}
-          />
-        )}
-
-        {currentPage === 'simulation' && (
-          <PortfolioSimulation 
-            onBack={navigateToOverview} 
-          />
-        )}
-
-        {currentPage === 'holdings' && (
-          <MyHoldings 
-            onBack={navigateToHome}
-            onGoToFundInsight={navigateToOverview}
-          />
-        )}
-
-        {currentPage === 'wealthOverview' && (
-          <WealthOverview 
-            onBack={navigateToHome}
-            onGoToPortfolioOverview={navigateToPortfolioOverview}
-            shouldNavigateToInsights={shouldNavigateToInsights}
-            onInsightsNavigated={() => setShouldNavigateToInsights(false)}
-          />
-        )}
-
-        {currentPage === 'portfolioOverview' && (
-          <PortfolioOverviewPage 
-            onBack={navigateToWealthOverview}
-            onGoToUnitTrusts={navigateToOverview}
-            onNavigateToInsights={navigateToWealthOverviewWithInsights}
-          />
-        )}
-      </PhoneFrame>
-    </div>
+    <BrowserRouter>
+      <div className={`w-full ${isMobile ? 'h-screen' : 'flex justify-center items-center'}`}>
+        <PhoneFrame>
+          <Routes>
+            <Route path="/home" element={<HomePage />} />
+            <Route path="/portfolio" element={<PortfolioPage />} />
+            <Route path="/fund" element={<FundPage />} />
+            <Route path="/" element={<Navigate to="/home" replace />} />
+          </Routes>
+        </PhoneFrame>
+      </div>
+    </BrowserRouter>
   );
 };
 

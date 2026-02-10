@@ -1,28 +1,23 @@
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import AIAssistant from './AIAssistant';
-import { useMobileDetect } from '../hooks/useMobileDetect';
+import { useNavigate } from 'react-router-dom';
+import AIAssistant from '../../components/AIAssistant';
+import { useMobileDetect } from '../../hooks/useMobileDetect';
 import { Chart as ChartJS, Title, Tooltip, Legend, CategoryScale, LinearScale } from 'chart.js';
 import { TreemapController, TreemapElement } from 'chartjs-chart-treemap';
-import HoldingsOverview from './overview/HoldingsOverview';
-import StyleTab from './tabs/StyleTab';
-import PerformanceTab from './tabs/PerformanceTab';
-import ClassesTab from './tabs/ClassesTab';
-import ConcentrationTab from './tabs/ConcentrationTab';
-import ManagerTab from './tabs/ManagerTab';
-import FloatingAIButton from './FloatingAIButton';
+import HoldingsOverview from '../../components/overview/HoldingsOverview';
+import StyleTab from '../../components/tabs/StyleTab';
+import PerformanceTab from '../../components/tabs/PerformanceTab';
+import ClassesTab from '../../components/tabs/ClassesTab';
+import ConcentrationTab from '../../components/tabs/ConcentrationTab';
+import ManagerTab from '../../components/tabs/ManagerTab';
+import FloatingAIButton from '../../components/FloatingAIButton';
 
 ChartJS.register(Title, Tooltip, Legend, CategoryScale, LinearScale, TreemapController, TreemapElement);
 
-interface FundInsightOverviewProps {
-  onBack: () => void;
-  onGoToDetails: () => void;
-  onGoToSimulation: () => void;
-  isAIGenerated: boolean;
-  onToggleAIMode: (value: boolean) => void;
-}
-
-const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoToDetails, onGoToSimulation, isAIGenerated, onToggleAIMode }) => {
+const FundPage: React.FC = () => {
+  const navigate = useNavigate();
+  const [isAIGenerated, setIsAIGenerated] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const [activeDetailTab, setActiveDetailTab] = useState('Performance');
@@ -503,7 +498,7 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
       <div className={`bg-white py-2 px-3 border-b border-gray-200 sticky z-50 ${isMobile ? 'top-0' : 'top-[30px]'}`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <button onClick={onBack} className="w-7 h-7 -ml-2 flex items-center justify-center active:bg-gray-100 rounded-full transition-colors">
+            <button onClick={() => navigate('/portfolio')} className="w-7 h-7 -ml-2 flex items-center justify-center active:bg-gray-100 rounded-full transition-colors cursor-pointer">
               <svg className="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
@@ -514,7 +509,7 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
           <div className="flex items-center gap-2">
             {/* AI Mode Toggle */}
             <button
-              onClick={() => onToggleAIMode(!isAIGenerated)}
+              onClick={() => setIsAIGenerated(!isAIGenerated)}
               className={`flex items-center gap-1 px-1.5 py-0.5 rounded-full shadow-sm transition-all cursor-pointer ${
                 isAIGenerated
                   ? 'bg-gradient-to-r from-purple-500 to-pink-500' 
@@ -632,4 +627,4 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
   );
 };
 
-export default FundInsightOverview;
+export default FundPage;

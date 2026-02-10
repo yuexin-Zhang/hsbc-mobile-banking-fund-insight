@@ -97,6 +97,11 @@ const TreemapChart: React.FC<TreemapChartProps> = ({ data, onItemClick, selected
         if (item) onItemClick?.(item.label);
       }
     },
+    interaction: {
+      mode: 'nearest' as const,
+      intersect: true
+    },
+    events: ['click', 'mousemove', 'mouseout', 'touchstart', 'touchmove'],
     plugins: {
       legend: { display: false },
       tooltip: {
