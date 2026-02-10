@@ -22,7 +22,7 @@ const StockAnalysisSection: React.FC<StockAnalysisSectionProps> = ({ sectionRef,
         {/* AI Summary */}
         <div className="bg-[#f0f8ff] p-2">
           <p className="text-[11px] text-gray-700 leading-snug">
-            YTD <span className="font-bold text-[#da0011]">+25.3%</span> with strong momentum. Top risers led by HSBC <span className="font-bold text-[#da0011]">+3.12%</span> and UBTECH <span className="font-bold text-[#da0011]">+1.83%</span>; MTR weakness <span className="font-bold text-green-600">-1.47%</span> reflects sector rotation. Consider locking gains on risers and averaging down on quality fallers. Note: Tech concentration <span className="font-bold">45%</span> exceeds threshold—diversify into defensive sectors for risk balance.
+            YTD <span className="text-[#da0011]">+25.3%</span> with strong momentum. Top risers: HSBC <span className="text-[#da0011]">+3.12%</span>, UBTECH <span className="text-[#da0011]">+1.83%</span>; MTR <span className="text-green-600">-1.47%</span>. Tech at 45%—consider profit-taking and diversifying into defensive sectors.
           </p>
         </div>
 

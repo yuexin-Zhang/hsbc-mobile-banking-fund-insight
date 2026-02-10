@@ -21,7 +21,7 @@ const BondAnalysisSection: React.FC<BondAnalysisSectionProps> = ({ sectionRef })
         {/* AI Summary */}
         <div className="bg-[#f0f8ff] p-2">
           <p className="text-[11px] text-gray-700 leading-snug">
-            Well-diversified allocation with avg yield <span className="font-bold text-[#da0011]">4.2%</span>. Consider laddering for rate flexibility. <span className="font-bold">15%</span> high-yield shows credit deterioration.
+            Avg yield <span className="text-[#da0011]">4.2%</span>, duration 5.3y. <span className="text-[#da0011]">14% high-risk</span>: Evergrande CCC, Country Garden CC—exit to IG bonds. HKD 593,250 coupons + Sep maturity (HKD 526,500) incoming.
           </p>
         </div>
 
@@ -221,11 +221,7 @@ const BondAnalysisSection: React.FC<BondAnalysisSectionProps> = ({ sectionRef })
                 <span className="text-[#db0011] font-bold mt-0.5">•</span>
                 <div className="text-gray-700">
                   <span className="font-semibold text-orange-700">⚠ Urgent: </span>
-                  <span>Evergrande 8.25% (HKD 653,280.50, 8%) downgraded to CCC. AI recommends selling and reallocating to </span>
-                  <span className="font-semibold">US Treasury 10Y</span>
-                  <span> or </span>
-                  <span className="font-semibold">HSBC 5.5% Perp</span>
-                  <span> to preserve capital </span>
+                  <span>Evergrande 8.25% (CCC, HKD 653,280) + Country Garden 7.5% (CC, HKD 487,105) = 14% at high default risk. Sell and rotate to US Treasury 10Y or HSBC 5.5% Perp </span>
                   <button className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5 cursor-pointer">
                     <span>Rebalance Now</span>
                     <svg className="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
@@ -237,23 +233,9 @@ const BondAnalysisSection: React.FC<BondAnalysisSectionProps> = ({ sectionRef })
               <div className="flex items-start gap-2 text-[11px]">
                 <span className="text-[#db0011] font-bold mt-0.5">•</span>
                 <div className="text-gray-700">
-                  <span>Corporate Bond ABC matures </span>
-                  <span className="font-semibold">Sep 20, 2026</span>
-                  <span> (HKD 526,500.00). Reinvest in China Govt 3.25% 2030 for similar risk/return profile or explore higher-yield Asia IG corporates </span>
+                  <span>Sep 20: Corporate Bond ABC maturity (HKD 526,500). Reinvest in China Govt 3.25% 2030 or explore higher-yield Asia IG corporates </span>
                   <button className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5 cursor-pointer">
                     <span>Plan Reinvestment</span>
-                    <svg className="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              <div className="flex items-start gap-2 text-[11px]">
-                <span className="text-[#db0011] font-bold mt-0.5">•</span>
-                <div className="text-gray-700">
-                  <span>Expected HKD 603,050.00 coupon income in next 12 months. Consider auto-reinvesting 70% into bond fund (4.8% yield) for compounding effect </span>
-                  <button className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5 cursor-pointer">
-                    <span>Set Auto-Invest</span>
                     <svg className="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                     </svg>

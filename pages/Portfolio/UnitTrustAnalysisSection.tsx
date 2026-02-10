@@ -22,7 +22,7 @@ const UnitTrustAnalysisSection: React.FC<UnitTrustAnalysisSectionProps> = ({ sec
         {/* AI Summary */}
         <div className="bg-[#f0f8ff] p-2">
           <p className="text-[11px] text-gray-700 leading-snug">
-            Strong performance <span className="font-bold text-[#da0011]">+18.5%</span> YoY, outperforming benchmark by <span className="font-bold text-[#da0011]">+3.2%</span>. Tech and healthcare exposure solid. Consider <span className="font-bold">+5%</span> Asia allocation.
+            Strong performance <span className="text-[#da0011]">+18.5%</span> YoY, outperforming benchmark by <span className="text-[#da0011]">+3.2%</span>. Tech and healthcare exposure solid. Consider +5% Asia allocation.
           </p>
         </div>
 

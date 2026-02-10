@@ -15,7 +15,6 @@ export const fallers = [
 export const couponPayments = [
   { date: 'Mar 10, 2026', bond: 'HSBC 5.5% Perp', description: 'Coupon Payment', amount: '+HKD 33,000', frequency: 'Semi-annual' },
   { date: 'May 15, 2026', bond: 'US Treasury 10Y', description: 'Coupon Payment', amount: '+HKD 33,750', frequency: 'Semi-annual' },
-  { date: 'Jun 12, 2026', bond: 'Tencent 2.39%', description: 'Coupon Payment', amount: '+HKD 9,800', frequency: 'Annual' },
 ];
 
 export const maturities = [
@@ -25,7 +24,6 @@ export const maturities = [
 export const allBondHoldings = [
   { name: 'Evergrande 8.25%', isin: 'XS2349090000', rating: 'CCC', value: '653,280.50', allocation: '8%', coupon: '8.25%', maturity: 'Mar 2027', ytm: '12.5%', warning: 'Credit rating downgraded. Consider reallocation to safer IG bonds.', hasRisk: true },
   { name: 'Country Garden 7.5%', isin: 'XS2456789012', rating: 'CC', value: '487,105.00', allocation: '6%', coupon: '7.50%', maturity: 'Aug 2026', ytm: '15.8%', warning: 'Payment default risk. Immediate action recommended.', hasRisk: true },
-  { name: 'Kaisa Group 11.65%', isin: 'XS2123456789', rating: 'D', value: '324,918.75', allocation: '4%', coupon: '11.65%', maturity: 'Jun 2025', ytm: '22.3%', warning: 'In default. Consider write-off and tax loss harvesting.', hasRisk: true },
 ];
 
 export const chartData = [
