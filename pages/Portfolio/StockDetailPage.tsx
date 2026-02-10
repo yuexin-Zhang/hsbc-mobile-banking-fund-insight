@@ -56,7 +56,7 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ onBack }) => {
         <div className="flex items-center justify-between">
           <button 
             onClick={onBack} 
-            className="w-8 h-8 -ml-2 flex items-center justify-center active:bg-gray-100 rounded-full transition-colors flex-shrink-0 z-10"
+            className="w-8 h-8 -ml-2 flex items-center justify-center active:bg-gray-100 rounded-full transition-colors flex-shrink-0 z-10 cursor-pointer"
           >
             <svg className="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -68,7 +68,7 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ onBack }) => {
               <p className="text-[13px] text-gray-600">NVIDIA CORP</p>
             </div>
           </div>
-          <button className="w-8 h-8 flex items-center justify-center active:bg-gray-100 rounded-full transition-colors flex-shrink-0">
+          <button className="w-8 h-8 flex items-center justify-center active:bg-gray-100 rounded-full transition-colors flex-shrink-0 cursor-pointer">
             <svg className="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
               <circle cx="12" cy="12" r="10" />
               <path d="M12 16v-4M12 8h.01" strokeLinecap="round" />
@@ -91,7 +91,7 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ onBack }) => {
           {/* Divider */}
           <div className="flex items-center justify-between mb-3">
             <span className="text-[15px] text-gray-600">N/A</span>
-            <button className="w-8 h-8 flex items-center justify-center active:bg-gray-100 rounded-full transition-colors">
+            <button className="w-8 h-8 flex items-center justify-center active:bg-gray-100 rounded-full transition-colors cursor-pointer">
               <svg className="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
@@ -121,7 +121,7 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ onBack }) => {
           <div className="flex">
             <button
               onClick={() => setActiveTab('Overview')}
-              className={`flex-1 py-4 text-[15px] font-medium relative transition-colors ${
+              className={`flex-1 py-4 text-[15px] font-medium relative transition-colors cursor-pointer ${
                 activeTab === 'Overview' ? 'text-gray-900' : 'text-gray-500'
               }`}
             >
@@ -132,7 +132,7 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ onBack }) => {
             </button>
             <button
               onClick={() => setActiveTab('Advance ratio')}
-              className={`flex-1 py-4 text-[15px] font-medium relative transition-colors ${
+              className={`flex-1 py-4 text-[15px] font-medium relative transition-colors cursor-pointer ${
                 activeTab === 'Advance ratio' ? 'text-gray-900' : 'text-gray-500'
               }`}
             >
@@ -153,7 +153,7 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ onBack }) => {
                 <button
                   key={range}
                   onClick={() => setActiveTimeRange(range)}
-                  className={`text-[14px] font-medium pb-1 ${
+                  className={`text-[14px] font-medium pb-1 cursor-pointer ${
                     activeTimeRange === range
                       ? 'text-gray-900 border-b-2 border-[#da0011]'
                       : 'text-gray-500'
@@ -267,7 +267,7 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ onBack }) => {
                   <h3 className="text-[15px] font-semibold text-gray-900 mb-0.5">Looking for more details?</h3>
                   <p className="text-[13px] text-gray-600">Download the HSBC HK Easy</p>
                 </div>
-                <button className="flex-shrink-0 p-2">
+                <button className="flex-shrink-0 p-2 cursor-pointer">
                   <svg className="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                   </svg>
@@ -280,10 +280,10 @@ const StockDetailPage: React.FC<StockDetailPageProps> = ({ onBack }) => {
 
       {/* Bottom Action Buttons */}
       <div className="sticky bottom-0 bg-white border-t border-gray-200 px-4 py-3 flex gap-3">
-        <button className="flex-1 bg-[#da0011] text-white text-[15px] font-semibold py-3 rounded active:opacity-80 transition-opacity">
+        <button className="flex-1 bg-[#da0011] text-white text-[15px] font-semibold py-3 rounded active:opacity-80 transition-opacity cursor-pointer">
           Buy
         </button>
-        <button className="flex-1 bg-white text-gray-400 text-[15px] font-semibold py-3 rounded border border-gray-300 active:opacity-80 transition-opacity">
+        <button className="flex-1 bg-white text-gray-400 text-[15px] font-semibold py-3 rounded border border-gray-300 active:opacity-80 transition-opacity cursor-pointer">
           Sell
         </button>
       </div>
