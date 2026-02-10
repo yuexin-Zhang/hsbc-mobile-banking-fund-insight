@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface AIInsightsCarouselProps {
@@ -10,6 +10,7 @@ const AIInsightsCarousel: React.FC<AIInsightsCarouselProps> = ({ onRiskProfileOp
   const [currentInsightIndex, setCurrentInsightIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isCarouselPaused, setIsCarouselPaused] = useState(false);
+  const carouselRef = useRef<HTMLDivElement>(null);
 
   // AI Insights data - 6 cards corresponding to What happened (3) and What's next (3)
   const insights = [
@@ -137,6 +138,33 @@ const AIInsightsCarousel: React.FC<AIInsightsCarouselProps> = ({ onRiskProfileOp
     return () => clearInterval(carouselInterval);
   }, [isCarouselPaused, isTransitioning, insights.length]);
 
+  // Handle wheel event with passive: false to prevent default scroll
+  useEffect(() => {
+    const carouselElement = carouselRef.current;
+    if (!carouselElement) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      if (isTransitioning) return;
+      
+      setIsTransitioning(true);
+      
+      if (e.deltaY > 0) {
+        setCurrentInsightIndex((prev) => (prev + 1) % insights.length);
+      } else if (e.deltaY < 0) {
+        setCurrentInsightIndex((prev) => (prev - 1 + insights.length) % insights.length);
+      }
+      
+      setTimeout(() => setIsTransitioning(false), 500);
+    };
+
+    carouselElement.addEventListener('wheel', handleWheel, { passive: false });
+    
+    return () => {
+      carouselElement.removeEventListener('wheel', handleWheel);
+    };
+  }, [isTransitioning, insights.length]);
+
   return (
     <div className="bg-[#f4f5f6] px-2 py-2 pb-3 relative">
       <div className="flex items-center justify-between mb-3">
@@ -183,6 +211,7 @@ const AIInsightsCarousel: React.FC<AIInsightsCarouselProps> = ({ onRiskProfileOp
 
       {/* AI Deep Dive Insights - Mobile-style Carousel */}
       <div 
+        ref={carouselRef}
         className="relative overflow-hidden"
         style={{ 
           perspective: '1000px',
@@ -191,20 +220,6 @@ const AIInsightsCarousel: React.FC<AIInsightsCarouselProps> = ({ onRiskProfileOp
         }}
         onMouseEnter={() => setIsCarouselPaused(true)}
         onMouseLeave={() => setIsCarouselPaused(false)}
-        onWheel={(e) => {
-          e.preventDefault();
-          if (isTransitioning) return;
-          
-          setIsTransitioning(true);
-          
-          if (e.deltaY > 0) {
-            setCurrentInsightIndex((prev) => (prev + 1) % insights.length);
-          } else if (e.deltaY < 0) {
-            setCurrentInsightIndex((prev) => (prev - 1 + insights.length) % insights.length);
-          }
-          
-          setTimeout(() => setIsTransitioning(false), 500);
-        }}
       >
         <div className="relative pb-4">
           {insights.map((insight, index) => {

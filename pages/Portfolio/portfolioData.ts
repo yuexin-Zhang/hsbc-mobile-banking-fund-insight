@@ -23,9 +23,9 @@ export const maturities = [
 ];
 
 export const allBondHoldings = [
-  { name: 'Evergrande 8.25%', isin: 'XS2349090000', rating: 'CCC', value: 'HKD 650K', allocation: '8%', coupon: '8.25%', maturity: 'Mar 2027', ytm: '12.5%', warning: 'Credit rating downgraded. Consider reallocation to safer IG bonds.', hasRisk: true },
-  { name: 'Country Garden 7.5%', isin: 'XS2456789012', rating: 'CC', value: 'HKD 480K', allocation: '6%', coupon: '7.50%', maturity: 'Aug 2026', ytm: '15.8%', warning: 'Payment default risk. Immediate action recommended.', hasRisk: true },
-  { name: 'Kaisa Group 11.65%', isin: 'XS2123456789', rating: 'D', value: 'HKD 320K', allocation: '4%', coupon: '11.65%', maturity: 'Jun 2025', ytm: '22.3%', warning: 'In default. Consider write-off and tax loss harvesting.', hasRisk: true },
+  { name: 'Evergrande 8.25%', isin: 'XS2349090000', rating: 'CCC', value: '653,280.50', allocation: '8%', coupon: '8.25%', maturity: 'Mar 2027', ytm: '12.5%', warning: 'Credit rating downgraded. Consider reallocation to safer IG bonds.', hasRisk: true },
+  { name: 'Country Garden 7.5%', isin: 'XS2456789012', rating: 'CC', value: '487,105.00', allocation: '6%', coupon: '7.50%', maturity: 'Aug 2026', ytm: '15.8%', warning: 'Payment default risk. Immediate action recommended.', hasRisk: true },
+  { name: 'Kaisa Group 11.65%', isin: 'XS2123456789', rating: 'D', value: '324,918.75', allocation: '4%', coupon: '11.65%', maturity: 'Jun 2025', ytm: '22.3%', warning: 'In default. Consider write-off and tax loss harvesting.', hasRisk: true },
 ];
 
 export const chartData = [

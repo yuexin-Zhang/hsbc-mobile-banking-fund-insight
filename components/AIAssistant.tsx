@@ -152,7 +152,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose, mode = 'scen
           {/* Close Button - positioned within header */}
           <button 
             onClick={handleClose}
-            className="absolute top-[60px] right-4 w-9 h-9 bg-gray-100 rounded-full shadow-md flex items-center justify-center hover:bg-gray-200 transition-colors z-10 border border-gray-200"
+            className="absolute top-[60px] right-4 w-9 h-9 bg-gray-100 rounded-full shadow-md flex items-center justify-center hover:bg-gray-200 transition-colors z-10 border border-gray-200 cursor-pointer"
           >
             <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -223,7 +223,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose, mode = 'scen
                   <button
                     key={scenario.id}
                     onClick={() => handleScenarioClick(scenario.id)}
-                    className="w-full bg-white rounded-lg p-4 border border-gray-200 shadow-sm hover:shadow-md hover:border-[#da0011] transition-all text-left group"
+                    className="w-full bg-white rounded-lg p-4 border border-gray-200 shadow-sm hover:shadow-md hover:border-[#da0011] transition-all text-left group cursor-pointer"
                   >
                     <div className="flex items-start gap-3">
                       <div className="w-10 h-10 bg-gradient-to-br from-[#da0011] to-[#ba000e] rounded-lg flex items-center justify-center text-white flex-shrink-0 group-hover:scale-110 transition-transform">
@@ -928,15 +928,17 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose, mode = 'scen
         {/* Input Bar at Bottom - Fixed */}
         <div className="bg-white border-t border-gray-200 p-4 flex-shrink-0">
           <div className="flex items-center gap-2 bg-gray-50 rounded-full px-4 py-3 border border-gray-200">
-            <button 
-              onClick={handleHomeClick}
-              className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-[#da0011] transition-colors flex-shrink-0"
-              title="Start new conversation"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-              </svg>
-            </button>
+            {(selectedScenario || conversationHistory.length > 0) && (
+              <button 
+                onClick={handleHomeClick}
+                className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-[#da0011] transition-colors flex-shrink-0 cursor-pointer"
+                title="Return to scenarios"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
+                </svg>
+              </button>
+            )}
             <input 
               type="text"
               placeholder="Ask about your portfolio performance..."

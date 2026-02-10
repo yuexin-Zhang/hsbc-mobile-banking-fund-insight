@@ -28,10 +28,10 @@ const BondAnalysisSection: React.FC<BondAnalysisSectionProps> = ({ sectionRef })
         {/* Bond Portfolio Summary Cards */}
         <div className="grid grid-cols-2 gap-2 mb-3">
           <div className="bg-gradient-to-br from-[#f8f9fa] to-white border border-gray-200 px-3 py-2">
-            <div className="text-[9px] text-gray-600 font-medium mb-0.5">Total Bond Value</div>
-            <div className="flex items-baseline gap-2">
-              <div className="text-[13px] font-bold text-gray-900">HKD 8.2M</div>
-              <div className="text-[8px] text-[#db0011] font-medium">+2.1% YTD</div>
+            <div className="text-[9px] text-gray-600 font-medium mb-0.5">Total Bond Value HKD</div>
+            <div className="flex items-baseline gap-1 flex-nowrap">
+              <div className="text-[13px] font-bold text-gray-900 whitespace-nowrap">8,273,504.35</div>
+              <div className="text-[8px] text-[#db0011] font-medium whitespace-nowrap">+2.1% YTD</div>
             </div>
           </div>
           <div className="bg-gradient-to-br from-[#f0f8ff] to-white border border-[#d5e5ec] px-3 py-2">
@@ -133,7 +133,7 @@ const BondAnalysisSection: React.FC<BondAnalysisSectionProps> = ({ sectionRef })
                             <div className="text-[9px] text-gray-600">ISIN: {bond.isin} • {bond.rating}</div>
                           </div>
                           <div className="text-right">
-                            <div className="text-[11px] font-bold text-gray-900">{bond.value}</div>
+                            <div className="text-[11px] font-bold text-gray-900">HKD {bond.value}</div>
                             <div className="text-[9px] text-gray-600">{bond.allocation}</div>
                           </div>
                         </div>
@@ -221,7 +221,7 @@ const BondAnalysisSection: React.FC<BondAnalysisSectionProps> = ({ sectionRef })
                 <span className="text-[#db0011] font-bold mt-0.5">•</span>
                 <div className="text-gray-700">
                   <span className="font-semibold text-orange-700">⚠ Urgent: </span>
-                  <span>Evergrande 8.25% (HKD 650K, 8%) downgraded to CCC. AI recommends selling and reallocating to </span>
+                  <span>Evergrande 8.25% (HKD 653,280.50, 8%) downgraded to CCC. AI recommends selling and reallocating to </span>
                   <span className="font-semibold">US Treasury 10Y</span>
                   <span> or </span>
                   <span className="font-semibold">HSBC 5.5% Perp</span>
@@ -239,7 +239,7 @@ const BondAnalysisSection: React.FC<BondAnalysisSectionProps> = ({ sectionRef })
                 <div className="text-gray-700">
                   <span>Corporate Bond ABC matures </span>
                   <span className="font-semibold">Sep 20, 2026</span>
-                  <span> (HKD 526K). Reinvest in China Govt 3.25% 2030 for similar risk/return profile or explore higher-yield Asia IG corporates </span>
+                  <span> (HKD 526,500.00). Reinvest in China Govt 3.25% 2030 for similar risk/return profile or explore higher-yield Asia IG corporates </span>
                   <button className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5 cursor-pointer">
                     <span>Plan Reinvestment</span>
                     <svg className="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
@@ -251,21 +251,9 @@ const BondAnalysisSection: React.FC<BondAnalysisSectionProps> = ({ sectionRef })
               <div className="flex items-start gap-2 text-[11px]">
                 <span className="text-[#db0011] font-bold mt-0.5">•</span>
                 <div className="text-gray-700">
-                  <span>Expected HKD 603K coupon income in next 12 months. Consider auto-reinvesting 70% into bond fund (4.8% yield) for compounding effect </span>
+                  <span>Expected HKD 603,050.00 coupon income in next 12 months. Consider auto-reinvesting 70% into bond fund (4.8% yield) for compounding effect </span>
                   <button className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5 cursor-pointer">
                     <span>Set Auto-Invest</span>
-                    <svg className="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              <div className="flex items-start gap-2 text-[11px]">
-                <span className="text-[#db0011] font-bold mt-0.5">•</span>
-                <div className="text-gray-700">
-                  <span>Portfolio duration 5.3y is moderate. If expecting rate cuts, extend duration by adding 10-15Y treasuries; if rate hikes, reduce by rotating to short-term (2-3Y) bonds </span>
-                  <button className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5 cursor-pointer">
-                    <span>Adjust Duration</span>
                     <svg className="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                     </svg>

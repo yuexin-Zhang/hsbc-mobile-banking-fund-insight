@@ -17,7 +17,7 @@ const StructuredProductAnalysisSection: React.FC<StructuredProductAnalysisSectio
         {/* AI Summary */}
         <div className="bg-[#f0f8ff] p-2">
           <p className="text-[11px] text-gray-700 leading-snug">
-            Portfolio of <span className="font-bold">4 products</span> worth <span className="font-bold text-[#da0011]">HKD 2.85M</span> with unrealized gain <span className="font-bold text-[#da0011]">+HKD 186K (+6.97%)</span>. All products above barrier with <span className="font-bold">100% principal protection</span>. <span className="font-bold">Next observation: Mar 15, 2026</span> - HSI Autocall has <span className="font-bold text-[#da0011]">68% early redemption probability</span>.
+            Portfolio of <span className="font-bold">4 products</span> worth <span className="font-bold text-[#da0011]">HKD 2,850,000.00</span> with unrealized gain <span className="font-bold text-[#da0011]">+HKD 186,000.00 (+6.97%)</span>. All products above barrier with <span className="font-bold">100% principal protection</span>. <span className="font-bold">Next observation: Mar 15, 2026</span> - HSI Autocall has <span className="font-bold text-[#da0011]">68% early redemption probability</span>.
           </p>
         </div>
 
@@ -39,8 +39,8 @@ const StructuredProductAnalysisSection: React.FC<StructuredProductAnalysisSectio
             <div className="grid grid-cols-3 gap-2 mt-2">
               <div>
                 <div className="text-[8px] text-gray-500">Invested / Current</div>
-                <div className="text-[10px] font-bold text-gray-900">HKD 750K</div>
-                <div className="text-[9px] text-[#da0011] font-semibold">HKD 812K (+8.27%)</div>
+                <div className="text-[10px] font-bold text-gray-900">HKD 750,000.00</div>
+                <div className="text-[9px] text-[#da0011] font-semibold">HKD 812,000.00 (+8.27%)</div>
               </div>
               <div>
                 <div className="text-[8px] text-gray-500">Barrier Status</div>
@@ -72,8 +72,8 @@ const StructuredProductAnalysisSection: React.FC<StructuredProductAnalysisSectio
             <div className="grid grid-cols-3 gap-2 mt-2">
               <div>
                 <div className="text-[8px] text-gray-500">Invested / Current</div>
-                <div className="text-[10px] font-bold text-gray-900">HKD 680K</div>
-                <div className="text-[9px] text-[#da0011] font-semibold">HKD 724K (+6.47%)</div>
+                <div className="text-[10px] font-bold text-gray-900">HKD 680,000.00</div>
+                <div className="text-[9px] text-[#da0011] font-semibold">HKD 724,000.00 (+6.47%)</div>
               </div>
               <div>
                 <div className="text-[8px] text-gray-500">Barrier Status</div>
@@ -105,8 +105,8 @@ const StructuredProductAnalysisSection: React.FC<StructuredProductAnalysisSectio
             <div className="grid grid-cols-3 gap-2 mt-2">
               <div>
                 <div className="text-[8px] text-gray-500">Invested / Current</div>
-                <div className="text-[10px] font-bold text-gray-900">HKD 834K</div>
-                <div className="text-[9px] text-[#da0011] font-semibold">HKD 893K (+7.07%)</div>
+                <div className="text-[10px] font-bold text-gray-900">HKD 834,000.00</div>
+                <div className="text-[9px] text-[#da0011] font-semibold">HKD 893,000.00 (+7.07%)</div>
               </div>
               <div>
                 <div className="text-[8px] text-gray-500">Cap Utilization</div>
@@ -133,7 +133,7 @@ const StructuredProductAnalysisSection: React.FC<StructuredProductAnalysisSectio
               <div className="flex items-start gap-2 text-[11px]">
                 <span className="text-[#db0011] font-bold mt-0.5">•</span>
                 <div className="text-gray-900">
-                  <span><span className="font-bold text-[#da0011]">Mar 15, 2026:</span> HSI Autocall observation date - <span className="font-bold text-[#da0011]">High probability of early redemption</span> (HKD 724K). Prepare reinvestment: allocate 50% to AI/semiconductor autocallables with 9-11% p.a. yields.</span>
+                  <span><span className="font-bold text-[#da0011]">Mar 15, 2026:</span> HSI Autocall observation date - <span className="font-bold text-[#da0011]">High probability of early redemption</span> (HKD 724,000.00). Prepare reinvestment: allocate 50% to AI/semiconductor autocallables with 9-11% p.a. yields.</span>
                   <button className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5 ml-1 cursor-pointer">
                     <span>View Tech Sector Products</span>
                     <svg className="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
@@ -148,18 +148,6 @@ const StructuredProductAnalysisSection: React.FC<StructuredProductAnalysisSectio
                   <span><span className="font-bold text-[#da0011]">Jun 15, 2026:</span> Tech Index Note coupon observation - Currently below 105% trigger (at 104% of initial). Monitor closely for potential coupon payment.</span>
                   <button className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5 ml-1 cursor-pointer">
                     <span>Set Price Alert</span>
-                    <svg className="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              <div className="flex items-start gap-2 text-[11px]">
-                <span className="text-[#db0011] font-bold mt-0.5">•</span>
-                <div className="text-gray-900">
-                  <span>Tech Index Note barrier at <span className="font-bold text-[#da0011]">78% vs 75% strike</span> - set alert at 76% to monitor downside risk. Current index performance: 104% of initial.</span>
-                  <button className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5 ml-1 cursor-pointer">
-                    <span>Set Barrier Alert</span>
                     <svg className="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                     </svg>
