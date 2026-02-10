@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useMobileDetect } from '../hooks/useMobileDetect';
+import { useMobileDetect } from '../../hooks/useMobileDetect';
 
 interface StockDetailPageProps {
   onBack: () => void;
