@@ -10,7 +10,7 @@ const App: React.FC = () => {
   const isMobile = useMobileDetect();
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/hsbc-mobile-banking-fund-insight">
       <div className={`w-full ${isMobile ? 'h-screen' : 'flex justify-center items-center'}`}>
         <PhoneFrame>
           <Routes>
