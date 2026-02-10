@@ -352,118 +352,51 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
                 </button>
               </div>
 
-              {/* Collapsed State - Continuous Scrolling */}
+              {/* Collapsed State - Static Two Lines */}
               {!isExpanded ? (
                 <div className="relative">
                   <div 
-                    className="bg-gradient-to-br from-[#e8f4f8] via-[#fef5f4] to-[#f0f8fc] rounded-[20px] border border-[#d5e5ec] shadow-sm overflow-hidden"
-                    style={{ animation: 'glow 3s ease-in-out infinite', height: '80px' }}
+                    className="bg-gradient-to-br from-[#e8f4f8] via-[#fef5f4] to-[#f0f8fc] rounded-[20px] border border-[#d5e5ec] shadow-sm px-4 py-3"
+                    style={{ animation: 'glow 3s ease-in-out infinite' }}
                   >
-                    <div className="continuous-scroll">
-                      {/* Duplicate content twice for seamless loop */}
-                      {[...Array(2)].map((_, setIndex) => (
-                        <div key={setIndex} className="pb-0">
-                          {/* What Happened Section */}
-                          <div className="px-4 pt-2 pb-1">
-                            <h4 className="text-[12px] font-bold text-[#1e1e1e] mb-2 flex items-center gap-1.5">
-                              <svg className="w-3.5 h-3.5 text-[#da0011]" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M3 13h2v7H3v-7zm4-6h2v13H7V7zm4-4h2v17h-2V3zm4 9h2v8h-2v-8zm4-3h2v11h-2V9z"/>
-                              </svg>
-                              <span>What happened</span>
-                            </h4>
-                            <div className="space-y-2.5">
-                              {/* Performance */}
-                              <div className="flex items-start gap-2">
-                                <div className="w-2 h-2 rounded-full bg-[#31b0d5] flex-shrink-0 mt-1 animate-pulse"></div>
-                                <div className="flex-1 min-w-0">
-                                  <div className="text-[11px] leading-snug">
-                                    <span className="text-[#31708f] font-semibold">Performance: </span>
-                                    <span className="text-[#1e1e1e]">Outperforming market by </span>
-                                    <span className="font-bold text-[#da0011]">8.3%</span>
-                                    <span className="text-[#1e1e1e]"> this month</span>
-                                  </div>
-                                </div>
-                              </div>
-                              
-                              {/* Top Movers */}
-                              <div className="flex items-start gap-2">
-                                <div className="w-2 h-2 rounded-full bg-[#31b0d5] flex-shrink-0 mt-1 animate-pulse"></div>
-                                <div className="flex-1 min-w-0">
-                                  <div className="text-[11px] leading-snug">
-                                    <span className="text-[#31708f] font-semibold">Top movers: </span>
-                                    <span className="text-[#1e1e1e]">HSBC Global Equity Fund dropped </span>
-                                    <span className="font-bold text-[#a94442]">5%</span>
-                                    <span className="text-[#1e1e1e]"> yesterday</span>
-                                  </div>
-                                </div>
-                              </div>
-
-                              {/* Allocation */}
-                              <div className="flex items-start gap-2">
-                                <div className="w-2 h-2 rounded-full bg-[#31b0d5] flex-shrink-0 mt-1 animate-pulse"></div>
-                                <div className="flex-1 min-w-0">
-                                  <div className="text-[11px] leading-snug">
-                                    <span className="text-[#31708f] font-semibold">Allocation: </span>
-                                    <span className="text-[#1e1e1e]">Consider adding </span>
-                                    <span className="font-bold text-[#da0011]">25%</span>
-                                    <span className="text-[#1e1e1e]"> into Global Equity</span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* What's Next Section */}
-                          <div className="px-4 pt-1 pb-2">
-                            <h4 className="text-[12px] font-bold text-[#1e1e1e] mb-2 flex items-center gap-1.5">
-                              <svg className="w-3.5 h-3.5 text-[#da0011]" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
-                              </svg>
-                              <span>What's next</span>
-                            </h4>
-                            <div className="space-y-2.5">
-                              {/* Risk Profile */}
-                              <div className="flex items-start gap-2">
-                                <div className="w-2 h-2 rounded-full bg-[#f0ad4e] flex-shrink-0 mt-1 animate-pulse"></div>
-                                <div className="flex-1 min-w-0">
-                                  <div className="text-[11px] leading-snug">
-                                    <span className="text-[#8a6d3b] font-semibold">Risk profile: </span>
-                                    <span className="text-[#1e1e1e]">Your risk assessment is expiring soon</span>
-                                  </div>
-                                </div>
-                              </div>
-                              
-                              {/* Time Deposit Maturity */}
-                              <div className="flex items-start gap-2">
-                                <div className="w-2 h-2 rounded-full bg-[#f0ad4e] flex-shrink-0 mt-1 animate-pulse"></div>
-                                <div className="flex-1 min-w-0">
-                                  <div className="text-[11px] leading-snug">
-                                    <span className="text-[#8a6d3b] font-semibold">Deposit: </span>
-                                    <span className="text-[#1e1e1e]">Your </span>
-                                    <span className="font-bold text-[#da0011]">HKD 1,500,000</span>
-                                    <span className="text-[#1e1e1e]"> time deposit maturing on </span>
-                                    <span className="font-bold text-[#1e1e1e]">9 Feb</span>
-                                  </div>
-                                </div>
-                              </div>
-
-                              {/* Bond Coupon */}
-                              <div className="flex items-start gap-2">
-                                <div className="w-2 h-2 rounded-full bg-[#f0ad4e] flex-shrink-0 mt-1 animate-pulse"></div>
-                                <div className="flex-1 min-w-0">
-                                  <div className="text-[11px] leading-snug">
-                                    <span className="text-[#8a6d3b] font-semibold">Cashflow: </span>
-                                    <span className="text-[#1e1e1e]">Bond coupon payment of </span>
-                                    <span className="font-bold text-[#da0011]">HKD 850,000</span>
-                                    <span className="text-[#1e1e1e]"> due </span>
-                                    <span className="font-bold text-[#1e1e1e]">10 Mar</span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
+                    <div className="space-y-2.5">
+                      {/* Performance */}
+                      <div className="flex items-start gap-2">
+                        <div className="w-2 h-2 rounded-full bg-[#31b0d5] flex-shrink-0 mt-1 animate-pulse"></div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-[11px] leading-snug">
+                            <span className="text-[#31708f] font-semibold">Performance: </span>
+                            <span className="text-[#1e1e1e]">Outperforming market by </span>
+                            <span className="font-bold text-[#da0011]">8.3%</span>
+                            <span className="text-[#1e1e1e]"> this month</span>
                           </div>
                         </div>
-                      ))}
+                      </div>
+                      
+                      {/* Risk Profile */}
+                      <div className="flex items-start gap-2">
+                        <div className="w-2 h-2 rounded-full bg-[#f0ad4e] flex-shrink-0 mt-1 animate-pulse"></div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-[11px] leading-snug">
+                            <span className="text-[#8a6d3b] font-semibold">Risk profile: </span>
+                            <span className="text-[#1e1e1e]">Your risk assessment is expiring soon </span>
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setIsRiskProfileOpen(true);
+                              }}
+                              className="text-[11px] text-[#da0011] font-semibold inline-flex items-center gap-0.5 relative cursor-pointer"
+                            >
+                              <span className="underline inline-flex items-center gap-0.5 inline-block">
+                                <span>Update now</span>
+                                <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                                </svg>
+                              </span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   

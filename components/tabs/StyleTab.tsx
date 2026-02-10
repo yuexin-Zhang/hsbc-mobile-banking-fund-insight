@@ -57,7 +57,7 @@ const StyleTab: React.FC<StyleTabProps> = ({ styleHoldings, styleTrustHoldings, 
           <button
             key={tab.id}
             onClick={() => setHoldingStyle(tab.id as any)}
-            className={`flex-1 py-2 flex flex-col items-center transition-all ${
+            className={`flex-1 py-2 flex flex-col items-center transition-all cursor-pointer ${
               holdingStyle === tab.id 
               ? 'bg-white text-[#da0011] shadow-sm' 
               : 'text-[#767676] hover:text-[#da0011]/60'

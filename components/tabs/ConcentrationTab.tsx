@@ -172,7 +172,7 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
           <button
             key={tab.id}
             onClick={() => handleTabChange(tab.id)}
-            className={`flex-1 py-2 text-[11px] font-bold transition-all ${
+            className={`flex-1 py-2 text-[11px] font-bold transition-all cursor-pointer ${
               concentrationTab === tab.id 
               ? 'bg-white text-[#da0011] shadow-sm' 
               : 'text-[#767676]'

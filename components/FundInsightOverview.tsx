@@ -515,8 +515,8 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
             {/* AI Mode Toggle */}
             <button
               onClick={() => onToggleAIMode(!isAIGenerated)}
-              className={`flex items-center gap-1 px-1.5 py-0.5 rounded-full shadow-sm transition-all ${
-                isAIGenerated 
+              className={`flex items-center gap-1 px-1.5 py-0.5 rounded-full shadow-sm transition-all cursor-pointer ${
+                isAIGenerated
                   ? 'bg-gradient-to-r from-purple-500 to-pink-500' 
                   : 'bg-gray-300'
               }`}
@@ -530,7 +530,7 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
             
             <button 
               onClick={handleExport}
-              className="w-7 h-7 flex items-center justify-center active:bg-gray-100 rounded-full transition-colors"
+              className="w-7 h-7 flex items-center justify-center active:bg-gray-100 rounded-full transition-colors cursor-pointer"
               title="Export Report"
             >
               <svg className="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
@@ -555,7 +555,7 @@ const FundInsightOverview: React.FC<FundInsightOverviewProps> = ({ onBack, onGoT
                 <button
                   key={tab}
                   onClick={() => handleTabClick(tab)}
-                  className={`flex-1 py-4 text-[12px] font-bold relative whitespace-nowrap transition-colors ${activeDetailTab === tab ? 'text-[#da0011]' : 'text-[#767676]'}`}
+                  className={`flex-1 py-4 text-[12px] font-bold relative whitespace-nowrap transition-colors cursor-pointer ${activeDetailTab === tab ? 'text-[#da0011]' : 'text-[#767676]'}`}
                 >
                   {tab}
                   {activeDetailTab === tab && <div className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#da0011]" />}
