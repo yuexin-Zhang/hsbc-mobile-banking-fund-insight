@@ -8,7 +8,7 @@ import FundPage from './pages/Fund';
 
 const App: React.FC = () => {
   const isMobile = useMobileDetect();
-  const basename = import.meta.env.PROD ? '/hsbc-mobile-banking-fund-insight' : '';
+  const basename = import.meta.env.BASE_URL.replace(/\/$/, '');
 
   return (
     <BrowserRouter basename={basename}>
