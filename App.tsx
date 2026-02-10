@@ -8,9 +8,10 @@ import FundPage from './pages/Fund';
 
 const App: React.FC = () => {
   const isMobile = useMobileDetect();
+  const basename = import.meta.env.PROD ? '/hsbc-mobile-banking-fund-insight' : '';
 
   return (
-    <BrowserRouter basename="/hsbc-mobile-banking-fund-insight">
+    <BrowserRouter basename={basename}>
       <div className={`w-full ${isMobile ? 'h-screen' : 'flex justify-center items-center'}`}>
         <PhoneFrame>
           <Routes>
