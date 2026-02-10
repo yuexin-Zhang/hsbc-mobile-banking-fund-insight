@@ -694,7 +694,7 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-1 text-[#5cb85c]">
+              <div className="flex items-center gap-1 text-[#da0011]">
                 <span className="text-[15px] font-medium">▲ 19,939.05</span>
               </div>
             </div>
@@ -711,7 +711,7 @@ const WealthOverview: React.FC<WealthOverviewProps> = ({ onBack, onGoToPortfolio
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-1 text-[#a94442]">
+              <div className="flex items-center gap-1 text-[#5cb85c]">
                 <span className="text-[15px] font-medium">▼ 5,223.18</span>
               </div>
             </div>
