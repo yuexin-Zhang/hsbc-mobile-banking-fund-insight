@@ -22,10 +22,11 @@ interface HoldingData {
 interface ConcentrationTabProps {
   concentrationSectorData: AllocationData[];
   concentrationRegionData: AllocationData[];
-  concentrationTopHoldingsData: AllocationData[];
+  concentrationTopHoldingsData?: AllocationData[]; // Made optional since we're hiding it
   holdingsData: HoldingData[];
   totalAssetValue: number;
   isAIGenerated: boolean;
+  viewMode?: 'sector' | 'region'; // New prop to determine what to display
 }
 
 const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
@@ -34,45 +35,44 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
   concentrationTopHoldingsData,
   holdingsData,
   totalAssetValue,
-  isAIGenerated
+  isAIGenerated,
+  viewMode = 'sector' // Default to sector view
 }) => {
-  const [concentrationTab, setConcentrationTab] = useState('Region');
+  // Use viewMode to set initial tab - hidden but code retained
+  // const [concentrationTab, setConcentrationTab] = useState('Region');
   const [selectedConcentrationItem, setSelectedConcentrationItem] = useState<string | null>(() => {
-    const maxItem = [...concentrationRegionData].sort((a, b) => b.pct - a.pct)[0];
+    const data = viewMode === 'sector' ? concentrationSectorData : concentrationRegionData;
+    const maxItem = [...data].sort((a, b) => b.pct - a.pct)[0];
     return maxItem ? maxItem.label : null;
   });
 
   const getCurrentData = () => {
-    if (concentrationTab === 'Sector') return concentrationSectorData;
-    if (concentrationTab === 'Region') return concentrationRegionData;
-    return concentrationTopHoldingsData;
+    return viewMode === 'sector' ? concentrationSectorData : concentrationRegionData;
   };
 
   const getInsight = () => {
-    if (concentrationTab === 'Sector') {
+    if (viewMode === 'sector') {
       return 'Power equipment, transportation and internet & technology sectors are key drivers of your portfolio; consider monitoring policy changes and sector cycles closely.';
     }
-    if (concentrationTab === 'Region') {
-      return 'Your portfolio has significant exposure to China and United States markets, with diversification across Hong Kong and Europe, balancing growth opportunities with geographic risk.';
-    }
-    return 'Top positions are concentrated in leaders such as Tencent Holdings, Alibaba Group and Apple Inc., so the portfolio still relies on a small group of large names even though single-stock weights are not extreme.';
+    return 'Your portfolio has significant exposure to China and United States markets, with diversification across Hong Kong and Europe, balancing growth opportunities with geographic risk.';
   };
 
-  const handleTabChange = (tabId: string) => {
-    setConcentrationTab(tabId);
-    let data: AllocationData[] = [];
-    if (tabId === 'Sector') data = concentrationSectorData;
-    else if (tabId === 'Region') data = concentrationRegionData;
-    else if (tabId === 'Top Holdings') data = concentrationTopHoldingsData;
-    const maxItem = [...data].sort((a, b) => b.pct - a.pct)[0];
-    if (maxItem) setSelectedConcentrationItem(maxItem.label);
-  };
+  // Tab change handler - Hidden but code retained
+  // const handleTabChange = (tabId: string) => {
+  //   setConcentrationTab(tabId);
+  //   let data: AllocationData[] = [];
+  //   if (tabId === 'Sector') data = concentrationSectorData;
+  //   else if (tabId === 'Region') data = concentrationRegionData;
+  //   else if (tabId === 'Top Holdings') data = concentrationTopHoldingsData || [];
+  //   const maxItem = [...data].sort((a, b) => b.pct - a.pct)[0];
+  //   if (maxItem) setSelectedConcentrationItem(maxItem.label);
+  // };
 
   const renderHoldingsList = () => {
     const currentData = getCurrentData();
     const themeColor = currentData.find(d => d.label === selectedConcentrationItem)?.color || '#da0011';
 
-    if (concentrationTab === 'Sector') {
+    if (viewMode === 'sector') {
       return holdingsData
         .filter(f => (f.sectorWeight as any)[selectedConcentrationItem!])
         .sort((a, b) => parseFloat((b.sectorWeight as any)[selectedConcentrationItem!]) - parseFloat((a.sectorWeight as any)[selectedConcentrationItem!]))
@@ -93,7 +93,7 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
         ));
     }
 
-    if (concentrationTab === 'Region') {
+    if (viewMode === 'region') {
       return holdingsData
         .filter(f => (f.regionWeight as any)[selectedConcentrationItem!])
         .sort((a, b) => parseFloat((b.regionWeight as any)[selectedConcentrationItem!]) - parseFloat((a.regionWeight as any)[selectedConcentrationItem!]))
@@ -114,43 +114,42 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
         ));
     }
 
-    // Top Holdings
-    return holdingsData
-      .filter(f => f.topStocks.some(s => s.name === selectedConcentrationItem))
-      .sort((a, b) => {
-        const getContrib = (fund: HoldingData) =>
-          parseFloat(fund.topStocks.find(s => s.name === selectedConcentrationItem)?.contribution || '0');
-        return getContrib(b) - getContrib(a);
-      })
-      .map((fund, idx) => {
-        const contributionValue =
-          fund.topStocks.find(s => s.name === selectedConcentrationItem)?.contribution || '0%';
+    // Top Holdings - Hidden but code retained
+    // return holdingsData
+    //   .filter(f => f.topStocks.some(s => s.name === selectedConcentrationItem))
+    //   .sort((a, b) => {
+    //     const getContrib = (fund: HoldingData) =>
+    //       parseFloat(fund.topStocks.find(s => s.name === selectedConcentrationItem)?.contribution || '0');
+    //     return getContrib(b) - getContrib(a);
+    //   })
+    //   .map((fund, idx) => {
+    //     const contributionValue =
+    //       fund.topStocks.find(s => s.name === selectedConcentrationItem)?.contribution || '0%';
 
-        return (
-          <div key={idx} className="flex items-center text-[11px] px-1 border-b border-gray-50 last:border-0 pb-2">
-            <div className="w-[40%] flex flex-col">
-              <span className="font-bold text-[#1e1e1e] line-clamp-1">{fund.name}</span>
-              <span className="text-[9px] text-[#767676] mt-0.5 font-medium">{fund.code}</span>
-            </div>
-            <div className="w-[35%] text-center">
-              <div className="font-bold text-[#1e1e1e]">{((fund.mktValue / totalAssetValue) * 100).toFixed(2)}%</div>
-              <div className="text-[9px] text-[#767676] font-medium mt-0.5">HKD {fund.mktValue.toLocaleString()}</div>
-            </div>
-            <div className="w-[25%] text-right pr-1 font-bold text-[#1e1e1e]">
-              {contributionValue}
-            </div>
-          </div>
-        );
-      });
+    //     return (
+    //       <div key={idx} className="flex items-center text-[11px] px-1 border-b border-gray-50 last:border-0 pb-2">
+    //         <div className="w-[40%] flex flex-col">
+    //           <span className="font-bold text-[#1e1e1e] line-clamp-1">{fund.name}</span>
+    //           <span className="text-[9px] text-[#767676] mt-0.5 font-medium">{fund.code}</span>
+    //         </div>
+    //         <div className="w-[35%] text-center">
+    //           <div className="font-bold text-[#1e1e1e]">{((fund.mktValue / totalAssetValue) * 100).toFixed(2)}%</div>
+    //           <div className="text-[9px] text-[#767676] font-medium mt-0.5">HKD {fund.mktValue.toLocaleString()}</div>
+    //         </div>
+    //         <div className="w-[25%] text-right pr-1 font-bold text-[#1e1e1e]">
+    //           {contributionValue}
+    //         </div>
+    //       </div>
+    //     );
+    //   });
+    return null;
   };
 
   const getDescription = () => {
+    const typeLabel = viewMode === 'sector' ? 'sector' : 'region';
     return {
       title: `${selectedConcentrationItem} is heavily held by the following funds:`,
-      subtitle:
-        concentrationTab === 'Top Holdings'
-          ? `${selectedConcentrationItem} is one of the core positions in these funds.`
-          : `These funds have relatively high exposure to this ${concentrationTab.toLowerCase()}.`,
+      subtitle: `These funds have relatively high exposure to this ${typeLabel}.`,
     };
   };
 
@@ -159,11 +158,13 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
       {/* Section Title */}
       <div className="flex items-start gap-1 mb-2">
         <div className="w-[3px] h-[18px] bg-[#da0011] mt-0.5"></div>
-        <h2 className="text-[15px] font-bold text-[#1e1e1e] leading-tight">Portfolio Concentration</h2>
+        <h2 className="text-[15px] font-bold text-[#1e1e1e] leading-tight">
+          {viewMode === 'sector' ? 'Sector Concentration' : 'Region Concentration'}
+        </h2>
       </div>
 
-      {/* Concentration Toggle Buttons */}
-      <div className="flex p-1 bg-[#f4f5f6]">
+      {/* Concentration Toggle Buttons - Hidden but code retained */}
+      {/* <div className="flex p-1 bg-[#f4f5f6]">
         {[
           { id: 'Region', label: 'Region' },
           { id: 'Sector', label: 'Sector' },
@@ -181,11 +182,11 @@ const ConcentrationTab: React.FC<ConcentrationTabProps> = ({
             {tab.label}
           </button>
         ))}
-      </div>
+      </div> */}
 
       <div className="space-y-2 animate-fade-in">
         <AllocationSection 
-          title={`${concentrationTab} Concentration`}
+          title={viewMode === 'sector' ? 'Sector Concentration' : 'Region Concentration'}
           data={[...getCurrentData()].sort((a, b) => b.pct - a.pct)} 
           showVal={true} 
           useTreemap={true} 

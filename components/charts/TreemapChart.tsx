@@ -23,7 +23,11 @@ const TreemapChart: React.FC<TreemapChartProps> = ({ data, onItemClick, selected
         tree: data,
         key: 'pct',
         spacing: 1,
-        borderWidth: 1,
+        borderWidth: (ctx: any) => {
+          const item = ctx.raw?._data || ctx.raw;
+          const isSelected = selectedLabel && item?.label === selectedLabel;
+          return isSelected ? 5 : 1; // 5px for selected, 1px for normal
+        },
         borderColor: (ctx: any) => {
           const item = ctx.raw?._data || ctx.raw;
           const daily = typeof item?.dailyChange === 'number' ? item.dailyChange : null;
@@ -36,7 +40,12 @@ const TreemapChart: React.FC<TreemapChartProps> = ({ data, onItemClick, selected
             return '#999';
           }
 
-          return isSelected ? '#da0011' : '#e5e5e5';
+          // Use the item's color for border when selected, or light gray when not selected
+          // For selected items, use a darker/more saturated version of the color
+          if (isSelected) {
+            return item?.color || '#da0011';
+          }
+          return '#e5e5e5';
         },
         borderRadius: 0,
         backgroundColor: (ctx: any) => {
@@ -50,8 +59,13 @@ const TreemapChart: React.FC<TreemapChartProps> = ({ data, onItemClick, selected
             return '#f3f3f3';
           }
 
-          // Use the actual color from the data item
-          return item?.color || '#f3f3f3';
+          // For selected items, use the original color; for non-selected, add high opacity
+          if (isSelected) {
+            return item?.color || '#f3f3f3';
+          }
+          // Add 85% opacity to non-selected items for strong contrast
+          const color = item?.color || '#f3f3f3';
+          return color + '26'; // Add 85% opacity (26 in hex = ~15% opacity)
         },
         labels: {
           display: true,

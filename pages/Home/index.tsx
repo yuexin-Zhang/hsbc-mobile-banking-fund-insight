@@ -69,17 +69,20 @@ const HomePage: React.FC = () => {
         {activeTab === 'insights' && <InsightsSection />}
       </div>
 
-      {/* HSBC Lion AI Button */}
+      {/* AI Chat Button */}
       <button
         onClick={() => setIsAIAssistantOpen(true)}
-        className="absolute bottom-24 right-4 w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 z-50 overflow-hidden cursor-pointer"
+        className="absolute bottom-24 right-4 w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg flex items-center justify-center hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 z-50 cursor-pointer group"
         aria-label="Open AI Assistant"
       >
-        <img 
-          src={`${import.meta.env.BASE_URL}icon-lion.png`} 
-          alt="HSBC Lion" 
-          className="w-full h-full object-cover"
-        />
+        <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          {/* Chat bubble */}
+          <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" fill="currentColor"/>
+          {/* Three dots (typing indicator) with pulse animation */}
+          <circle cx="8" cy="10" r="1.2" fill="#a855f7" className="animate-pulse" style={{ animationDelay: '0s' }}/>
+          <circle cx="12" cy="10" r="1.2" fill="#ec4899" className="animate-pulse" style={{ animationDelay: '0.3s' }}/>
+          <circle cx="16" cy="10" r="1.2" fill="#f472b6" className="animate-pulse" style={{ animationDelay: '0.6s' }}/>
+        </svg>
       </button>
 
       {/* AI Assistant Dialog */}

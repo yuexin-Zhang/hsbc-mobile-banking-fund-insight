@@ -6,7 +6,7 @@ import { useMobileDetect } from '../../hooks/useMobileDetect';
 import { Chart as ChartJS, Title, Tooltip, Legend, CategoryScale, LinearScale } from 'chart.js';
 import { TreemapController, TreemapElement } from 'chartjs-chart-treemap';
 import HoldingsOverview from '../../components/overview/HoldingsOverview';
-import StyleTab from '../../components/tabs/StyleTab';
+// import StyleTab from '../../components/tabs/StyleTab'; // Hidden but code retained
 import PerformanceTab from '../../components/tabs/PerformanceTab';
 import ClassesTab from '../../components/tabs/ClassesTab';
 import ConcentrationTab from '../../components/tabs/ConcentrationTab';
@@ -21,15 +21,17 @@ const FundPage: React.FC = () => {
   const [showToast, setShowToast] = useState(false);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const [activeDetailTab, setActiveDetailTab] = useState('Performance');
+  const [activeConcentrationView, setActiveConcentrationView] = useState<'sector' | 'region'>('sector');
   const [currentTime, setCurrentTime] = useState('');
   const isMobile = useMobileDetect();
   
   // Refs for tab sections
   const performanceRef = useRef<HTMLDivElement>(null);
-  const styleRef = useRef<HTMLDivElement>(null);
+  // const styleRef = useRef<HTMLDivElement>(null); // Hidden but code retained
   const managerRef = useRef<HTMLDivElement>(null);
   const classesRef = useRef<HTMLDivElement>(null);
-  const concentrationRef = useRef<HTMLDivElement>(null);
+  const sectorRef = useRef<HTMLDivElement>(null);
+  const regionRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const isScrollingFromClick = useRef(false);
 
@@ -110,22 +112,23 @@ const FundPage: React.FC = () => {
   ];
 
   const totalAssetValue = 9395746.24;
-  const detailTabs = ['Performance', 'Asset Class', 'Style', 'Concentration'];
+  const detailTabs = ['Performance', 'Asset Class', 'Sector', 'Region'];
 
-  const styleHoldings = [
-    { name: 'BGF WLD MIN', id: 'IPFD3004', returnRate: '21.76%', holdingDays: '458 Days', threeMonthChange: '+8.45%', isPositive: true, style: 'Value', mktValue: 939574.62 },
-    { name: 'BGF ENERGY', id: 'IPFD3145', returnRate: '-0.86%', holdingDays: '124 Days', threeMonthChange: '-2.15%', isPositive: false, style: 'Growth', mktValue: 939574.62 },
-    { name: 'BGF GOLD', id: 'IPFD3131', returnRate: '18.53%', holdingDays: '562 Days', threeMonthChange: '+12.30%', isPositive: true, style: 'Balanced', mktValue: 1348936.56 },
-    { name: 'BLK Sys GE High Inc', id: 'IPFD3116', returnRate: '42.56%', holdingDays: '890 Days', threeMonthChange: '+5.12%', isPositive: true, style: 'Value', mktValue: 1137489.55 },
-    { name: 'BLK Sys GE High Inc', id: 'IPFD2116', returnRate: '11.10%', holdingDays: '215 Days', threeMonthChange: '+3.88%', isPositive: true, style: 'Balanced', mktValue: 1126489.55 },
-    { name: 'BIK World Tech', id: 'IPFD2254', returnRate: '0.20%', holdingDays: '15 Days', threeMonthChange: '-0.45%', isPositive: true, style: 'Growth', mktValue: 1033532.09 },
-    { name: 'JPM GEHI USD', id: 'IPFD3540', returnRate: '4.41%', holdingDays: '180 Days', threeMonthChange: '+1.20%', isPositive: true, style: 'Growth', mktValue: 859305.69 },
-  ];
+  // Style holdings - Hidden but code retained
+  // const styleHoldings = [
+  //   { name: 'BGF WLD MIN', id: 'IPFD3004', returnRate: '21.76%', holdingDays: '458 Days', threeMonthChange: '+8.45%', isPositive: true, style: 'Value', mktValue: 939574.62 },
+  //   { name: 'BGF ENERGY', id: 'IPFD3145', returnRate: '-0.86%', holdingDays: '124 Days', threeMonthChange: '-2.15%', isPositive: false, style: 'Growth', mktValue: 939574.62 },
+  //   { name: 'BGF GOLD', id: 'IPFD3131', returnRate: '18.53%', holdingDays: '562 Days', threeMonthChange: '+12.30%', isPositive: true, style: 'Balanced', mktValue: 1348936.56 },
+  //   { name: 'BLK Sys GE High Inc', id: 'IPFD3116', returnRate: '42.56%', holdingDays: '890 Days', threeMonthChange: '+5.12%', isPositive: true, style: 'Value', mktValue: 1137489.55 },
+  //   { name: 'BLK Sys GE High Inc', id: 'IPFD2116', returnRate: '11.10%', holdingDays: '215 Days', threeMonthChange: '+3.88%', isPositive: true, style: 'Balanced', mktValue: 1126489.55 },
+  //   { name: 'BIK World Tech', id: 'IPFD2254', returnRate: '0.20%', holdingDays: '15 Days', threeMonthChange: '-0.45%', isPositive: true, style: 'Growth', mktValue: 1033532.09 },
+  //   { name: 'JPM GEHI USD', id: 'IPFD3540', returnRate: '4.41%', holdingDays: '180 Days', threeMonthChange: '+1.20%', isPositive: true, style: 'Growth', mktValue: 859305.69 },
+  // ];
 
-  const styleTrustHoldings = [
-    { name: 'CR Trust FirstEagle No.1', id: 'T1C477', returnRate: '20.91%', holdingDays: '630 Days', threeMonthChange: '+7.15%', isPositive: true, style: 'Balanced', mktValue: 459451.99 },
-    { name: 'CR Trust FirstEagle No.8', id: 'T1E648', returnRate: '-1.49%', holdingDays: '92 Days', threeMonthChange: '+0.55%', isPositive: false, style: 'Balanced', mktValue: 460391.57 },
-  ];
+  // const styleTrustHoldings = [
+  //   { name: 'CR Trust FirstEagle No.1', id: 'T1C477', returnRate: '20.91%', holdingDays: '630 Days', threeMonthChange: '+7.15%', isPositive: true, style: 'Balanced', mktValue: 459451.99 },
+  //   { name: 'CR Trust FirstEagle No.8', id: 'T1E648', returnRate: '-1.49%', holdingDays: '92 Days', threeMonthChange: '+0.55%', isPositive: false, style: 'Balanced', mktValue: 460391.57 },
+  // ];
 
   const managerHoldings = [
     { 
@@ -198,13 +201,14 @@ const FundPage: React.FC = () => {
     { label: 'Japan', pct: 6.0, val: '563,746.98', color: '#509EBC', currency: 'HKD' },
   ];
 
-  const concentrationTopHoldingsData = [
-    { label: 'NVIDIA Corp.', pct: 52.0, val: '4,885,787.96', color: '#999', currency: 'HKD', dailyChange: 0.64 },
-    { label: 'Tencent Holdings', pct: 18.5, val: '1,738,237.04', color: '#da0011', currency: 'HKD', dailyChange: 0.17 },
-    { label: 'Alibaba Group', pct: 14.0, val: '1,315,408.47', color: '#31b0d5', currency: 'HKD', dailyChange: -0.23 },
-    { label: 'Meituan', pct: 9.0, val: '845,617.16', color: '#5cb85c', currency: 'HKD', dailyChange: 0.05 },
-    { label: 'CATL', pct: 6.5, val: '610,723.61', color: '#f0ad4e', currency: 'HKD', dailyChange: -0.42 },
-  ];
+  // Top Holdings - Hidden but code retained
+  // const concentrationTopHoldingsData = [
+  //   { label: 'NVIDIA Corp.', pct: 52.0, val: '4,885,787.96', color: '#999', currency: 'HKD', dailyChange: 0.64 },
+  //   { label: 'Tencent Holdings', pct: 18.5, val: '1,738,237.04', color: '#da0011', currency: 'HKD', dailyChange: 0.17 },
+  //   { label: 'Alibaba Group', pct: 14.0, val: '1,315,408.47', color: '#31b0d5', currency: 'HKD', dailyChange: -0.23 },
+  //   { label: 'Meituan', pct: 9.0, val: '845,617.16', color: '#5cb85c', currency: 'HKD', dailyChange: 0.05 },
+  //   { label: 'CATL', pct: 6.5, val: '610,723.61', color: '#f0ad4e', currency: 'HKD', dailyChange: -0.42 },
+  // ];
 
   const holdingsData = [
     {
@@ -388,9 +392,10 @@ const FundPage: React.FC = () => {
       const sections = [
         { ref: performanceRef, name: 'Performance' },
         { ref: classesRef, name: 'Asset Class' },
-        { ref: styleRef, name: 'Style' },
+        // { ref: styleRef, name: 'Style' }, // Hidden but code retained
         // { ref: managerRef, name: 'Manager' }, // Hidden but code retained
-        { ref: concentrationRef, name: 'Concentration' }
+        { ref: sectorRef, name: 'Sector' },
+        { ref: regionRef, name: 'Region' }
       ];
 
       for (let i = sections.length - 1; i >= 0; i--) {
@@ -426,14 +431,17 @@ const FundPage: React.FC = () => {
       case 'Asset Class':
         targetRef = classesRef;
         break;
-      case 'Style':
-        targetRef = styleRef;
-        break;
+      // case 'Style': // Hidden but code retained
+      //   targetRef = styleRef;
+      //   break;
       // case 'Manager': // Hidden but code retained
       //   targetRef = managerRef;
       //   break;
-      case 'Concentration':
-        targetRef = concentrationRef;
+      case 'Sector':
+        targetRef = sectorRef;
+        break;
+      case 'Region':
+        targetRef = regionRef;
         break;
     }
 
@@ -577,15 +585,15 @@ const FundPage: React.FC = () => {
               />
             </div>
 
-            {/* Style Section */}
-            <div ref={styleRef} className="scroll-mt-[100px] mt-12 pt-4 border-t-[6px] border-[#f4f5f6]">
+            {/* Style Section - Hidden but code retained */}
+            {/* <div ref={styleRef} className="scroll-mt-[100px] mt-12 pt-4 border-t-[6px] border-[#f4f5f6]">
               <StyleTab 
                 styleHoldings={styleHoldings}
                 styleTrustHoldings={styleTrustHoldings}
                 totalAssetValue={totalAssetValue}
                 isAIGenerated={isAIGenerated}
               />
-            </div>
+            </div> */}
 
             {/* Manager Section - Hidden but code retained */}
             {/* <div ref={managerRef} className="scroll-mt-[100px] mt-12 pt-4 border-t-[6px] border-[#f4f5f6]">
@@ -596,15 +604,29 @@ const FundPage: React.FC = () => {
               />
             </div> */}
 
-            {/* Concentration Section */}
-            <div ref={concentrationRef} className="scroll-mt-[100px] mt-12 pt-4 border-t-[6px] border-[#f4f5f6]">
+            {/* Sector Section */}
+            <div ref={sectorRef} className="scroll-mt-[100px] mt-12 pt-4 border-t-[6px] border-[#f4f5f6]">
               <ConcentrationTab 
                 concentrationSectorData={concentrationSectorData}
                 concentrationRegionData={concentrationRegionData}
-                concentrationTopHoldingsData={concentrationTopHoldingsData}
+                // concentrationTopHoldingsData={concentrationTopHoldingsData} // Hidden but code retained
                 holdingsData={holdingsData}
                 totalAssetValue={totalAssetValue}
                 isAIGenerated={isAIGenerated}
+                viewMode="sector"
+              />
+            </div>
+
+            {/* Region Section */}
+            <div ref={regionRef} className="scroll-mt-[100px] mt-12 pt-4 border-t-[6px] border-[#f4f5f6]">
+              <ConcentrationTab 
+                concentrationSectorData={concentrationSectorData}
+                concentrationRegionData={concentrationRegionData}
+                // concentrationTopHoldingsData={concentrationTopHoldingsData} // Hidden but code retained
+                holdingsData={holdingsData}
+                totalAssetValue={totalAssetValue}
+                isAIGenerated={isAIGenerated}
+                viewMode="region"
               />
             </div>
           </div>

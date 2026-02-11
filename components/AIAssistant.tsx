@@ -240,17 +240,17 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose, mode = 'scen
                   <button
                     key={scenario.id}
                     onClick={() => handleScenarioClick(scenario.id)}
-                    className="w-full bg-white rounded-lg p-4 border border-gray-200 shadow-sm hover:shadow-md hover:border-[#da0011] transition-all text-left group cursor-pointer"
+                    className="w-full bg-white rounded-lg p-4 border border-gray-200 shadow-sm hover:shadow-md transition-all text-left group cursor-pointer"
                   >
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-[#da0011] to-[#ba000e] rounded-lg flex items-center justify-center text-white flex-shrink-0 group-hover:scale-110 transition-transform">
+                      <div className="w-10 h-10 bg-gradient-to-br from-gray-700 to-gray-800 rounded-lg flex items-center justify-center text-white flex-shrink-0 group-hover:scale-110 transition-transform">
                         {scenario.icon}
                       </div>
                       <div className="flex-1">
                         <div className="text-gray-900 text-xs font-bold mb-1">{scenario.title}</div>
                         <div className="text-gray-600 text-[10px] leading-relaxed line-clamp-2">{scenario.question}</div>
                       </div>
-                      <svg className="w-4 h-4 text-gray-400 group-hover:text-[#da0011] flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                      <svg className="w-4 h-4 text-gray-400 group-hover:text-gray-700 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                       </svg>
                     </div>
@@ -972,34 +972,44 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ isOpen, onClose, mode = 'scen
 
         {/* Input Bar at Bottom - Fixed */}
         <div className="bg-white border-t border-gray-200 p-4 flex-shrink-0">
-          <div className="flex items-center gap-2 bg-gray-50 rounded-full px-4 py-3 border border-gray-200">
-            {/* RM Contact Button - Inside input box */}
-            <button 
-              onClick={() => setShowRMContact(true)}
-              className="w-8 h-8 flex items-center justify-center text-[#da0011] hover:bg-red-50 rounded-full transition-colors flex-shrink-0 cursor-pointer"
-              title="Contact your Relationship Manager"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-            </button>
-            <input 
-              type="text"
-              placeholder="Ask about your portfolio performance..."
-              className="flex-1 bg-transparent text-gray-900 text-xs placeholder:text-gray-400 focus:outline-none"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-            />
-            <button 
-              onClick={handleSendMessage}
-              className="w-8 h-8 bg-[#da0011] rounded-full flex items-center justify-center hover:bg-[#ba000e] transition-colors flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-              disabled={!inputValue.trim()}
-            >
-              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-              </svg>
-            </button>
+          <div className="flex items-center gap-3">
+            {/* RM Contact Button - Outside input box with tooltip */}
+            <div className="relative group">
+              <button 
+                onClick={() => setShowRMContact(true)}
+                className="w-10 h-10 bg-[#da0011] rounded-full flex items-center justify-center hover:bg-[#ba000e] transition-colors shadow-md cursor-pointer mt-2"
+                title="Contact your Relationship Manager"
+              >
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+              </button>
+              {/* Tooltip - Always visible, subtle styling, close to icon */}
+              <div className="absolute bottom-[40px] left-1/2 -translate-x-1/2 mb-0.5 px-2 py-0.5 bg-gray-100 text-gray-600 text-[9px] font-medium rounded whitespace-nowrap pointer-events-none border border-gray-200">
+                Contact RM
+                <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[4px] border-r-[4px] border-t-[3px] border-transparent border-t-gray-200"></div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 bg-gray-50 rounded-full px-4 py-3 border border-gray-200 flex-1">
+              <input 
+                type="text"
+                placeholder="Ask about your portfolio performance..."
+                className="flex-1 bg-transparent text-gray-900 text-xs placeholder:text-gray-400 focus:outline-none"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+              />
+              <button 
+                onClick={handleSendMessage}
+                className="w-8 h-8 bg-[#0072ce] rounded-full flex items-center justify-center hover:bg-[#005ca9] transition-colors flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                disabled={!inputValue.trim()}
+              >
+                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                </svg>
+              </button>
+            </div>
           </div>
           <div className="text-gray-400 text-[9px] text-center mt-2 flex items-center justify-center gap-1">
             <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
