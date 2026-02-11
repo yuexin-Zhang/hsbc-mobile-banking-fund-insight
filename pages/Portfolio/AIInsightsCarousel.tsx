@@ -125,7 +125,7 @@ const AIInsightsCarousel: React.FC<AIInsightsCarouselProps> = ({ onRiskProfileOp
     }
   ];
 
-  // Auto-carousel for AI Deep Dive Insights
+  // Auto-carousel for AI Portfolio Intelligence
   useEffect(() => {
     if (isCarouselPaused || isTransitioning) return;
     
@@ -201,15 +201,15 @@ const AIInsightsCarousel: React.FC<AIInsightsCarouselProps> = ({ onRiskProfileOp
             </span>
           </span>
           
-          {/* Deep Dive Insights with background and shimmer effect */}
+          {/* Portfolio Intelligence with background and shimmer effect */}
           <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-1.5 py-0.5 flex items-center rounded-r-full relative overflow-hidden shadow-[0_0_12px_rgba(168,85,247,0.4)]">
             <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent -translate-x-full animate-[shimmer_1.8s_ease-in-out_infinite] w-[200%]"></span>
-            <span className="relative">Deep Dive Insights</span>
+            <span className="relative">Portfolio Intelligence</span>
           </span>
         </h3>
       </div>
 
-      {/* AI Deep Dive Insights - Mobile-style Carousel */}
+      {/* AI Portfolio Intelligence - Mobile-style Carousel */}
       <div 
         ref={carouselRef}
         className="relative overflow-hidden"
