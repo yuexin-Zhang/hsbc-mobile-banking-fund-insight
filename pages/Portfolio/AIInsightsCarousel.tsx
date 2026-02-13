@@ -3,13 +3,13 @@ import { useNavigate } from 'react-router-dom';
 
 interface AIInsightsCarouselProps {
   onRiskProfileOpen: () => void;
+  isPaused?: boolean;
 }
 
-const AIInsightsCarousel: React.FC<AIInsightsCarouselProps> = ({ onRiskProfileOpen }) => {
+const AIInsightsCarousel: React.FC<AIInsightsCarouselProps> = ({ onRiskProfileOpen, isPaused = false }) => {
   const navigate = useNavigate();
   const [currentInsightIndex, setCurrentInsightIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [isCarouselPaused, setIsCarouselPaused] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
 
   // AI Insights data - 6 cards corresponding to What happened (3) and What's next (3)
@@ -127,7 +127,7 @@ const AIInsightsCarousel: React.FC<AIInsightsCarouselProps> = ({ onRiskProfileOp
 
   // Auto-carousel for AI Portfolio Intelligence
   useEffect(() => {
-    if (isCarouselPaused || isTransitioning) return;
+    if (isPaused || isTransitioning) return;
     
     const carouselInterval = setInterval(() => {
       setIsTransitioning(true);
@@ -136,7 +136,7 @@ const AIInsightsCarousel: React.FC<AIInsightsCarouselProps> = ({ onRiskProfileOp
     }, 1000);
     
     return () => clearInterval(carouselInterval);
-  }, [isCarouselPaused, isTransitioning, insights.length]);
+  }, [isPaused, isTransitioning, insights.length]);
 
   // Handle wheel event with passive: false to prevent default scroll
   useEffect(() => {
@@ -218,8 +218,6 @@ const AIInsightsCarousel: React.FC<AIInsightsCarouselProps> = ({ onRiskProfileOp
           touchAction: 'pan-y',
           minHeight: '180px',
         }}
-        onMouseEnter={() => setIsCarouselPaused(true)}
-        onMouseLeave={() => setIsCarouselPaused(false)}
       >
         <div className="relative pb-4">
           {insights.map((insight, index) => {

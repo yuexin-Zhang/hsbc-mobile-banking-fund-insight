@@ -5,6 +5,7 @@ import { useMobileDetect } from '../../hooks/useMobileDetect';
 import FloatingAIButton from '../../components/FloatingAIButton';
 import AIAssistant from '../../components/AIAssistant';
 import RiskProfileQuestionnaire from '../../components/RiskProfileQuestionnaire';
+import RMContactPage from '../../components/RMContactPage';
 import StockDetailPage from './StockDetailPage';
 import PortfolioStatusBar from './PortfolioStatusBar';
 import PortfolioMarketValueSection from './PortfolioMarketValueSection';
@@ -13,6 +14,8 @@ import StockAnalysisSection from './StockAnalysisSection';
 import UnitTrustAnalysisSection from './UnitTrustAnalysisSection';
 import BondAnalysisSection from './BondAnalysisSection';
 import StructuredProductAnalysisSection from './StructuredProductAnalysisSection';
+import PortfolioOverviewAnalysis from './PortfolioOverviewAnalysis';
+import AlertsModal from './AlertsModal';
 
 const PortfolioPage: React.FC = () => {
   const navigate = useNavigate();
@@ -21,6 +24,9 @@ const PortfolioPage: React.FC = () => {
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const [showStockDetail, setShowStockDetail] = useState(false);
   const [isRiskProfileOpen, setIsRiskProfileOpen] = useState(false);
+  const [showAlerts, setShowAlerts] = useState(false);
+  const [hasUnreadAlerts, setHasUnreadAlerts] = useState(true);
+  const [showRMContact, setShowRMContact] = useState(false);
   const isMobile = useMobileDetect();
   
   // Refs for analysis sections
@@ -118,107 +124,161 @@ const PortfolioPage: React.FC = () => {
     }
   };
 
+  const handleBellClick = () => {
+    setShowAlerts(true);
+    setHasUnreadAlerts(false);
+  };
+
   return (
     <>
       <style>{`
-
+        @keyframes bellShake {
+          0%, 100% { transform: rotate(0deg); }
+          10%, 30%, 50%, 70%, 90% { transform: rotate(-10deg); }
+          20%, 40%, 60%, 80% { transform: rotate(10deg); }
+        }
+        
+        .bell-shake {
+          animation: bellShake 1s ease-in-out infinite;
+        }
       `}</style>
-    <div className="flex flex-col h-full bg-[#f4f5f6] font-sans relative">
-      {/* Mobile Status Bar */}
-      <PortfolioStatusBar currentTime={currentTime} isMobile={isMobile} />
+      <div className="flex flex-col h-full bg-[#f4f5f6] font-sans relative">
+        {/* Mobile Status Bar */}
+        <PortfolioStatusBar currentTime={currentTime} isMobile={isMobile} />
 
-      {/* Header */}
-      <div className={`bg-white py-2 px-3 border-b border-gray-200 sticky z-50 ${isMobile ? 'top-0' : 'top-[30px]'}`}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button 
-              onClick={() => navigate('/home')} 
-              className="w-7 h-7 -ml-2 flex items-center justify-center active:bg-gray-100 rounded-full transition-colors cursor-pointer"
+        {/* Header */}
+        <div className={`bg-white py-2 px-3 border-b border-gray-200 sticky z-50 ${isMobile ? 'top-0' : 'top-[30px]'}`}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <button 
+                onClick={() => navigate('/home')} 
+                className="w-7 h-7 -ml-2 flex items-center justify-center active:bg-gray-100 rounded-full transition-colors cursor-pointer"
+              >
+                <svg className="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+              </button>
+              <h1 className="text-[17px] font-semibold text-gray-900 whitespace-nowrap">
+                AI Portfolio Review
+              </h1>
+            </div>
+            
+            {/* Bell Icon */}
+            <button
+              onClick={handleBellClick}
+              className="relative w-9 h-9 flex items-center justify-center active:bg-gray-100 rounded-full transition-colors cursor-pointer"
             >
-              <svg className="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              <svg 
+                className={`w-5 h-5 ${hasUnreadAlerts ? 'text-[#FFA500] bell-shake' : 'text-gray-600'}`}
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" 
+                />
               </svg>
+              {hasUnreadAlerts && (
+                <div className="absolute top-1 right-1 w-2 h-2 bg-[#da0011] rounded-full" />
+              )}
             </button>
-            <h1 className="text-[17px] font-semibold text-gray-900 whitespace-nowrap">
-              AI Portfolio Review
-            </h1>
           </div>
         </div>
-      </div>
 
-      {/* Content */}
-      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto no-scrollbar">
-        {/* Total Market Value Section */}
-        <PortfolioMarketValueSection />
+        {/* Content */}
+        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto no-scrollbar">
+          {/* Total Market Value Section */}
+          <PortfolioMarketValueSection />
 
-        {/* AI Insights Section */}
-        <AIInsightsCarousel onRiskProfileOpen={() => setIsRiskProfileOpen(true)} />
+          {/* AI Insights Section */}
+          <AIInsightsCarousel onRiskProfileOpen={() => setIsRiskProfileOpen(true)} isPaused={showAlerts} />
 
-        {/* AI Analysis by Asset Type */}
-        <div className="bg-white rounded-sm border border-gray-200">
-          {/* Sticky Tab Group */}
-          <div className="sticky top-[0px] z-40 bg-white overflow-x-auto no-scrollbar shadow-sm border-b border-gray-200">
-            <div className="flex">
-              {['Stock', 'Unit Trust', 'Bond', 'Structured Product'].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => handleAnalysisTabClick(tab)}
-                  className={`flex-1 py-4 text-[12px] font-bold relative whitespace-nowrap transition-colors cursor-pointer ${
-                    activeAnalysisTab === tab ? 'text-[#da0011]' : 'text-[#767676]'
-                  }`}
-                >
-                  {tab}
-                  {activeAnalysisTab === tab && (
-                    <div className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#da0011]" />
-                  )}
-                </button>
-              ))}
+          {/* Portfolio Overview Analysis */}
+          <PortfolioOverviewAnalysis />
+
+          {/* AI Analysis by Asset Type */}
+          <div className="bg-white rounded-sm border border-gray-200">
+            {/* Sticky Tab Group */}
+            <div className="sticky top-[0px] z-40 bg-white overflow-x-auto no-scrollbar shadow-sm border-b border-gray-200">
+              <div className="flex">
+                {['Stock', 'Unit Trust', 'Bond', 'Structured Product'].map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => handleAnalysisTabClick(tab)}
+                    className={`flex-1 py-4 text-[12px] font-bold relative whitespace-nowrap transition-colors cursor-pointer ${
+                      activeAnalysisTab === tab ? 'text-[#da0011]' : 'text-[#767676]'
+                    }`}
+                  >
+                    {tab}
+                    {activeAnalysisTab === tab && (
+                      <div className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#da0011]" />
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Analysis Content */}
+            <div className="px-4 py-4">
+              {/* Stock Section */}
+              <StockAnalysisSection 
+                sectionRef={stockRef} 
+                onShowStockDetail={() => setShowStockDetail(true)} 
+              />
+
+              {/* Unit Trust Section */}
+              <UnitTrustAnalysisSection sectionRef={unitTrustRef} />
+
+              {/* Bond Section */}
+              <BondAnalysisSection sectionRef={bondRef} />
+
+              {/* Structured Product Section */}
+              <StructuredProductAnalysisSection sectionRef={structuredProductRef} />
             </div>
           </div>
-
-          {/* Analysis Content */}
-          <div className="px-4 py-4">
-            {/* Stock Section */}
-            <StockAnalysisSection 
-              sectionRef={stockRef} 
-              onShowStockDetail={() => setShowStockDetail(true)} 
-            />
-
-            {/* Unit Trust Section */}
-            <UnitTrustAnalysisSection sectionRef={unitTrustRef} />
-
-            {/* Bond Section */}
-            <BondAnalysisSection sectionRef={bondRef} />
-
-            {/* Structured Product Section */}
-            <StructuredProductAnalysisSection sectionRef={structuredProductRef} />
+        </div>
+        
+        {/* Floating AI Button */}
+        <FloatingAIButton onClick={() => setShowAIAssistant(true)} />
+        
+        {/* AI Assistant Modal */}
+        <AIAssistant 
+          isOpen={showAIAssistant} 
+          onClose={() => setShowAIAssistant(false)}
+          mode="analysis"
+        />
+        
+        {/* Stock Detail Overlay */}
+        {showStockDetail && (
+          <div className="absolute inset-0 z-50 bg-white">
+            <StockDetailPage onBack={() => setShowStockDetail(false)} />
           </div>
-        </div>
-      </div>
-      
-      {/* Floating AI Button */}
-      <FloatingAIButton onClick={() => setShowAIAssistant(true)} />
-      
-      {/* AI Assistant Modal */}
-      <AIAssistant 
-        isOpen={showAIAssistant} 
-        onClose={() => setShowAIAssistant(false)}
-        mode="analysis"
-      />
-      
-      {/* Stock Detail Overlay */}
-      {showStockDetail && (
-        <div className="absolute inset-0 z-50 bg-white">
-          <StockDetailPage onBack={() => setShowStockDetail(false)} />
-        </div>
-      )}
+        )}
 
-      {/* Risk Profile Questionnaire */}
-      <RiskProfileQuestionnaire
-        isOpen={isRiskProfileOpen}
-        onClose={() => setIsRiskProfileOpen(false)}
-      />
-    </div>
+        {/* Risk Profile Questionnaire */}
+        <RiskProfileQuestionnaire
+          isOpen={isRiskProfileOpen}
+          onClose={() => setIsRiskProfileOpen(false)}
+        />
+
+        {/* Alerts Modal */}
+        <AlertsModal
+          isOpen={showAlerts}
+          onClose={() => setShowAlerts(false)}
+          onContactRM={() => {
+            setShowAlerts(false);
+            setShowRMContact(true);
+          }}
+        />
+
+        {/* RM Contact Modal */}
+        {showRMContact && (
+          <RMContactPage onBack={() => setShowRMContact(false)} />
+        )}
+      </div>
     </>
   );
 };

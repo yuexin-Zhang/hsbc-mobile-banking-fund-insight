@@ -11,7 +11,7 @@ const UnitTrustAnalysisSection: React.FC<UnitTrustAnalysisSectionProps> = ({ sec
   const navigate = useNavigate();
 
   return (
-    <div ref={sectionRef} className="scroll-mt-[150px] mt-8 pt-8 border-t-[6px] border-[#f4f5f6]">
+    <div ref={sectionRef} className="scroll-mt-[150px] mt-8 pt-8 border-t-[6px] border-[#f4f5f6]" data-section="unit-trust">
       {/* Section Title */}
       <div className="flex items-center gap-2 mb-2">
         <div className="w-1 h-5 bg-[#da0011]"></div>
@@ -36,8 +36,11 @@ const UnitTrustAnalysisSection: React.FC<UnitTrustAnalysisSectionProps> = ({ sec
           <div className="mb-3">
             <h4 className="text-[13px] font-bold text-gray-900 mb-2">AI Suggestions</h4>
             <div className="space-y-3">
-              <div className="flex items-start gap-2 text-[11px]">
+              <div className="flex items-start gap-2 text-[11px] relative">
                 <span className="text-[#db0011] font-bold mt-0.5">•</span>
+                <svg className="absolute -left-[4px] -top-[1px] w-4 h-4 text-[#FFA500] transform rotate-45 scale-x-[-1]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" style={{ zIndex: 1 }}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
                 <div className="text-gray-700">
                   <span>Consider rebalancing: Increase Asia ex-Japan exposure by 3-5% to capture emerging market growth </span>
                   <button className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5 cursor-pointer">
@@ -48,8 +51,11 @@ const UnitTrustAnalysisSection: React.FC<UnitTrustAnalysisSectionProps> = ({ sec
                   </button>
                 </div>
               </div>
-              <div className="flex items-start gap-2 text-[11px]">
+              <div className="flex items-start gap-2 text-[11px] relative">
                 <span className="text-[#db0011] font-bold mt-0.5">•</span>
+                <svg className="absolute -left-[4px] -top-[1px] w-4 h-4 text-[#FFA500] transform rotate-45 scale-x-[-1]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" style={{ zIndex: 1 }}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
                 <div className="text-gray-700">
                   <span>BGF ENERGY showing recent underperformance; monitor for potential reallocation to renewable energy funds </span>
                   <button className="inline text-[10px] text-[#db0011] font-semibold underline active:opacity-70 inline-flex items-center gap-0.5 cursor-pointer">
