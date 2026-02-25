@@ -10,6 +10,7 @@ const AIInsightsCarousel: React.FC<AIInsightsCarouselProps> = ({ onRiskProfileOp
   const navigate = useNavigate();
   const [currentInsightIndex, setCurrentInsightIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
 
   // AI Insights data - 6 cards corresponding to What happened (3) and What's next (3)
@@ -127,7 +128,7 @@ const AIInsightsCarousel: React.FC<AIInsightsCarouselProps> = ({ onRiskProfileOp
 
   // Auto-carousel for AI Portfolio Intelligence
   useEffect(() => {
-    if (isPaused || isTransitioning) return;
+    if (isPaused || isTransitioning || isHovered) return;
     
     const carouselInterval = setInterval(() => {
       setIsTransitioning(true);
@@ -136,7 +137,7 @@ const AIInsightsCarousel: React.FC<AIInsightsCarouselProps> = ({ onRiskProfileOp
     }, 1000);
     
     return () => clearInterval(carouselInterval);
-  }, [isPaused, isTransitioning, insights.length]);
+  }, [isPaused, isTransitioning, isHovered, insights.length]);
 
   // Handle wheel event with passive: false to prevent default scroll
   useEffect(() => {
@@ -218,6 +219,8 @@ const AIInsightsCarousel: React.FC<AIInsightsCarouselProps> = ({ onRiskProfileOp
           touchAction: 'pan-y',
           minHeight: '180px',
         }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
         <div className="relative pb-4">
           {insights.map((insight, index) => {
