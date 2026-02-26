@@ -6,16 +6,16 @@ import FloatingAIButton from '../../components/FloatingAIButton';
 import AIAssistant from '../../components/AIAssistant';
 import RiskProfileQuestionnaire from '../../components/RiskProfileQuestionnaire';
 import RMContactPage from '../../components/RMContactPage';
-import StockDetailPage from './StockDetailPage';
-import PortfolioStatusBar from './PortfolioStatusBar';
-import PortfolioMarketValueSection from './PortfolioMarketValueSection';
-import AIInsightsCarousel from './AIInsightsCarousel';
-import StockAnalysisSection from './StockAnalysisSection';
-import UnitTrustAnalysisSection from './UnitTrustAnalysisSection';
-import BondAnalysisSection from './BondAnalysisSection';
-import StructuredProductAnalysisSection from './StructuredProductAnalysisSection';
-import PortfolioOverviewAnalysis from './PortfolioOverviewAnalysis';
-import AlertsModal from './AlertsModal';
+import StockDetailPage from './sections/Analysis/Stock/Detail';
+import PortfolioStatusBar from './sections/StatusBar';
+import PortfolioMarketValueSection from './sections/MarketValue';
+import AIInsightsCarousel from './sections/AIInsights';
+import StockAnalysisSection from './sections/Analysis/Stock';
+import UnitTrustAnalysisSection from './sections/Analysis/UnitTrust';
+import BondAnalysisSection from './sections/Analysis/Bond';
+import StructuredProductAnalysisSection from './sections/Analysis/StructuredProduct';
+import PortfolioOverviewAnalysis from './sections/Overview';
+import AlertsModal from './modals/AlertsModal';
 
 const PortfolioPage: React.FC = () => {
   const navigate = useNavigate();
@@ -29,7 +29,6 @@ const PortfolioPage: React.FC = () => {
   const [showRMContact, setShowRMContact] = useState(false);
   const isMobile = useMobileDetect();
   
-  // Refs for analysis sections
   const unitTrustRef = useRef<HTMLDivElement>(null);
   const stockRef = useRef<HTMLDivElement>(null);
   const structuredProductRef = useRef<HTMLDivElement>(null);
@@ -37,7 +36,6 @@ const PortfolioPage: React.FC = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const isScrollingFromClick = useRef(false);
 
-  // Update current time
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -48,11 +46,9 @@ const PortfolioPage: React.FC = () => {
     
     updateTime();
     const interval = setInterval(updateTime, 1000);
-    
     return () => clearInterval(interval);
   }, []);
 
-  // Handle scroll to update active analysis tab
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
     if (!scrollContainer) return;
@@ -86,7 +82,6 @@ const PortfolioPage: React.FC = () => {
     return () => scrollContainer.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Handle analysis tab click to scroll to section
   const handleAnalysisTabClick = (tab: string) => {
     setActiveAnalysisTab(tab);
     isScrollingFromClick.current = true;
@@ -94,18 +89,10 @@ const PortfolioPage: React.FC = () => {
     let targetRef: React.RefObject<HTMLDivElement> | null = null;
     
     switch (tab) {
-      case 'Unit Trust':
-        targetRef = unitTrustRef;
-        break;
-      case 'Stock':
-        targetRef = stockRef;
-        break;
-      case 'Structured Product':
-        targetRef = structuredProductRef;
-        break;
-      case 'Bond':
-        targetRef = bondRef;
-        break;
+      case 'Unit Trust': targetRef = unitTrustRef; break;
+      case 'Stock': targetRef = stockRef; break;
+      case 'Structured Product': targetRef = structuredProductRef; break;
+      case 'Bond': targetRef = bondRef; break;
     }
 
     if (targetRef?.current && scrollContainerRef.current) {
@@ -137,16 +124,11 @@ const PortfolioPage: React.FC = () => {
           10%, 30%, 50%, 70%, 90% { transform: rotate(-10deg); }
           20%, 40%, 60%, 80% { transform: rotate(10deg); }
         }
-        
-        .bell-shake {
-          animation: bellShake 1s ease-in-out infinite;
-        }
+        .bell-shake { animation: bellShake 1s ease-in-out infinite; }
       `}</style>
       <div className="flex flex-col h-full bg-[#f4f5f6] font-sans relative">
-        {/* Mobile Status Bar */}
         <PortfolioStatusBar currentTime={currentTime} isMobile={isMobile} />
 
-        {/* Header */}
         <div className={`bg-white py-2 px-3 border-b border-gray-200 sticky z-50 ${isMobile ? 'top-0' : 'top-[30px]'}`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -158,12 +140,9 @@ const PortfolioPage: React.FC = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
               </button>
-              <h1 className="text-[17px] font-semibold text-gray-900 whitespace-nowrap">
-                AI Portfolio Review
-              </h1>
+              <h1 className="text-[17px] font-semibold text-gray-900 whitespace-nowrap">AI Portfolio Review</h1>
             </div>
             
-            {/* Bell Icon */}
             <button
               onClick={handleBellClick}
               className="relative w-9 h-9 flex items-center justify-center active:bg-gray-100 rounded-full transition-colors cursor-pointer"
@@ -188,20 +167,12 @@ const PortfolioPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Content */}
         <div ref={scrollContainerRef} className="flex-1 overflow-y-auto no-scrollbar">
-          {/* Total Market Value Section */}
           <PortfolioMarketValueSection />
-
-          {/* AI Insights Section */}
           <AIInsightsCarousel onRiskProfileOpen={() => setIsRiskProfileOpen(true)} isPaused={showAlerts} />
-
-          {/* Portfolio Overview Analysis */}
           <PortfolioOverviewAnalysis />
 
-          {/* AI Analysis by Asset Type */}
           <div className="bg-white rounded-sm border border-gray-200">
-            {/* Sticky Tab Group */}
             <div className="sticky top-[0px] z-40 bg-white overflow-x-auto no-scrollbar shadow-sm border-b border-gray-200">
               <div className="flex">
                 {['Stock', 'Unit Trust', 'Bond', 'Structured Product'].map((tab) => (
@@ -221,50 +192,37 @@ const PortfolioPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Analysis Content */}
             <div className="px-4 py-4">
-              {/* Stock Section */}
               <StockAnalysisSection 
                 sectionRef={stockRef} 
                 onShowStockDetail={() => setShowStockDetail(true)} 
               />
-
-              {/* Unit Trust Section */}
               <UnitTrustAnalysisSection sectionRef={unitTrustRef} />
-
-              {/* Bond Section */}
               <BondAnalysisSection sectionRef={bondRef} />
-
-              {/* Structured Product Section */}
               <StructuredProductAnalysisSection sectionRef={structuredProductRef} />
             </div>
           </div>
         </div>
         
-        {/* Floating AI Button */}
         <FloatingAIButton onClick={() => setShowAIAssistant(true)} />
         
-        {/* AI Assistant Modal */}
         <AIAssistant 
           isOpen={showAIAssistant} 
           onClose={() => setShowAIAssistant(false)}
           mode="analysis"
         />
         
-        {/* Stock Detail Overlay */}
         {showStockDetail && (
           <div className="absolute inset-0 z-50 bg-white">
             <StockDetailPage onBack={() => setShowStockDetail(false)} />
           </div>
         )}
 
-        {/* Risk Profile Questionnaire */}
         <RiskProfileQuestionnaire
           isOpen={isRiskProfileOpen}
           onClose={() => setIsRiskProfileOpen(false)}
         />
 
-        {/* Alerts Modal */}
         <AlertsModal
           isOpen={showAlerts}
           onClose={() => setShowAlerts(false)}
@@ -274,7 +232,6 @@ const PortfolioPage: React.FC = () => {
           }}
         />
 
-        {/* RM Contact Modal */}
         {showRMContact && (
           <RMContactPage onBack={() => setShowRMContact(false)} />
         )}

@@ -1,32 +1,11 @@
-// Portfolio data constants
+export interface ChartDataPoint {
+  date: string;
+  all: number;
+  fund: number;
+  saa: number;
+}
 
-export const risers = [
-  { name: 'HSBC HOLDING...', code: '00005', exchange: 'HK', price: '139.000 HKD', change: '+4.200', percent: '+3.12%', trend: 'up' },
-  { name: 'UBTECH ROBOT...', code: '09880', exchange: 'HK', price: '128.000 HKD', change: '+2.300', percent: '+1.83%', trend: 'up' },
-  { name: 'HS HIGH DIV', code: '03466', exchange: 'HK', price: '21.300 HKD', change: '+0.240', percent: '+1.14%', trend: 'up' },
-];
-
-export const fallers = [
-  { name: 'HSBC HOLDING...', code: '00005', exchange: 'HK', price: '139.000 HKD', change: '-2.100', percent: '-1.49%', trend: 'down' },
-  { name: 'MTR CORP LTD', code: '00066', exchange: 'HK', price: '36.120 HKD', change: '-0.540', percent: '-1.47%', trend: 'down' },
-  { name: 'HS HIGH DIV', code: '03466', exchange: 'HK', price: '21.300 HKD', change: '-0.180', percent: '-0.84%', trend: 'down' },
-];
-
-export const couponPayments = [
-  { date: 'Mar 10, 2026', bond: 'HSBC 5.5% Perp', description: 'Coupon Payment', amount: '+HKD 33,000', frequency: 'Semi-annual' },
-  { date: 'May 15, 2026', bond: 'US Treasury 10Y', description: 'Coupon Payment', amount: '+HKD 33,750', frequency: 'Semi-annual' },
-];
-
-export const maturities = [
-  { date: 'Sep 20, 2026', bond: 'Corporate Bond ABC', description: 'Principal + Final Coupon', amount: '+HKD 526,500', note: 'Reinvest decision needed', isMaturity: true },
-];
-
-export const allBondHoldings = [
-  { name: 'Evergrande 8.25%', isin: 'XS2349090000', rating: 'CCC', value: '653,280.50', allocation: '8%', coupon: '8.25%', maturity: 'Mar 2027', ytm: '12.5%', warning: 'Credit rating downgraded. Consider reallocation to safer IG bonds.', hasRisk: true },
-  { name: 'Country Garden 7.5%', isin: 'XS2456789012', rating: 'CC', value: '487,105.00', allocation: '6%', coupon: '7.50%', maturity: 'Aug 2026', ytm: '15.8%', warning: 'Payment default risk. Immediate action recommended.', hasRisk: true },
-];
-
-export const chartData = [
+export const chartData: ChartDataPoint[] = [
   { date: '2025-01', all: 0, fund: 0, saa: 0 },
   { date: '2025-01', all: 1.2, fund: 0.8, saa: 0.5 },
   { date: '2025-01', all: 2.8, fund: 2.1, saa: 1.2 },
