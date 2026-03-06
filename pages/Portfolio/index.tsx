@@ -213,7 +213,7 @@ const PortfolioPage: React.FC = () => {
         />
         
         {showStockDetail && (
-          <div className="absolute inset-0 z-50 bg-white">
+          <div className="absolute inset-0 z-[60] bg-white">
             <StockDetailPage onBack={() => setShowStockDetail(false)} />
           </div>
         )}
@@ -230,6 +230,7 @@ const PortfolioPage: React.FC = () => {
             setShowAlerts(false);
             setShowRMContact(true);
           }}
+          onShowStockDetail={() => setShowStockDetail(true)}
         />
 
         {showRMContact && (
